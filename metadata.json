@@ -1,0 +1,8 @@
+{
+  "name": "3d upgrade (VOLLFUNKTION) Körperfluss - Evidenz für Therapie \u0026 Ausbildung",
+  "description": "Adaptive KI-Plattform für strukturierte Befundung und modernes Lernen.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

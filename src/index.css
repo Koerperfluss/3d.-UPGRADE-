@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #D4AF37;
+  --color-brand-primary-light: #E5BF48;
+  --color-brand-primary-dark: #B38F2D;
+}
+
+@layer components {
+  /* Flexbox Navigation Layout */
+  .nav-flex-container {
+    @apply flex items-center justify-between h-20;
+  }
+
+  .nav-links-flex {
+    @apply flex items-center gap-10;
+  }
+
+  .nav-actions-flex {
+    @apply flex items-center gap-8;
+  }
+
+  .nav-mobile-flex {
+    @apply flex items-center gap-4;
+  }
+
+  /* Flexbox Footer Layout */
+  .footer-grid-flex {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-24 mb-48;
+  }
+
+  .footer-bottom-flex {
+    @apply flex flex-col md:flex-row items-center justify-between gap-12;
+  }
+
+  .footer-brand-flex {
+    @apply flex items-center gap-10 mb-12;
+  }
+
+  .footer-links-flex {
+    @apply flex items-center gap-12;
+  }
+
+  .glass {
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-dark {
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(64px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .text-gradient-gold {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, var(--color-brand-primary), var(--color-brand-primary-light), var(--color-brand-primary-dark));
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 60px -15px rgba(212, 175, 55, 0.2);
+  }
+
+  .border-gold {
+    border: 1px solid rgba(212, 175, 55, 0.2);
+  }
+
+  .premium-card {
+    @apply rounded-3xl p-8 transition-all duration-500;
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .premium-card:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 60px -15px rgba(212, 175, 55, 0.2);
+  }
+}
+
+body {
+  background-color: #000000;
+  background-image: radial-gradient(circle at 50% 0%, #121212 0%, #000000 100%);
+  color: #FFFFFF;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}

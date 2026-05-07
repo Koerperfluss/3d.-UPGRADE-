@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Körperfluss - Wissensbrücke für Gesundheitsberufe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#2C1A12',
+                            surface: '#3D2419',
+                            accent: '#D4A373',
+                            text: '#FFF3E3',
+                            muted: '#A88D80'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #2C1A12;
+            color: #FFF3E3;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="w-full p-6 flex justify-center md:justify-start items-center border-b border-brand-surface">
+        <div class="flex items-center gap-3">
+            <img src="./logo-1.jpeg" alt="Körperfluss Logo" class="w-10 h-10 rounded-full border border-brand-accent/50 object-cover">
+            <span class="font-serif text-brand-accent text-xl tracking-widest">Körperfluss</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="flex-grow flex flex-col items-center justify-center px-6 py-24 text-center">
+        <div class="px-4 py-1.5 rounded-full border border-brand-accent/30 text-brand-accent text-xs font-bold uppercase tracking-[0.2em] mb-8 bg-black/20">
+            Education & Professional
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold text-brand-text font-serif tracking-tight leading-[1.1] mb-6 drop-shadow-lg max-w-4xl">
+            Wissensbrücke für <br/><span class="italic font-light text-brand-accent">Gesundheitsberufe</span>
+        </h1>
+        <p class="text-lg md:text-xl text-brand-muted font-light leading-relaxed max-w-2xl mb-12">
+            KI-gestützte Ausbildungsplattform für evidenzbasierte Physiotherapie.
+        </p>
+    </main>
+
+    <!-- Team Section -->
+    <section class="py-20 px-6 bg-brand-surface/30 border-y border-brand-surface">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl font-serif text-center text-brand-accent mb-12">Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 rounded-2xl bg-brand-bg border border-brand-surface text-center">
+                    <h3 class="text-xl font-bold text-brand-text mb-1">Sascha Lagler</h3>
+                    <p class="text-sm text-brand-accent">Clinical Lead & CEO</p>
+                </div>
+                <div class="p-8 rounded-2xl bg-brand-bg border border-brand-surface text-center">
+                    <h3 class="text-xl font-bold text-brand-text mb-1">Peter Fischer</h3>
+                    <p class="text-sm text-brand-accent">Tech Lead & CTO</p>
+                </div>
+                <div class="p-8 rounded-2xl bg-brand-bg border border-brand-surface text-center">
+                    <h3 class="text-xl font-bold text-brand-text mb-1">Lisa Mauerhart</h3>
+                    <p class="text-sm text-brand-accent">Head of UX & Inklusion</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partner / Logos Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-brand-muted mb-10">Unterstützt durch & Partner</h2>
+            <div class="flex flex-wrap justify-center items-center gap-12 opacity-80">
+                <div class="text-2xl font-serif font-bold text-brand-text border-b-2 border-brand-accent pb-1">FFG</div>
+                <div class="text-2xl font-serif font-bold text-brand-text border-b-2 border-brand-accent pb-1">Wirtschaftsagentur Wien</div>
+                <div class="text-2xl font-serif font-bold text-brand-text border-b-2 border-brand-accent pb-1">FH Linz</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Impressum -->
+    <footer class="mt-auto py-12 px-6 border-t border-brand-surface bg-brand-bg text-center">
+        <div class="max-w-3xl mx-auto flex flex-col items-center justify-center gap-2">
+            <h3 class="text-brand-accent font-serif text-lg mb-4">Impressum</h3>
+            <p class="text-sm text-brand-muted">Körperfluss Technologies FlexCo (in Gründung)</p>
+            <p class="text-sm text-brand-muted">Sascha Lagler</p>
+            <p class="text-sm text-brand-muted">GISA: 39096401</p>
+            <p class="text-sm text-brand-muted">1130 Wien, Österreich</p>
+        </div>
+    </footer>
+
+</body>
+</html>
