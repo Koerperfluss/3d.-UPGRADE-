@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Körperfluss ist eine adaptive KI-Plattform für strukturierte Befundung, personalisierte Therapiepläne und modernes Lernen in der Physiotherapie und im Gesundheitswesen." />
+    <meta name="theme-color" content="#FFFDF8">
+    <title>Körperfluss - Evidenz für Therapie & Ausbildung</title>
+    <link rel="manifest" href="/manifest.json" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#D4AF37',        // Metallic Gold
+              'brand-primary-light': '#F1D38E',  
+              'brand-primary-dark': '#996515',   
+              
+              'brand-accent': '#C5A028',         
+              
+              'brand-background': '#000000',     // Pure Black
+              'brand-surface': '#0A0A0A',        // Deepest Gray
+              'brand-surface-alt': '#121212',    
+              
+              'brand-border': 'rgba(212, 175, 55, 0.2)', // Subtle Gold Border
+              
+              'brand-secondary': '#FFFFFF',      // White
+              'brand-secondary-light': '#A1A1AA', // Zinc-400
+              
+              'brand-text-on-light': '#FFFFFF',     
+              'brand-text-on-light-secondary': '#A1A1AA', 
+              
+              'brand-text-on-dark': '#FFFFFF',      
+              
+              'brand-success': '#10B981',           
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              serif: ['Cormorant Garamond', 'Playfair Display', 'serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            backgroundImage: {
+              'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+              'fluid-gold': 'linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #121212 100%)',
+              'logo-gradient': 'linear-gradient(90deg, #D4AF37, #996515)',
+              'body-gradient': 'radial-gradient(circle at 50% 0%, #1A1A1A 0%, #000000 100%)',
+              'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
+            },
+            animation: {
+              fadeInUp: 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              float: 'float 8s ease-in-out infinite',
+              'float-delayed': 'float 8s ease-in-out 4s infinite',
+              'pulse-slow': 'pulse-slow 6s ease-in-out infinite',
+              'spin-slow': 'spin 20s linear infinite',
+              'glow': 'glow 4s ease-in-out infinite',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              'pulse-slow': {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.6' },
+              },
+              glow: {
+                '0%, 100%': { filter: 'drop-shadow(0 0 5px rgba(212, 175, 55, 0.3))' },
+                '50%': { filter: 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.6))' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.6.2",
+    "@google/genai": "https://esm.sh/@google/genai"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="text-brand-text-on-light font-sans text-base antialiased selection:bg-brand-primary/30 selection:text-brand-secondary">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
