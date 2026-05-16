@@ -40,13 +40,14 @@ export const AssessmentCenterPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-background text-white">
-      <Section 
-        title="Assessment Center" 
-        subtitle="Zentraler Hub für Prüfungen, Quizzes und KI-gestützte Lernpfad-Optimierung."
-      />
+    <div className="min-h-screen bg-brand-background text-white relative">
+      <div className="relative z-10">
+        <Section 
+          title="Assessment Center" 
+          subtitle="Zentraler Hub für Prüfungen, Quizzes und KI-gestützte Lernpfad-Optimierung."
+        />
 
-      <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
         {/* Stats Grid */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {stats.map((s, i) => (
@@ -195,6 +196,7 @@ export const AssessmentCenterPage: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
       </div>
     </div>
   );

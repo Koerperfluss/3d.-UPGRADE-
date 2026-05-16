@@ -15,12 +15,14 @@ export const CurriculumPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('matrix');
 
   const systems = [
-    { id: 1, name: 'Anamnese & Intake', modules: ['Diagnostik-Bot', 'Fall-Simulator'], route: '/diagnostik-bot', prereq: 'Basis Anatomie', link: 'Trainiert das Erstgespräch und Triage mit virtuellen Patienten.' },
+    { id: 1, name: 'Anamnese & Intake', modules: ['Anamnese Trainer', 'Fall-Simulator'], route: '/anamnese-trainer', prereq: 'Basis Anatomie', link: 'Trainiert das Erstgespräch und Triage mit virtuellen Patienten.' },
     { id: 2, name: 'Befund & Analyse', modules: ['Vision Agent', 'Skill-Check', 'Media Analyzer'], route: '/vision-agent', prereq: 'Funktionelle Anatomie, Biomechanik', link: 'KI-gestützte Bewegungs- und Haltungsanalyse via Video/Foto.' },
     { id: 3, name: 'Clinical Reasoning', modules: ['Wirkungsketten', 'Hypothesen-Tester'], route: '/case-training', prereq: 'Physiologie', link: 'Leitet Studierende von isolierten Symptomen zur Diagnose.' },
-    { id: 4, name: 'Evidenz & Therapie', modules: ['Leitlinien-RAG', 'Compliance-Filter'], route: '/literatur', prereq: 'Wissenschaftliches Arbeiten', link: 'Sichert Therapiepläne mit aktuellen Med-Datenbanken (AWMF) ab.' },
-    { id: 5, name: 'Assessment & Note', modules: ['Freitext-Korrektur', 'Lernpfad-KI'], route: '/assessment-center', prereq: 'Alle Theorie-Module', link: 'Automatisierte Bewertung der Transferleistung und Examina.' },
-    { id: 6, name: 'Dozenten-Workspace', modules: ['LUMI-Config', 'Content-Generator'], route: '/educator-workspace', prereq: 'Dozenten-Zugang', link: 'Das Administrations-Cockpit für Unterrichtsvorbereitung und Analytics.' },
+    { id: 4, name: 'Manuelle Therapie der HWS', modules: ['Skill-Check Video', 'Clinical Reasoning'], route: '/labor', prereq: 'Funktionelle Anatomie, Neurologie-Basics', link: 'Fokus auf zervikale Untersuchung, Instabilitätstests (Sharp-Purser) und Mobilisationstechniken. Lernziele: Sichere Erkennung von Red Flags, korrekte Grifftechnik.' },
+    { id: 5, name: 'Propriozeptives Training für Sprunggelenksverletzungen', modules: ['Vision Agent', 'Leitlinien-RAG'], route: '/vision-agent', prereq: 'Biomechanik, Trainingslehre', link: 'Rehabilitation nach Supinationstrauma. Lernziele: Phasenadaptierte Belastungssteigerung, neuromuskuläre Kontrolle, Return-to-Sport Kriterien.' },
+    { id: 6, name: 'Evidenz & Therapie', modules: ['Leitlinien-RAG', 'Compliance-Filter'], route: '/literatur', prereq: 'Wissenschaftliches Arbeiten', link: 'Sichert Therapiepläne mit aktuellen Med-Datenbanken (AWMF) ab.' },
+    { id: 7, name: 'Assessment & Note', modules: ['Freitext-Korrektur', 'Lernpfad-KI'], route: '/assessment-center', prereq: 'Alle Theorie-Module', link: 'Automatisierte Bewertung der Transferleistung und Examina.' },
+    { id: 8, name: 'Dozenten-Workspace', modules: ['LUMI-Config', 'Content-Generator'], route: '/educator-workspace', prereq: 'Dozenten-Zugang', link: 'Das Administrations-Cockpit für Unterrichtsvorbereitung und Analytics.' },
   ];
 
   const tools = [
@@ -31,7 +33,7 @@ export const CurriculumPage: React.FC = () => {
     { name: 'Media Analyzer', function: 'Skill-Check Video', model: 'Gemini Vision', usage: 'Grifftechnik-Check', prereq: 'Praktische Grundlagen', route: '/labor' },
     { name: 'Literatur-RAG', function: 'Semantische Suche', model: 'Embedding + Flash', usage: 'Evidenz-Check', prereq: 'Wiss. Arbeiten', route: '/literatur' },
     { name: 'Creative Lab', function: 'Anatomie-Generierung', model: 'Imagen + Veo', usage: 'Lehrmittel', prereq: '- (Dozenten)', route: '/labor' },
-    { name: 'Diagnostik-Bot', function: 'Anamnese + Red Flags', model: 'Gemini Flash', usage: 'Intake-Triage', prereq: 'Anatomie I', route: '/diagnostik-bot' },
+    { name: 'Anamnese Trainer', function: 'Anamnese + Red Flags', model: 'Gemini Flash', usage: 'Intake-Triage', prereq: 'Anatomie I', route: '/anamnese-trainer' },
     { name: 'Clinical Reasoning Hub', function: 'Vollständige Pipeline', model: 'Gemini 3.1 Pro', usage: 'Komplexe Fälle', prereq: 'Alle Theorie-Module', route: '/clinical-hub' },
   ];
 
@@ -145,7 +147,7 @@ export const CurriculumPage: React.FC = () => {
                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-primary/50 to-transparent" />
                 
                 {[
-                  { step: 1, title: 'Befund aufnehmen', desc: 'Diagnostik-Bot erhebt Anamnese & Red Flags', route: '/diagnostik-bot', icon: SearchIcon },
+                  { step: 1, title: 'Befund aufnehmen', desc: 'Anamnese Trainer erhebt Anamnese & Red Flags', route: '/anamnese-trainer', icon: SearchIcon },
                   { step: 2, title: 'Wirkungskette herleiten', desc: 'Reasoning Hub analysiert Pathomechanik', route: '/clinical-hub', icon: BrainCircuitIcon },
                   { step: 3, title: 'Evidenz prüfen', desc: 'Literatur-RAG validiert Hypothesen', route: '/literatur', icon: LightBulbIcon },
                   { step: 4, title: 'Simulation absolvieren', desc: 'Case Training trainiert Clinical Reasoning', route: '/case-training', icon: SimulationIcon },

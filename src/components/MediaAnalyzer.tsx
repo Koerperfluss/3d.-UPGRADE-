@@ -15,6 +15,7 @@ import {
   CloudUploadIcon,
   SaveIcon,
   DocumentTextIcon,
+  CheckCircleIcon,
   LightBulbIcon,
   AcademicCapIcon
 } from './IconComponents';
@@ -34,9 +35,41 @@ export const MediaAnalyzer: React.FC = () => {
   const [result, setResult] = useState<any>(null);
   const [groundingLinks, setGroundingLinks] = useState<any[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const contextInputRef = useRef<HTMLInputElement>(null);
+
+  const loadDemoVideo = () => {
+    setIsDemoMode(true);
+    setPreview('demo_placeholder');
+    setResult(null);
+    setErrorMessage(null);
+    
+    // Auto start analysis after 1 second of loading demo video
+    setTimeout(() => {
+        setIsAnalyzing(true);
+        setTimeout(() => {
+            setIsAnalyzing(false);
+            setResult({
+                isSimulated: true,
+                header: { title: "Klinischer Befund: Kniebeuge", status: "Korrekturbedarf" },
+                professional_report: {
+                    summary: "Die Patientin zeigt bei der Kniebeuge eine leichte Valgusabweichung sowie eine übermäßige Rumpfvorneigung. Zudem fällt eine Innenrotation des rechten Fußes auf.",
+                    findings: [
+                        { point: "Knieachse", severity: "low", logic: "Wird weitgehend stabil gehalten. Leichter Valgus-Kollaps < 5° in der tiefsten Phase der Flexion. (Gut)", chain_of_thought: { cause: "Leichte Schwäche Gluteus Medius", compensation: "Tibianrotation", symptom: "Patellafehlgleiten" }, coordinates: { x: 45, y: 70 } },
+                        { point: "Rumpfneigung", severity: "medium", logic: "Signifikante Rumpfvorneigung gemessen bei 34° (Norm: < 25°). Deutet auf Schwäche im M. gluteus maximus oder eingeschränkte Sprunggelenksbeweglichkeit hin. (Optimierungsbedarf)", chain_of_thought: { cause: "Eingeschränkte Plantarflexion OSG", compensation: "Verstärkte Hüftflexion", symptom: "Überlastung der lumbalen Erektoren" }, coordinates: { x: 50, y: 35 } },
+                        { point: "Fußstellung", severity: "high", logic: "Deutliche Innenrotation des rechten Fußes während der exzentrischen Phase. (Korrekturbedarf)", chain_of_thought: { cause: "Eingeschränkte Dorsalextension", compensation: "Eversion / Pronation", symptom: "Tibialis Posterior Insuffizienz" }, coordinates: { x: 40, y: 90 } }
+                    ]
+                },
+                action_plan: [
+                    { step: "Lokalspezifisches Screening", reason: "Beweglichkeitstests für das obere Sprunggelenk (Dorsalextension) beidseits." },
+                    { step: "Kräftigung", reason: "Isolierte Aktivierung der Hüftabduktoren und Außenrotatoren rechts." }
+                ]
+            });
+        }, 3000);
+    }, 500);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -145,13 +178,14 @@ export const MediaAnalyzer: React.FC = () => {
         
         ${specificInstructions}
         
-        AUFGABE: Erstelle einen strukturierten JSON-Bericht.
+        AUFGABE: Erstelle einen strukturierten JSON-Bericht. Generiere für jede erkannte Abweichung eine detaillierte biomechanische 'Wirkungskette' (Ursache -> Kompensation -> Symptom), inklusive möglicher Erklärungen. Diese Kette soll als 'chain_of_thought' im Report dargestellt werden.
         STRUKTUR (JSON):
         {
           "header": { "title": "Klinischer Befund", "status": "Auffällig" | "Kritisch" | "Unauffällig" },
           "professional_report": {
             "summary": "Prägnante Zusammenfassung (Fachsprache).",
-            "findings": [{ "point": "Struktur/Bereich", "severity": "high"|"medium"|"low", "logic": "Der Inhalt der Analyse basierend auf dem gewählten Modus." }]
+            "findings": [{ "point": "Struktur/Bereich", "severity": "high"|"medium"|"low", "logic": "Der Inhalt der Analyse, sowie mögliche Erklärungen für die Abweichungen.", "chain_of_thought": { "cause": "Ursache der Abweichung", "compensation": "Kompensationsmechanismus", "symptom": "symptomatische Ausprägung" }, "coordinates": { "x": 50, "y": 50 } }]
+            // coordinates: x / y in Prozent (0-100), positioniert die Abweichung auf dem Bild/Video für visuelle Overlays. E.g. Valgus knee at x: 45, y: 70
           },
           "patient_report": {
             "summary": "Verständliche Erklärung ohne Fachjargon.",
@@ -169,13 +203,11 @@ export const MediaAnalyzer: React.FC = () => {
 
       const response = await generateClinicalContent(
         promptParts, 
-        'gemini-2.0-flash', 
+        'gemini-2.5-flash', 
         {
           thinkingConfig: reasoningMode === 'chain' ? { thinkingBudget: 16000 } : undefined,
           responseMimeType: "application/json"
-        },
-        [],
-        [{ googleSearch: {} }]
+        }
       );
 
       const responseText = response.text || "{}";
@@ -188,7 +220,11 @@ export const MediaAnalyzer: React.FC = () => {
 
     } catch (e: any) {
       console.error("Analysis Error:", e);
-      setErrorMessage("Ein Fehler ist aufgetreten. Bitte prüfen Sie API-Key oder Dateigröße.");
+      if (e?.isTrusted || e instanceof ProgressEvent) {
+          setErrorMessage("Die Mediendatei konnte nicht geladen werden oder ist zu groß. Bitte verwenden Sie ein kürzeres Video (max. 10 Sekunden) oder ein kleineres Bild.");
+      } else {
+          setErrorMessage(e?.message || "Ein Fehler ist aufgetreten. Bitte prüfen Sie API-Key oder Dateigröße.");
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -265,10 +301,15 @@ export const MediaAnalyzer: React.FC = () => {
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         {/* Input Area */}
         <div className="space-y-4">
-          <Card className="p-1 bg-brand-secondary border-none shadow-2xl relative overflow-hidden aspect-[4/3] flex items-center justify-center rounded-3xl group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+          <Card className={`p-1 bg-brand-secondary border-none shadow-2xl relative overflow-hidden aspect-[4/3] flex items-center justify-center rounded-3xl group ${!isDemoMode ? 'cursor-pointer' : ''}`} onClick={() => !isDemoMode && fileInputRef.current?.click()}>
             {preview ? (
-              <div className="w-full h-full relative">
-                {file?.type.startsWith('video') 
+              <div className={`w-full h-full relative ${preview === 'demo_placeholder' ? 'flex flex-col items-center justify-center bg-zinc-800 rounded-[30px]' : ''}`}>
+                {preview === 'demo_placeholder' ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <VideoLibraryIcon className="w-16 h-16 text-zinc-500 mb-4" />
+                    <span className="text-zinc-500 text-[10px] font-black uppercase tracking-widest text-center px-4">Demo: Student führt Kniebeuge aus</span>
+                  </div>
+                ) : file?.type.startsWith('video') 
                   ? <video src={preview} className="w-full h-full object-cover" autoPlay loop muted playsInline /> 
                   : <img src={preview} className="w-full h-full object-cover" alt="Vorschau" />
                 }
@@ -276,9 +317,31 @@ export const MediaAnalyzer: React.FC = () => {
                   <div className="absolute inset-0 bg-brand-secondary/80 backdrop-blur-[4px] flex flex-col items-center justify-center z-10">
                      <BrainCircuitIcon className="w-16 h-16 text-brand-primary animate-pulse mb-6" />
                      <p className="text-white font-black uppercase text-sm tracking-widest mb-2">
-                         {reasoningMode === 'chain' ? 'Analysiere Wirkungsketten...' : 'Analysiere Imbalancen...'}
+                         KI analysiert klinisches Bild...
                      </p>
                      <p className="text-white/60 text-xs font-mono">Gemini 3.0 Pro Reasoning</p>
+                  </div>
+                )}
+                {!isAnalyzing && result?.professional_report?.findings && (
+                  <div className="absolute inset-0 z-20 pointer-events-none">
+                    {result.professional_report.findings.map((finding: any, idx: number) => {
+                      if (!finding.coordinates || typeof finding.coordinates.x !== 'number' || typeof finding.coordinates.y !== 'number') return null;
+                      return (
+                        <div 
+                          key={idx}
+                          className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-auto group cursor-help z-30"
+                          style={{ left: `${finding.coordinates.x}%`, top: `${finding.coordinates.y}%` }}
+                        >
+                          <div className={`w-5 h-5 rounded-full border-2 border-white shadow-[0_0_15px_rgba(0,0,0,0.5)] animate-pulse flex items-center justify-center ${finding.severity === 'high' ? 'bg-red-500' : finding.severity === 'medium' ? 'bg-amber-500' : 'bg-brand-primary'}`}>
+                             <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                          </div>
+                          <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/90 backdrop-blur-xl text-white text-[10px] p-3 rounded-xl border border-white/10 shadow-2xl w-56 text-center pointer-events-none absolute top-full">
+                             <strong className={`block mb-1 uppercase tracking-widest ${finding.severity === 'high' ? 'text-red-400' : finding.severity === 'medium' ? 'text-amber-400' : 'text-brand-primary'}`}>{finding.point}</strong>
+                             <span className="font-light leading-relaxed opacity-90">{finding.logic}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -291,6 +354,10 @@ export const MediaAnalyzer: React.FC = () => {
             )}
             <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*,video/*" />
           </Card>
+          
+          <Button onClick={loadDemoVideo} variant="outline" className="w-full py-3 text-[10px] uppercase tracking-widest border-brand-border/40 hover:bg-brand-background text-brand-text-on-light">
+             ▶️ Demo-Video laden: Kniebeuge-Analyse
+          </Button>
 
           {/* Expert Context Upload */}
           <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm">
@@ -320,7 +387,10 @@ export const MediaAnalyzer: React.FC = () => {
           </div>
 
           <Button onClick={runAnalysis} disabled={!file || isAnalyzing} variant="primary" className="w-full py-5 shadow-glow">
-             {isAnalyzing ? "Analysiere..." : "Analyse starten"}
+             <div className="flex items-center space-x-2">
+                {isAnalyzing ? <div className="animate-spin h-5 w-5 border-2 border-brand-secondary border-t-transparent rounded-full" /> : <BrainCircuitIcon className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700" />}
+                <span>{isAnalyzing ? "KI analysiert klinisches Bild..." : "Analyse starten"}</span>
+             </div>
           </Button>
 
           {errorMessage && (
@@ -332,54 +402,97 @@ export const MediaAnalyzer: React.FC = () => {
         </div>
 
         {/* Dashboard Output */}
-        <Card className="bg-white border-brand-border/40 shadow-xl rounded-[2rem] min-h-[500px] p-0 overflow-hidden flex flex-col relative">
-          <header className="bg-brand-background border-b border-brand-border/30 p-6 flex justify-between items-center">
+        <Card className="bg-white border-brand-border/40 shadow-xl rounded-[2rem] h-full min-h-[500px] max-h-[85vh] p-0 overflow-hidden flex flex-col relative w-full">
+          <header className="bg-brand-background border-b border-brand-border/30 p-6 md:p-8 flex justify-between items-center shrink-0">
               <div>
-                <h3 className="text-brand-secondary font-bold font-serif text-xl">Ergebnis</h3>
-                <span className="text-[9px] font-black uppercase text-brand-primary tracking-wider">
+                <h3 className="text-brand-secondary font-bold font-serif text-2xl mb-1">Ergebnis</h3>
+                <span className="text-[10px] font-black uppercase text-brand-primary tracking-widest">
                     {viewMode === 'pro' ? (reasoningMode === 'chain' ? 'Wirkungskette' : 'Biomechanik') : 'Patienten-Information'}
                 </span>
               </div>
               {result && (
-                 <div className="flex gap-2">
-                     <button onClick={saveReport} className="p-2 bg-brand-surface rounded-full border border-brand-border hover:border-brand-primary transition-colors" title="In Drive speichern (Download)">
-                        <SaveIcon className="w-4 h-4 text-brand-secondary" />
+                 <div className="flex gap-3">
+                     <button onClick={saveReport} className="p-3 bg-white rounded-full border border-brand-border/50 hover:bg-brand-background hover:scale-105 transition-all shadow-sm" title="In Drive speichern (Download)">
+                        <SaveIcon className="w-5 h-5 text-brand-secondary" />
                      </button>
-                     <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full border flex items-center ${result.header.status === 'Unauffällig' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-red-50 text-red-600 border-red-200 animate-pulse'}`}>
-                        {result.header.status}
+                     <span className={`text-[10px] font-black uppercase px-4 py-2 rounded-full border flex items-center shadow-sm ${result?.header?.status === 'Unauffällig' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-red-50 text-red-600 border-red-200 animate-pulse'}`}>
+                        {result?.header?.status}
                      </span>
                  </div>
               )}
           </header>
 
-          <div className="p-8 flex-grow overflow-y-auto custom-scrollbar">
+          <div className="p-6 md:p-10 flex-grow overflow-y-auto custom-scrollbar">
             {!result && !isAnalyzing && (
-              <div className="h-64 flex flex-col items-center justify-center opacity-20 text-center">
-                <SimulationIcon className="w-16 h-16 mb-4" />
-                <p className="text-xs font-black uppercase tracking-widest">Warte auf Clinical Input</p>
+              <div className="h-full min-h-[300px] flex flex-col items-center justify-center opacity-30 text-center">
+                <SimulationIcon className="w-20 h-20 mb-6" />
+                <p className="text-sm font-black uppercase tracking-[0.2em]">Warte auf Clinical Input</p>
               </div>
             )}
 
             {result && (
-              <div className="space-y-8 animate-fadeInUp">
-                <div className={`p-5 rounded-2xl border shadow-inner ${result.header.status !== 'Unauffällig' ? 'bg-red-50/50 border-red-100' : 'bg-brand-background border-brand-border'}`}>
-                  <h4 className="text-[10px] font-black uppercase text-brand-primary mb-2">Befund-Zusammenfassung</h4>
-                  <p className="text-sm font-bold text-brand-secondary leading-relaxed">{currentReport.summary}</p>
+              <div className="space-y-10 animate-fadeInUp w-full">
+                <div className={`p-6 md:p-8 rounded-3xl border shadow-sm ${result?.header?.status !== 'Unauffällig' ? 'bg-red-50/40 border-red-100' : 'bg-brand-background/40 border-brand-border/50'}`}>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-brand-primary mb-4 flex items-center gap-2">
+                     <DocumentTextIcon className="w-4 h-4" /> Befund-Zusammenfassung
+                  </h4>
+                  <p className="text-base md:text-lg font-medium text-brand-secondary leading-relaxed md:leading-loose">{currentReport?.summary}</p>
                 </div>
 
-                <div className="space-y-4">
-                  <h4 className="text-[10px] font-black uppercase text-brand-text-on-light-secondary border-b border-brand-border pb-2">
-                      {viewMode === 'pro' ? (reasoningMode === 'chain' ? 'Kausale Kette' : 'Beobachtungen') : 'Erklärung'}
+                <div className="space-y-6">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-brand-text-on-light-secondary border-b border-brand-border/60 pb-3 flex items-center gap-2">
+                      <BrainCircuitIcon className="w-4 h-4" /> {viewMode === 'pro' ? (reasoningMode === 'chain' ? 'Kausale Kette' : 'Beobachtungen') : 'Erklärung'}
                   </h4>
-                  {currentReport.findings.map((f: any, i: number) => (
-                    <div key={i} className="p-4 bg-brand-surface rounded-xl border border-brand-border/50 shadow-sm hover:border-brand-primary/30 transition-colors">
-                       <div className="flex justify-between items-start mb-2">
-                          <span className="font-black text-[11px] text-brand-secondary uppercase tracking-wide">{f.point}</span>
-                          {f.severity && <div className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${f.severity === 'high' ? 'bg-red-100 text-red-700' : f.severity === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>{f.severity} Priority</div>}
+                  {currentReport?.findings?.map((f: any, i: number) => (
+                    <div key={i} className="p-6 md:p-8 bg-white rounded-3xl border border-brand-border/40 shadow-sm hover:shadow-md hover:border-brand-primary/30 transition-all group">
+                       <div className="flex justify-between items-start mb-4">
+                          <span className="font-black text-[12px] md:text-sm text-brand-secondary uppercase tracking-widest flex items-center gap-2">
+                             <div className={`w-2 h-2 rounded-full ${f.severity === 'high' ? 'bg-red-500' : f.severity === 'medium' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
+                             {f.point}
+                          </span>
+                          {f.severity && <div className={`px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${f.severity === 'high' ? 'bg-red-50 text-red-700 border border-red-100' : f.severity === 'medium' ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>{f.severity} Priority</div>}
                        </div>
-                       <p className="text-[11px] text-brand-text-on-light leading-relaxed font-medium">{f.logic}</p>
+                       <p className="text-[14px] md:text-base text-brand-text-on-light leading-relaxed font-medium mb-5">{f.logic}</p>
+                       
+                       {f.chain_of_thought && viewMode === 'pro' && reasoningMode === 'chain' && (
+                          <div className="mt-5 pt-5 border-t border-brand-border/30 grid grid-cols-1 gap-4 relative">
+                             <div className="absolute top-6 bottom-6 left-3 w-[2px] bg-brand-primary/20 rounded-full"></div>
+                             
+                             <div className="relative pl-10">
+                                <div className="absolute left-[9px] top-2 w-2 h-2 rounded-full bg-red-400 ring-4 ring-red-400/20"></div>
+                                <span className="block text-[10px] font-black uppercase tracking-widest text-brand-text-on-light-secondary mb-1">Ursache</span>
+                                <span className="text-[13px] md:text-sm font-medium text-brand-secondary leading-relaxed block">{f.chain_of_thought.cause}</span>
+                             </div>
+
+                             <div className="relative pl-10">
+                                <div className="absolute left-[9px] top-2 w-2 h-2 rounded-full bg-amber-400 ring-4 ring-amber-400/20"></div>
+                                <span className="block text-[10px] font-black uppercase tracking-widest text-brand-text-on-light-secondary mb-1">Kompensation</span>
+                                <span className="text-[13px] md:text-sm font-medium text-brand-secondary leading-relaxed block">{f.chain_of_thought.compensation}</span>
+                             </div>
+
+                             <div className="relative pl-10">
+                                <div className="absolute left-[9px] top-2 w-2 h-2 rounded-full bg-emerald-400 ring-4 ring-emerald-400/20"></div>
+                                <span className="block text-[10px] font-black uppercase tracking-widest text-brand-text-on-light-secondary mb-1">Symptomatik</span>
+                                <span className="text-[13px] md:text-sm font-medium text-brand-secondary leading-relaxed block">{f.chain_of_thought.symptom}</span>
+                             </div>
+                          </div>
+                       )}
                     </div>
                   ))}
+                  
+                  {result.isSimulated && (
+                    <div className="p-6 mt-8 bg-zinc-50 rounded-2xl border border-zinc-200/60 flex flex-col md:flex-row items-start gap-4 shadow-inner">
+                      <div className="p-2 bg-zinc-200/50 rounded-full shrink-0">
+                         <BrainCircuitIcon className="w-5 h-5 text-zinc-500" />
+                      </div>
+                      <div className="flex-grow">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-zinc-600 mb-1">Simulation Info</h4>
+                        <p className="text-sm font-medium text-zinc-500 leading-relaxed">
+                          Dies ist ein <strong className="text-zinc-700">simulierter Beispiel-Report</strong>. Um echte Analysen durchzuführen, fügen Sie einen gültigen API Key (Server) hinzu oder deaktivieren Sie den Demo-Modus.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4">

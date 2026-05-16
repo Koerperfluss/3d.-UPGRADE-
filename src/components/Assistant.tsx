@@ -50,7 +50,7 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      const modelName = useThinking ? 'gemini-2.0-flash-thinking-exp' : 'gemini-2.0-flash';
+      const modelName = useThinking ? 'gemini-3.1-pro-preview' : 'gemini-2.5-flash';
       
       const responseStream = await generateClinicalContentStream(
         [...history, { role: 'user', parts: [{ text: currentInput }] }],
