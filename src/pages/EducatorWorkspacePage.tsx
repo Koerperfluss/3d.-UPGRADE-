@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Section } from '../components/Section';
 import { Card } from '../components/Card';
@@ -7,11 +7,12 @@ import {
   AnalyticsIcon, BrainIcon, LabIcon, 
   SearchIcon, BrainCircuitIcon, CheckCircleIcon,
   ArrowRightIcon, FilterIcon, WarningIcon,
-  CreativeIcon, DocumentTextIcon
+  CreativeIcon, DocumentTextIcon, SparklesIcon
 } from '../components/IconComponents';
 import { CreativeLab } from '../components/CreativeLab';
+import { generateClinicalContent } from '../services/aiService';
 
-type TabType = 'cases' | 'analytics' | 'config' | 'lab';
+type TabType = 'cases' | 'analytics' | 'config' | 'lab' | 'database';
 
 interface StudentCase {
   id: string;
@@ -66,21 +67,57 @@ export const EducatorWorkspacePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('cases');
   const [showCoT, setShowCoT] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo: Zugriff auf Live-Fälle und Analytics gewährt.");
+      setTimeout(() => setToastMessage(null), 4000);
+    };
+    window.addEventListener('demo-step-educator', handleDemo);
+    return () => window.removeEventListener('demo-step-educator', handleDemo);
+  }, []);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedRedFlag, setSelectedRedFlag] = useState<StudentCase | null>(null);
+  const [isGeneratingRubric, setIsGeneratingRubric] = useState(false);
+  const [rubricResult, setRubricResult] = useState<string | null>(null);
 
-  const handleBatchAnalyze = () => {
+  const handleBatchAnalyze = async () => {
     setIsAnalyzing(true);
-    setTimeout(() => {
-        setIsAnalyzing(false);
-        setToastMessage("3 Fälle analysiert. Ø Score: 74.5% | Häufigste Lücke: Neurologisches Screening (2/3 Studenten)");
-        setTimeout(() => setToastMessage(null), 5000);
-    }, 2000);
+    setToastMessage(null);
+    try {
+      const prompt = `Analysiere folgende studentische Fälle und erstelle eine einzeilige NLP-Summary (max 15 Wörter) für den Dozenten, welche Lücken auffällig sind:
+      ${JSON.stringify(mockCases)}`;
+      
+      const response = await generateClinicalContent(prompt, 'gemini-2.5-flash');
+      setToastMessage(response.text || "Analyse abgeschlossen.");
+    } catch (e) {
+      setToastMessage("Analyse fehlgeschlagen.");
+    } finally {
+      setIsAnalyzing(false);
+      setTimeout(() => setToastMessage(null), 5000);
+    }
   };
 
   const handleMoodleExport = () => {
     setToastMessage("Export erfolgreich! KF_Report_2026-05-08.zip wurde an Moodle übertragen.");
     setTimeout(() => setToastMessage(null), 5000);
+  };
+
+  const handleGenerateRubric = async () => {
+    setIsGeneratingRubric(true);
+    setRubricResult(null);
+    try {
+      const prompt = `Du bist ein Physiotherapie-Prüfer. Erstelle eine OSCE-Rubric (Objektive Structured Clinical Examination) für die nächste Prüfung zum Thema "LWS Syndrom". 
+      Achte besonders auf die Lücke "Neurologisches Screening", da die Dashboard-Analytics zeigen, dass Semesterübergreifend dort Fehler gemacht werden.
+      Erstelle das als Markdown Tabelle mit Punkten (0-3) für Anamnese, Basisuntersuchung und Red-Flags-Screening.`;
+      
+      const res = await generateClinicalContent(prompt, 'gemini-2.5-pro');
+      setRubricResult(res.text || "### OSCE Rubric - LWS Syndrom\n(Fehler bei der Generierung)");
+    } catch (e) {
+      setRubricResult("### OSCE Rubric\nEin Fehler ist aufgetreten.");
+    } finally {
+      setIsGeneratingRubric(false);
+    }
   };
 
   const mockQueries = [
@@ -114,17 +151,17 @@ export const EducatorWorkspacePage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Tabs */}
         <div className="flex justify-center gap-4 mb-12 flex-wrap">
-          {(['cases', 'analytics', 'config', 'lab'] as TabType[]).map((t) => (
+          {(['cases', 'analytics', 'config', 'lab', 'database'] as const).map((t) => (
             <button
               key={t}
-              onClick={() => setActiveTab(t)}
+              onClick={() => setActiveTab(t as any)}
               className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all ${
                 activeTab === t 
                   ? 'bg-brand-primary text-brand-secondary shadow-glow' 
                   : 'bg-white/5 text-white/40 hover:text-white border border-white/10'
               }`}
             >
-              {t === 'cases' ? 'Live-Fälle' : t === 'analytics' ? 'Query Analytics' : t === 'config' ? 'Chatbot Config' : 'Creative Lab'}
+              {t === 'cases' ? 'Live-Fälle' : t === 'analytics' ? 'Query Analytics' : t === 'config' ? 'Chatbot Config' : t === 'database' ? 'Datenbank & Upload' : 'Creative Lab'}
             </button>
           ))}
         </div>
@@ -145,7 +182,7 @@ export const EducatorWorkspacePage: React.FC = () => {
                 </div>
                 <div className="flex flex-col items-end gap-3">
                   <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">🧠 KI-Reasoning anzeigen</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">🧠 Transparenz-Modus für Prüfer: Chain-of-Thought (CoT)</span>
                     <button 
                       onClick={() => setShowCoT(!showCoT)}
                       className={`w-14 items-center bg-white/10 rounded-full cursor-pointer overflow-hidden p-1 flex transition-colors ${showCoT ? 'bg-brand-primary' : ''}`}
@@ -250,6 +287,38 @@ export const EducatorWorkspacePage: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-8"
             >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                 <div>
+                    <h2 className="text-2xl font-serif font-bold text-white tracking-tight">Performanz & Schwachstellen</h2>
+                    <p className="text-zinc-500 text-sm">Übersicht der Learning Analytics und Erstellung von Prüfungsrastern.</p>
+                 </div>
+                 <Button 
+                    onClick={handleGenerateRubric} 
+                    disabled={isGeneratingRubric}
+                    variant="primary" 
+                    className="flex items-center gap-2 text-[10px] uppercase tracking-widest py-3"
+                 >
+                    {isGeneratingRubric ? <span className="animate-pulse">Generiere Rubric...</span> : <><SparklesIcon className="w-4 h-4" /> OSCE-Rubric generieren</>}
+                 </Button>
+              </div>
+
+              {rubricResult && (
+                  <Card className="p-8 border-brand-primary bg-brand-primary/5 animate-fadeInUp">
+                      <div className="flex justify-between items-start mb-6 border-b border-brand-primary/20 pb-4">
+                          <h3 className="text-xl font-bold font-serif text-brand-primary flex items-center gap-3">
+                              <DocumentTextIcon className="w-6 h-6" /> Generierte OSCE-Rubric (Prüfungsraster)
+                          </h3>
+                          <Button variant="outline" className="text-[10px] p-2 px-4 border-brand-primary/20 hover:bg-brand-primary/10">Drucken</Button>
+                      </div>
+                      <div className="prose prose-invert prose-sm max-w-none text-zinc-300">
+                          {rubricResult.split('\n').map((line, i) => {
+                             if (line.startsWith('###')) return <h4 key={i} className="text-white text-lg font-bold mt-4 mb-2">{line.replace('### ', '')}</h4>;
+                             return <p key={i} dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>') }} />;
+                          })}
+                      </div>
+                  </Card>
+              )}
+
               <div className="grid md:grid-cols-3 gap-6">
                 <Card className="p-8 border-l-4 border-l-brand-primary">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Total Queries</h4>
@@ -365,6 +434,64 @@ export const EducatorWorkspacePage: React.FC = () => {
                   </Button>
                 </div>
               </Card>
+            </motion.div>
+          )}
+
+          {activeTab === 'database' && (
+            <motion.div 
+              key="database"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-8"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                 <div>
+                    <h2 className="text-2xl font-serif font-bold text-white tracking-tight">Curriculum & Datenbank</h2>
+                    <p className="text-zinc-500 text-sm">Zentrale Ablage für Curricula, Studien und Lehrmaterial.</p>
+                 </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <Card className="p-10">
+                  <h3 className="text-2xl font-bold mb-6 flex items-center gap-4">
+                    <DocumentTextIcon className="w-6 h-6 text-brand-primary" />
+                    Curriculum Upload (RAG)
+                  </h3>
+                  <div className="border-2 border-dashed border-white/20 rounded-[32px] p-12 text-center hover:border-brand-primary/50 transition-colors cursor-pointer bg-white/[0.02]">
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <ArrowRightIcon className="w-6 h-6 text-brand-primary -rotate-90" />
+                    </div>
+                    <p className="text-white font-bold mb-2">PDF oder Lehrplan hier ablegen</p>
+                    <p className="text-zinc-500 text-xs mb-6">Macht Inhalte für den Chatbot (LUMI) und die Analyseeinheiten verfügbar.</p>
+                    <Button variant="outline" className="text-[10px] uppercase font-black tracking-widest px-8">Datei auswählen</Button>
+                  </div>
+                </Card>
+
+                <Card className="p-10">
+                  <h3 className="text-2xl font-bold mb-6 flex items-center gap-4">
+                    <BrainCircuitIcon className="w-6 h-6 text-brand-primary" />
+                    Datenbank-Status
+                  </h3>
+                  <div className="space-y-4">
+                    {[
+                      { name: 'S3-Leitlinie LWS (2024)', size: '2.4 MB', date: 'Vor 2 Tagen', status: 'Verarbeitet' },
+                      { name: 'Fallstudien_Physiotherapie_Q1.pdf', size: '15.1 MB', date: 'Vor 1 Woche', status: 'Verarbeitet' },
+                      { name: 'Curriculum_Biomechanik_Neu.docx', size: '1.2 MB', date: 'Heute', status: 'Indexierung...' },
+                    ].map((file, i) => (
+                      <div key={i} className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/10">
+                        <div>
+                          <p className="text-sm font-bold text-white mb-1">{file.name}</p>
+                          <p className="text-[10px] text-zinc-500">{file.size} • {file.date}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${file.status.includes('Verarbeitet') ? 'text-brand-success' : 'text-brand-primary animate-pulse'}`}>
+                          {file.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
             </motion.div>
           )}
 

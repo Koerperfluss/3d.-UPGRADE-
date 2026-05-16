@@ -5,9 +5,10 @@ import { generateClinicalContent } from '../services/aiService';
 import { Section } from '../components/Section';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
-import { BrainCircuitIcon, CheckCircleIcon, ArrowRightIcon, CloseIcon, SimulationIcon, LightBulbIcon } from '../components/IconComponents';
+import { BrainCircuitIcon, CheckCircleIcon, ArrowRightIcon, CloseIcon, SimulationIcon, LightBulbIcon, SparklesIcon, DownloadIcon } from '../components/IconComponents';
 import { QuizQuestion, SpacedRepetitionItem } from '../types';
 import { spacedRepetitionService } from '../services/spacedRepetitionService';
+import { SHOWCASE_CASES, simulateLmsExport, downloadAsPdf } from '../utils/demoFeatures';
 
 interface GeneratorInput {
   fachbereich: string;
@@ -74,6 +75,32 @@ const QuizGenerator: React.FC<{ onQuizGenerated: (questions: QuizQuestion[]) => 
     }
   };
 
+  const loadDemoQuiz = () => {
+    setInput({...input, topic: SHOWCASE_CASES.LWS_ANAMNESE.title});
+    const demoQuestions: QuizQuestion[] = [
+      {
+        id: `GEN_DEMO_1`,
+        type: 'multiple_choice',
+        question: "Welcher Kennmuskel ist typischerweise bei einer Radikulopathie L5 geschwächt?",
+        options: ["M. tibialis anterior", "M. extensor hallucis longus", "M. triceps surae", "M. quadriceps femoris"],
+        correctAnswer: "M. extensor hallucis longus",
+        explanation: "Der M. extensor hallucis longus ist der primäre Kennmuskel für das Segment L5.",
+        topic: "LWS-Stabilität"
+      },
+      {
+        id: `GEN_DEMO_2`,
+        type: 'multiple_choice',
+        question: "Was ist ein typisches Zeichen für eine Claudicatio spinalis?",
+        options: ["Verstärkung der Beschwerden bei Vorbeugung", "Besserung der Beschwerden beim Bergaufgehen", "Isolierter Fußschmerz ohne Rückenbeschwerden", "Verstärkung der Beschwerden im Sitzen"],
+        correctAnswer: "Besserung der Beschwerden beim Bergaufgehen",
+        explanation: "Beim Bergaufgehen (Inklination der LWS) erweitert sich der Spinalkanal, was zu einer Entlastung führt.",
+        topic: "LWS-Stabilität"
+      }
+    ];
+    spacedRepetitionService.addQuestionsToPool(demoQuestions);
+    onQuizGenerated(demoQuestions);
+  };
+
   return (
     <Card className="glass-dark border-white/5 p-12 rounded-[48px] shadow-2xl relative overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-brand-primary/10 transition-colors duration-700"></div>
@@ -100,9 +127,15 @@ const QuizGenerator: React.FC<{ onQuizGenerated: (questions: QuizQuestion[]) => 
           />
         </div>
         {error && <p className="text-red-500 text-xs font-light tracking-wide bg-red-500/5 p-4 rounded-2xl border border-red-500/10">{error}</p>}
-        <Button onClick={handleGenerate} disabled={isLoading || !input.topic} variant="primary" className="w-full py-8 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20">
-          {isLoading ? 'Generiere...' : 'Fragen generieren'}
-        </Button>
+        
+        <div className="flex gap-4">
+          <Button onClick={handleGenerate} disabled={isLoading || !input.topic} variant="primary" className="flex-1 py-8 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20">
+            {isLoading ? 'Generiere...' : 'Fragen generieren'}
+          </Button>
+          <Button onClick={loadDemoQuiz} variant="outline" className="py-8 px-8 border-white/10 bg-white/5 hover:bg-white/10 text-brand-primary flex items-center justify-center">
+            <SparklesIcon className="w-6 h-6" />
+          </Button>
+        </div>
       </div>
     </Card>
   );
@@ -140,9 +173,20 @@ export const QuizPage: React.FC = () => {
                     <p className="text-zinc-500 text-xl font-light tracking-wide leading-relaxed max-w-2xl mx-auto mb-16">
                         Die Fragen werden basierend auf Ihrem Wissensstand und der Spaced-Repetition-Logik geladen.
                     </p>
-                    <Button onClick={() => setMode('menu')} variant="primary" className="py-8 px-16 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20">
-                        Session beenden
-                    </Button>
+                    <div className="flex justify-center gap-4">
+                        <Button onClick={() => setMode('menu')} variant="primary" className="py-8 px-16 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20">
+                            Session beenden
+                        </Button>
+                        <Button onClick={downloadAsPdf} variant="outline" className="py-8 px-8 border-white/10 text-[10px] uppercase tracking-[0.2em] font-black flex items-center justify-center gap-2 text-zinc-400 hover:text-white hover:bg-white/5">
+                            <DownloadIcon className="w-4 h-4" /> PDF
+                        </Button>
+                        <Button onClick={async () => {
+                            await simulateLmsExport('Quiz');
+                            setMode('menu'); // Simulation
+                        }} variant="outline" className="py-8 px-8 border-white/10 text-[10px] uppercase tracking-[0.2em] font-black flex items-center justify-center gap-2 text-zinc-400 hover:text-white hover:bg-white/5">
+                            <CheckCircleIcon className="w-4 h-4" /> Moodle
+                        </Button>
+                    </div>
                 </Card>
             </div>
         </div>

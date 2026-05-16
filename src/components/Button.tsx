@@ -11,6 +11,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   ariaLabel?: string;
+  tabIndex?: number;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -22,9 +23,10 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   type = 'button',
   disabled = false,
-  ariaLabel
+  ariaLabel,
+  tabIndex
 }) => {
-  const baseStyles = 'font-black rounded-[32px] shadow-xl focus:outline-none transition-all duration-1000 ease-in-out transform hover:-translate-y-1 disabled:opacity-30 disabled:cursor-not-allowed tracking-[0.6em] uppercase text-[11px]';
+  const baseStyles = 'font-black rounded-[32px] shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all duration-1000 ease-in-out transform hover:-translate-y-1 disabled:opacity-30 disabled:cursor-not-allowed tracking-[0.6em] uppercase text-[11px]';
 
   let variantStyles = '';
   switch (variant) {
@@ -56,14 +58,14 @@ export const Button: React.FC<ButtonProps> = ({
 
   if (to) {
     return (
-      <Link to={to} className={combinedClassName} aria-label={ariaLabel}>
+      <Link to={to} className={combinedClassName} aria-label={ariaLabel} tabIndex={tabIndex}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} className={combinedClassName} disabled={disabled} aria-label={ariaLabel}>
+    <button type={type} onClick={onClick} className={combinedClassName} disabled={disabled} aria-label={ariaLabel} tabIndex={tabIndex}>
       {children}
     </button>
   );

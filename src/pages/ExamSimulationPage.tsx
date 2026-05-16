@@ -239,6 +239,7 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [gradedExam, setGradedExam] = useState<Exam | null>(null);
   const [isGrading, setIsGrading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (isSubmitted) return;
@@ -465,11 +466,25 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
         ) : (
             <div className="flex items-center gap-6">
                 <Button onClick={onExit} variant="outline" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">Zurück zur Übersicht</Button>
-                <Button onClick={() => window.print()} variant="secondary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">PDF Export</Button>
-                <Button onClick={() => alert('Erfolgreich in Moodle synchronisiert! (LTI 1.3 Demo)')} variant="primary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">In Moodle sichern (LMS)</Button>
+                <Button onClick={() => window.print()} variant="primary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">Arbeitsblatt laden (PDF)</Button>
+                <Button onClick={async () => {
+                    const { simulateLmsExport } = await import('../utils/demoFeatures');
+                    await simulateLmsExport('Prüfungs-Feedback');
+                    setShowToast(true);
+                    setTimeout(() => setShowToast(false), 3000);
+                }} variant="outline" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold border-white/20">Nach Moodle exportieren</Button>
             </div>
         )}
       </div>
+
+      {showToast && (
+        <div 
+          className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[200] bg-brand-success/90 border border-brand-success text-white px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(16,185,129,0.3)] flex items-center gap-3 backdrop-blur-md animate-fadeInUp"
+        >
+          <CheckCircleIcon className="w-6 h-6" />
+          <span className="text-sm font-bold tracking-wide">Prüfungs-Feedback wurde an Moodle übermittelt!</span>
+        </div>
+      )}
     </motion.div>
   );
 };

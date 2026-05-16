@@ -4,8 +4,9 @@ import { Link, NavLink } from 'react-router-dom';
 import { User, Lecturer } from '../types';
 import { Logo } from './Logo';
 import { Button } from './Button';
-import { ShoppingCartIcon, AcademicCapIcon, DocumentTextIcon, VideoLibraryIcon, CameraIcon, BrainIcon, CheckCircleIcon } from './IconComponents';
+import { ShoppingCartIcon, AcademicCapIcon, DocumentTextIcon, VideoLibraryIcon, CameraIcon, BrainIcon, CheckCircleIcon, SparklesIcon } from './IconComponents';
 import { useCart } from '../context/CartContext';
+import { useClinicalContext } from '../context/ClinicalContext';
 
 interface NavbarProps {
   user: User | null;
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { totalItems } = useCart();
+  const { isCotMode, setCotMode } = useClinicalContext();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -89,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
           <Link to="/" className="flex items-center gap-6 group transition-all duration-700 hover:scale-[1.02]" onClick={() => setIsOpen(false)}>
             <div className="relative">
               <div className="absolute -inset-2 bg-brand-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              <img src="/Körperfluss Logo - Angepasst .png" alt="Körperfluss Logo" className="relative w-14 h-14 rounded-full border border-white/10 shadow-glow object-cover" referrerPolicy="no-referrer" />
+              <Logo className="relative w-14 h-14 rounded-full border border-white/10 shadow-glow object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="font-serif font-bold text-2xl tracking-tighter text-white leading-none">
@@ -105,7 +107,16 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
               {renderNavLinks()}
             </div>
             
-            <div className="nav-actions-flex">
+            <div className="nav-actions-flex flex items-center gap-6">
+              {(user?.role === 'student' || lecturer) && (
+                <button
+                  onClick={() => setCotMode(!isCotMode)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-500 ${isCotMode ? 'border-brand-primary bg-brand-primary/10 text-brand-primary shadow-glow' : 'border-white/10 text-zinc-500 hover:border-white/30 hover:text-white'}`}
+                >
+                  <SparklesIcon className="w-4 h-4" />
+                  <span className="text-[10px] uppercase font-black tracking-widest">{isCotMode ? 'CoT Aktiv' : 'CoT Modus'}</span>
+                </button>
+              )}
               <button onClick={onCartClick} className="relative p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
                 <ShoppingCartIcon className="w-6 h-6 text-zinc-500 group-hover:text-brand-primary transition-colors duration-500" />
                 {totalItems > 0 && (

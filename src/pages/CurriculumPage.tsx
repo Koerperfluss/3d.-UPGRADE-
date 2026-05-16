@@ -46,7 +46,7 @@ export const CurriculumPage: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Tabs */}
-        <div className="flex justify-center gap-4 mb-12">
+        <div className="flex justify-center gap-4 mb-12 flex-wrap w-full">
           {(['matrix', 'catalog', 'workflow'] as TabType[]).map((t) => (
             <button
               key={t}

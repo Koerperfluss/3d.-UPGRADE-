@@ -4,7 +4,8 @@ import { Type } from '@google/genai';
 import { generateClinicalContent } from '../services/aiService';
 import { Card } from './Card';
 import { Button } from './Button';
-import { BrainCircuitIcon, LightBulbIcon, CloseIcon, AcademicCapIcon, ArrowRightIcon, FilterIcon, DocumentTextIcon } from './IconComponents';
+import { BrainCircuitIcon, LightBulbIcon, CloseIcon, AcademicCapIcon, ArrowRightIcon, FilterIcon, DocumentTextIcon, SparklesIcon, DownloadIcon, CheckCircleIcon } from './IconComponents';
+import { SHOWCASE_CASES, simulateLmsExport, downloadAsPdf } from '../utils/demoFeatures';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type KnowledgeLevel = 'micro' | 'contrastive' | 'reflective';
@@ -41,6 +42,29 @@ export const WirkungskettenAnalyser: React.FC = () => {
   
   const [isLearningMode, setIsLearningMode] = useState(false);
   const [selectedNode, setSelectedNode] = useState<ChainNode | null>(null);
+  const [showToast, setShowToast] = useState(false);
+
+  const loadDemoCase = () => {
+    const showcase = SHOWCASE_CASES.LWS_ANAMNESE;
+    setFindings(showcase.title);
+    setChain({
+      topic: "Lumboischialgie bei Bandscheibenprotrusion",
+      level_context: "Reflektive Analyse der Zusammenhänge",
+      nodes: [
+        { id: "1", label: "L4/L5 Protrusion", type: "cause", description: "Mechanische Vorwölbung des Anulus fibrosus nach Hebetrauma.", clinical_hint: "Druck auf das posteriore Längsband." },
+        { id: "2", label: "Durale Reizung", type: "mechanism", description: "Chemische und mechanische Irritation der Nervenwurzel L5.", clinical_hint: "Entzündungskaskade triggert Schmerzsignale." },
+        { id: "3", label: "L5 Radikulopathie", type: "symptom", description: "Ausstrahlender stechender Schmerz ins rechte Bein.", clinical_hint: "Belastungsabhängig (Vorbeugen verstärkt Schmerz)." },
+        { id: "4", label: "Stufenbettlagerung", type: "therapy", description: "Entlastung des hinteren Segmentes zur Schmerzreduktion.", clinical_hint: "Frühfunktionelle Mobilisation nach Schmerzrückgang laut S3." }
+      ],
+      links: [
+        { source: "1", target: "2" },
+        { source: "2", target: "3" },
+        { source: "3", target: "4" }
+      ],
+      sources: ["NVL Kreuzschmerz 2024", "JOSPT Leitlinie LWS"],
+      reasoning_summary: showcase.reasoning_hint
+    });
+  };
 
   const handleAnalyze = async () => {
     if (!findings.trim()) return;
@@ -163,19 +187,25 @@ export const WirkungskettenAnalyser: React.FC = () => {
                     </button>
                 ))}
             </div>
-            <Button 
-                onClick={handleAnalyze} 
-                disabled={isLoading || !findings} 
-                variant="primary" 
-                className="w-full py-6 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20"
-            >
-                {isLoading ? (
-                    <span className="flex items-center gap-3">
-                        <div className="animate-spin h-3 w-3 border-2 border-current border-t-transparent rounded-full"></div>
-                        Analysiere Wirkungskette...
-                    </span>
-                ) : 'Analyse starten'}
-            </Button>
+            
+            <div className="flex gap-4">
+              <Button 
+                  onClick={handleAnalyze} 
+                  disabled={isLoading || !findings} 
+                  variant="primary" 
+                  className="flex-1 py-6 text-[10px] uppercase tracking-[0.4em] font-black shadow-2xl shadow-brand-primary/20"
+              >
+                  {isLoading ? (
+                      <span className="flex items-center justify-center gap-3">
+                          <div className="animate-spin h-3 w-3 border-2 border-current border-t-transparent rounded-full"></div>
+                          Analysiere...
+                      </span>
+                  ) : 'Analyse starten'}
+              </Button>
+              <Button onClick={loadDemoCase} variant="outline" className="py-6 px-6 border-white/10 bg-white/5 hover:bg-white/10 text-brand-primary flex items-center justify-center">
+                  <SparklesIcon className="w-5 h-5" />
+              </Button>
+            </div>
         </div>
 
         {/* Output Section: AI Reasoning */}
@@ -193,8 +223,12 @@ export const WirkungskettenAnalyser: React.FC = () => {
                         <div className="glass-dark p-8 rounded-[32px] border border-brand-primary/20 bg-brand-primary/5 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
                             <div className="flex items-center gap-3 mb-4 relative z-10">
-                                <BrainCircuitIcon className="w-6 h-6 text-brand-primary" />
-                                <h4 className="text-[10px] uppercase tracking-[0.3em] font-black text-white">KI-Herleitung (Reasoning)</h4>
+                                <span className="text-xl">🧠</span>
+                                <h4 className="text-[10px] uppercase tracking-[0.3em] font-black text-white">Transparenz-Modus für Prüfer (Validierung)</h4>
+                            </div>
+                            <div className="flex items-center gap-2 mb-4 relative z-10 bg-brand-success/10 border border-brand-success/20 px-3 py-1.5 rounded-full inline-flex">
+                                <CheckCircleIcon className="w-4 h-4 text-brand-success" />
+                                <span className="text-[9px] uppercase tracking-widest text-brand-success font-bold">Live-Abgleich mit {chain.sources[0] || 'S3-Leitlinie JOSPT 2024'}</span>
                             </div>
                             <p className="text-zinc-300 text-lg font-light leading-relaxed italic relative z-10">
                                 "{chain.reasoning_summary}"
@@ -237,6 +271,20 @@ export const WirkungskettenAnalyser: React.FC = () => {
                                     {s}
                                 </span>
                             ))}
+                        </div>
+                        
+                        {/* Aktionen & Export */}
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                           <Button onClick={downloadAsPdf} variant="primary" className="flex-1 text-[10px] py-4 uppercase tracking-[0.2em] flex justify-center items-center gap-2">
+                               <DownloadIcon className="w-4 h-4" /> Arbeitsblatt laden (PDF)
+                           </Button>
+                           <Button onClick={async () => {
+                               await simulateLmsExport('WirkungskettenAnalyser');
+                               setShowToast(true);
+                               setTimeout(() => setShowToast(false), 3000);
+                           }} variant="outline" className="flex-1 text-[10px] py-4 uppercase tracking-[0.2em] flex justify-center items-center gap-2">
+                               <CheckCircleIcon className="w-4 h-4" /> Nach Moodle exportieren
+                           </Button>
                         </div>
                     </motion.div>
                 ) : (

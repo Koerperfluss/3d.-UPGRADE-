@@ -21,6 +21,8 @@ import {
 } from '../components/IconComponents';
 import { CreativeLab } from '../components/CreativeLab';
 import { MediaAnalyzer } from '../components/MediaAnalyzer';
+import { ToolMatrix } from '../components/ToolMatrix';
+import { Logo } from '../components/Logo';
 
 interface DashboardPageProps {
   user: User | null;
@@ -28,45 +30,63 @@ interface DashboardPageProps {
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) => {
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo Mode: Die Dashboard-Statistiken wurden simuliert geladen.");
+      setTimeout(() => setToastMessage(null), 4000);
+    };
+    window.addEventListener('demo-step-dashboard', handleDemo);
+    return () => window.removeEventListener('demo-step-dashboard', handleDemo);
+  }, []);
+
   const role = lecturer ? 'dozent' : (user?.role || 'patient');
   const name = lecturer ? lecturer.name : (user?.name || 'Gast');
 
   const renderPatientView = () => (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       {/* Main Content: Personal Report */}
       <div className="lg:col-span-8 space-y-12">
          <div className="glass-dark rounded-[48px] overflow-hidden shadow-[0_60px_150px_rgba(0,0,0,0.9)] border border-white/5 backdrop-blur-3xl">
            <HealthAnalysis />
          </div>
          
-         <div className="glass-dark group relative overflow-hidden p-12 md:p-16 rounded-[48px] border border-white/5 shadow-2xl">
+         <div className="glass-dark group relative overflow-hidden p-8 md:p-16 rounded-[32px] md:rounded-[48px] border border-white/5 shadow-2xl">
             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary/5 rounded-full blur-[120px] -mr-48 -mt-48 group-hover:bg-brand-primary/10 transition-colors duration-1000"></div>
             <div className="relative z-10">
-              <div className="flex items-center gap-6 mb-10">
-                <div className="w-16 h-16 rounded-[24px] bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 shadow-glow">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-10">
+                <div className="w-16 h-16 rounded-[24px] bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 shadow-glow flex-shrink-0">
                   <ConsultingIcon className="w-8 h-8 text-brand-primary" />
                 </div>
-                <h3 className="text-4xl font-bold font-serif text-white tracking-tight uppercase">Ihr Handlungsplan</h3>
+                <h3 className="text-3xl md:text-4xl font-bold font-serif text-white tracking-tight uppercase">Ihr Handlungsplan</h3>
               </div>
-              <p className="text-zinc-400 mb-16 text-xl font-light leading-relaxed max-w-3xl tracking-wide">
+              <p className="text-zinc-400 mb-12 md:mb-16 text-lg md:text-xl font-light leading-relaxed max-w-3xl tracking-wide">
                   Basierend auf Ihrer <span className="text-white font-medium italic">KI-gestützten Haltungsanalyse</span> haben wir folgende personalisierte Ressourcen für Sie zusammengestellt.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="flex items-center justify-between bg-white/[0.03] p-8 rounded-[32px] border border-white/5 hover:border-brand-primary/30 transition-all group/item cursor-pointer backdrop-blur-xl">
+                  <div className="flex items-center justify-between bg-white/[0.03] p-6 md:p-8 rounded-[24px] md:rounded-[32px] border border-white/5 hover:border-brand-primary/30 transition-all group/item cursor-pointer backdrop-blur-xl">
                       <div className="flex flex-col">
-                        <span className="font-bold text-white text-xl tracking-tight">PDF Handout</span>
+                        <span className="font-bold text-white text-lg md:text-xl tracking-tight">PDF Handout</span>
                         <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-black mt-2">Vollversion (Evidenz)</span>
                       </div>
-                      <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover/item:border-brand-primary group-hover/item:bg-brand-primary/10 transition-all">
+                      <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full border border-white/10 flex items-center justify-center group-hover/item:border-brand-primary group-hover/item:bg-brand-primary/10 transition-all">
                         <ArrowRightIcon className="w-5 h-5 text-zinc-500 group-hover/item:text-brand-primary" />
                       </div>
                   </div>
-                  <div className="flex items-center justify-between bg-white/[0.03] p-8 rounded-[32px] border border-white/5 hover:border-brand-primary/30 transition-all group/item cursor-pointer backdrop-blur-xl">
+                  <div className="flex items-center justify-between bg-white/[0.03] p-6 md:p-8 rounded-[24px] md:rounded-[32px] border border-white/5 hover:border-brand-primary/30 transition-all group/item cursor-pointer backdrop-blur-xl">
                       <div className="flex flex-col">
-                        <span className="font-bold text-white text-xl tracking-tight">Rechnungsbeleg</span>
+                        <span className="font-bold text-white text-lg md:text-xl tracking-tight">Rechnungsbeleg</span>
                         <span className="text-[10px] text-zinc-600 uppercase tracking-[0.4em] font-black mt-2">Steuerlich absetzbar</span>
                       </div>
-                      <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover/item:border-brand-primary group-hover/item:bg-brand-primary/10 transition-all">
+                      <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full border border-white/10 flex items-center justify-center group-hover/item:border-brand-primary group-hover/item:bg-brand-primary/10 transition-all">
                         <ArrowRightIcon className="w-5 h-5 text-zinc-500 group-hover/item:text-brand-primary" />
                       </div>
                   </div>
@@ -110,6 +130,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
 
   const renderStudentView = () => (
     <div className="space-y-16 relative z-10">
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Hub 1: Clinical Reasoning Hub */}
         <div className="glass-dark group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl">
@@ -163,7 +191,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
         </div>
       </div>
 
-      <div className="glass-dark rounded-[60px] p-16 md:p-24 shadow-[0_60px_150px_rgba(0,0,0,0.9)] border border-white/5 relative overflow-hidden group">
+      <div className="glass-dark rounded-[60px] p-16 md:p-24 shadow-[0_60px_150px_rgba(0,0,0,0.9)] border border-white/5 relative overflow-hidden group mb-16">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/5 blur-[150px] rounded-full -mr-300 -mt-300 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
         <h3 className="text-4xl md:text-6xl font-bold font-serif text-white mb-16 flex items-center gap-10 tracking-tighter relative z-10 uppercase">
           <div className="w-20 h-20 rounded-[28px] bg-brand-primary/10 flex items-center justify-center border border-brand-primary/20 shadow-glow">
@@ -175,17 +203,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
           <MediaAnalyzer />
         </div>
       </div>
+      <ToolMatrix />
     </div>
   );
 
   const renderDozentView = () => (
     <div className="space-y-16 relative z-10">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {[
           { label: 'Aktive Kurse', value: '12' },
           { label: 'Studierende', value: '482' },
-          { label: 'KI-Analysen', value: '1.2k' },
-          { label: 'Feedback-Score', value: '4.9' }
+          { label: 'Leitlinien-Adhärenz', value: '98%' },
+          { label: 'Entscheidungs-Sicherheit', value: '92%' }
         ].map((stat, i) => (
           <div key={i} className="glass-dark p-12 text-center group hover:scale-[1.05] transition-all duration-700 rounded-[40px] border border-white/5 shadow-xl">
             <p className="text-brand-primary text-[11px] uppercase tracking-[0.5em] font-black mb-6 opacity-80">{stat.label}</p>
@@ -270,7 +299,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
             <div className="flex items-center justify-center md:justify-start gap-10 mb-16">
               <div className="relative">
                 <div className="absolute -inset-6 bg-brand-primary/20 blur-3xl rounded-full animate-pulse"></div>
-                <img src="/Körperfluss Logo - Angepasst .png" alt="Körperfluss Logo" className="relative w-28 h-28 rounded-full border border-white/10 shadow-glow object-cover" />
+                <Logo className="relative w-28 h-28 rounded-full border border-white/10 shadow-glow object-cover flex-shrink-0 aspect-square" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-black text-brand-primary uppercase tracking-[0.6em] mb-4 opacity-80">

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isOwner(userId) { return request.auth.uid == userId; }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'lecturer'; }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'role']) &&
+             data.email is string && data.email.size() <= 200 &&
+             data.role is string && (data.role == 'student' || data.role == 'lecturer') &&
+             (!('name' in data) || (data.name is string && data.name.size() <= 100)) &&
+             (!('createdAt' in data) || data.createdAt is timestamp) &&
+             (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+    
+    function isValidAssessment(data) {
+      return data.keys().hasAll(['userId', 'type', 'score', 'total', 'timestamp']) &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.type is string && (data.type == 'quiz' || data.type == 'case-training' || data.type == 'anamnese') &&
+             data.score is number &&
+             data.total is number &&
+             (!('feedback' in data) || (data.feedback is string && data.feedback.size() <= 10000)) &&
+             data.timestamp is timestamp;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      
+      allow create: if isSignedIn() && isValidId(userId) && isOwner(userId) && isValidUser(incoming()) && incoming().email == request.auth.token.email && incoming().createdAt == request.time;
+      allow update: if isSignedIn() && isValidId(userId) && (isOwner(userId) || isAdmin()) && isValidUser(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'updatedAt']) && incoming().updatedAt == request.time;
+    }
+
+    match /assessments/{assessmentId} {
+      allow get: if isSignedIn() && isValidId(assessmentId) && (existing().userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      allow create: if isSignedIn() && isValidId(assessmentId) && isValidAssessment(incoming()) && incoming().userId == request.auth.uid;
+      allow update: if false; 
+      allow delete: if isAdmin() && isValidId(assessmentId);
+    }
+  }
+}

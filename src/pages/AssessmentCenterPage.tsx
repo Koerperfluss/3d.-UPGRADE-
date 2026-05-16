@@ -11,6 +11,16 @@ import {
 
 export const AssessmentCenterPage: React.FC = () => {
   const [activeView, setActiveView] = useState<'overview' | 'path'>('overview');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo Mode: Exam Assistant geladen. Hier simulieren Sie Prüfungssituationen.");
+      setTimeout(() => setToastMessage(null), 4000);
+    };
+    window.addEventListener('demo-step-assessment', handleDemo);
+    return () => window.removeEventListener('demo-step-assessment', handleDemo);
+  }, []);
 
   const stats = [
     { label: 'Quiz Score', value: '84%', icon: QuizIcon, color: 'text-blue-400' },
@@ -41,6 +51,14 @@ export const AssessmentCenterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-background text-white relative">
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       <div className="relative z-10">
         <Section 
           title="Assessment Center" 
@@ -169,11 +187,16 @@ export const AssessmentCenterPage: React.FC = () => {
               </div>
 
               {/* Chain of Thought Visualization */}
-              <div className="mt-12 p-8 rounded-3xl bg-black/40 border border-white/5">
-                <h4 className="text-sm font-bold mb-6 flex items-center gap-2">
-                  <TargetIcon className="w-4 h-4 text-brand-primary" />
-                  Chain of Thought: Kompetenz-Mapping
+              <div className="mt-12 p-8 rounded-3xl bg-black/40 border border-white/5 relative">
+                <div className="absolute top-4 right-4 flex gap-2">
+                   <Button onClick={() => alert('PDF wird generiert...')} variant="outline" className="text-[10px] py-1 px-3 border-white/20">Als Arbeitsblatt (PDF)</Button>
+                   <Button onClick={() => alert('An Moodle gesendet!')} variant="primary" className="text-[10px] py-1 px-3 bg-brand-primary text-black">Nach Moodle exportieren</Button>
+                </div>
+                <h4 className="text-sm font-bold mb-2 flex items-center gap-2 text-brand-primary">
+                  <TargetIcon className="w-4 h-4" />
+                  Transparenz-Modus für Prüfer: Chain-of-Thought (CoT)
                 </h4>
+                <p className="text-[10px] uppercase tracking-widest text-white/40 mb-6">KI-Denkschritte & Kompetenz-Mapping</p>
                 <div className="space-y-4">
                   {[
                     { step: 'Daten-Aggregation', status: 'completed', desc: 'Analyse von 150 Quiz-Antworten und 3 Simulationen.' },

@@ -61,7 +61,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister }) => {
         <Link to="/" className="flex justify-center items-center mb-16 group">
             <div className="relative">
               <div className="absolute -inset-3 bg-brand-primary/20 blur-2xl rounded-full animate-pulse"></div>
-              <img src="/logo.jpeg" alt="Logo" className="relative h-20 w-20 rounded-full border border-white/10 shadow-glow object-cover" referrerPolicy="no-referrer" />
+              <Logo className="relative h-20 w-20 rounded-full border border-white/10 shadow-glow object-cover" />
             </div>
         </Link>
         <Card className="!p-16 glass-dark border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.8)] rounded-[60px]">

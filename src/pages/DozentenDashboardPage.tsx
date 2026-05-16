@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Section } from '../components/Section';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { ToolMatrix } from '../components/ToolMatrix';
+import { Logo } from '../components/Logo';
 import { Lecturer, StudentDifficulty } from '../types';
 import { EnvelopeIcon, SimulationIcon, CheckCircleIcon, CommunityIcon, WarningIcon, LightBulbIcon, VideoLibraryIcon, CameraIcon, BrainCircuitIcon, AcademicCapIcon } from '../components/IconComponents';
 
@@ -21,7 +23,7 @@ const WelcomeBanner: React.FC<{ name: string; institution: string }> = ({ name, 
             <div className="flex items-center gap-8 mb-12">
               <div className="relative">
                 <div className="absolute -inset-4 bg-brand-primary/30 blur-3xl rounded-full animate-pulse"></div>
-                <img src="/Körperfluss Logo - Angepasst .png" alt="Körperfluss Logo" className="relative w-24 h-24 rounded-full border border-white/10 shadow-glow object-cover" referrerPolicy="no-referrer" />
+                <Logo className="relative w-24 h-24 rounded-full border border-white/10 shadow-glow object-cover" />
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.5em] border border-brand-primary/20 bg-brand-primary/5 px-6 py-3 rounded-full opacity-80 w-fit">Education Admin</span>
@@ -53,11 +55,12 @@ const curriculumData = [
     { module: 'Klinisches Reasoning I', status: 'Aktiv', progress: 40 },
     { module: 'Biomechanik & Ganganalyse', status: 'Geplant', progress: 0 },
 ];export const DozentenDashboardPage: React.FC<DozentenDashboardPageProps> = ({ lecturer }) => {
+  const currentLecturer = lecturer || { name: 'Prof. Dr. Eva Meier', institution: 'FH Gesundheitsberufe' };
   return (
     <div className="relative animate-fadeInUp bg-transparent min-h-screen pt-48 pb-32 overflow-hidden font-sans">
       
       <Section containerClassName="py-0 relative z-10">
-        <WelcomeBanner name={lecturer.name} institution={lecturer.institution} />
+        <WelcomeBanner name={currentLecturer.name} institution={currentLecturer.institution} />
 
         {/* --- SECTION 1: PROFESSIONAL TOOLS (AREA 2 CORE) --- */}
         <div className="mb-32">
@@ -186,6 +189,10 @@ const curriculumData = [
              </div>
           </div>
 
+        </div>
+        
+        <div className="mt-32 relative z-10 w-full mb-16">
+           <ToolMatrix />
         </div>
       </Section>
     </div>
