@@ -14,37 +14,55 @@ const TOUR_STEPS: TourStep[] = [
   {
     path: '/',
     title: '1. Willkommen bei Körperfluss',
-    text: 'Dies ist die interaktive 3D-Startseite. Hier beginnt die Reise in die Welt des klinischen Reasonings. Im Hintergrund sehen Sie unser prozedural generiertes 3D-Modell, das auf Mausbewegungen reagiert und die Verbindung zwischen Anatomie und digitaler Technologie symbolisiert.',
-    delayMs: 7000,
-  },
-  {
-    path: '/angebote',
-    title: '2. Mitgliedschaften & Angebote',
-    text: 'Hier sehen Sie unsere maßgeschneiderten Preismodelle für Privatnutzer und Dozenten. Von Premium Access bis hin zu Campus-Lizenzen ist alles transparent dargestellt.',
+    text: 'Dies ist die interaktive 3D-Startseite. Im Hintergrund sehen Sie unser prozedural generiertes 3D-Modell, das auf Navigation reagiert und den "Körperfluss" symbolisiert.',
     delayMs: 6000,
   },
   {
-    path: '/dozenten-login',
-    title: '3. Dozenten-Bereich',
-    text: 'Dozenten haben einen eigenen, geschützten Login-Bereich, der ihnen Zugang zu speziellen Vorbereitungs-Tools und Dashboards gibt.',
-    delayMs: 5000,
-  },
-  {
-    path: '/vision-agent',
-    title: '4. Vision Agent',
-    text: 'Ein Highlight: Die Veo Video Engine. Hier können klinische Medien hochgeladen und automatisch von unserer KI analysiert werden. Ideal für Bewegungsanalysen und radiologische Screenings.',
-    delayMs: 8000,
+    path: '/dashboard',
+    title: '2. Student Dashboard',
+    text: 'Das Herzstück für Lernende. Hier sammeln sich persönliche Lernfortschritte, kürzlich besuchte Module und Empfehlungen.',
+    delayMs: 6000,
   },
   {
     path: '/anamnese-trainer',
-    title: '5. Anamnese Trainer',
-    text: 'Ein interaktiver KI-Chatbot, der Studenten dabei hilft, Anamnesegespräche zu simulieren. Echtes Patientengesprächs-Training direkt im Browser.',
+    title: '3. Anamnese Trainer',
+    text: 'Ein KI-gestützter Chatbot zur Simulation von Patientengesprächen. Trainieren Sie die Erhebung des subjektiven Befunds in Echtzeit.',
     delayMs: 8000,
   },
   {
-    path: '/educator-workspace',
-    title: '6. Educator Workspace',
-    text: 'Im Workspace können Dozenten den Fortschritt ihrer Studenten überwachen, Fallstudien auswerten und zielgerichtet neues Wissen vermitteln. Vielen Dank für die Tour!',
+    path: '/vision',
+    title: '4. Vision Agent',
+    text: 'Erweiterte Bild- und Videoanalyse. Laden Sie klinische Medien hoch (z.B. Ganganalyse-Videos) und lassen Sie diese von unserer KI auswerten.',
+    delayMs: 8000,
+  },
+  {
+    path: '/case-training',
+    title: '5. Case Training',
+    text: 'Interaktives Fall-Training anhand von echten Patientenszenarien. Ideal für das Clinical Reasoning.',
+    delayMs: 6000,
+  },
+  {
+    path: '/creative-lab',
+    title: '6. Creative Lab',
+    text: 'Kreativ-Workspace für Dozenten und Studierende zur Generierung von Anschauungsmaterial und Modellen.',
+    delayMs: 6000,
+  },
+  {
+    path: '/assessment',
+    title: '7. Assessment Center (Exam Assist)',
+    text: 'Vorbereitung auf Prüfungen mit gezielten Fragen, simulierten OSCE-Stationen und sofortigem Feedback.',
+    delayMs: 6000,
+  },
+  {
+    path: '/educator',
+    title: '8. Educator Workspace',
+    text: 'Das Cockpit für Dozenten: Studenten tracken, Fallstudien entwerfen und den Unterricht datengestützt optimieren.',
+    delayMs: 8000,
+  },
+  {
+    path: '/angebote',
+    title: '9. Angebote & Lizenzen',
+    text: 'Unsere maßgeschneiderten Preismodelle für Studierende, Therapeuten und Fakultäten. Die Tour endet hier - danke für Ihre Aufmerksamkeit!',
     delayMs: 7000,
   }
 ];
@@ -77,6 +95,12 @@ export const DemoTourOverlay: React.FC = () => {
       if (location.pathname !== currentStep.path) {
         navigate(currentStep.path);
       }
+      
+      // Dispatch an event so the page can trigger its demo animation
+      setTimeout(() => {
+        const eventName = `demo-step-${currentStep.path.replace('/', '') || 'home'}`;
+        window.dispatchEvent(new Event(eventName));
+      }, 800);
     }
   }, [isActive, currentStepIndex]); // removed dependencies to prevent rapid looping
 

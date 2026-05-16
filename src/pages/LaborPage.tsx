@@ -6,8 +6,27 @@ import { Card } from '../components/Card';
 import { SimulationIcon, CameraIcon } from '../components/IconComponents';
 
 export const LaborPage: React.FC = () => {
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo Mode: Creative Lab für KI-gestützte Modellexploration geöffnet.");
+      setTimeout(() => setToastMessage(null), 4000);
+    };
+    window.addEventListener('demo-step-creative-lab', handleDemo);
+    return () => window.removeEventListener('demo-step-creative-lab', handleDemo);
+  }, []);
+
   return (
     <div className="relative animate-fadeInUp bg-transparent min-h-screen pt-48 pb-32 overflow-hidden font-sans">
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       <Section containerClassName="py-0 relative z-10">
         {/* Header */}
         <div className="mb-32">

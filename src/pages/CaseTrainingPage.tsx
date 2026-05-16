@@ -645,9 +645,27 @@ OUTPUT JSON:
 export const CaseTrainingPage: React.FC = () => {
   const [activeCase, setActiveCase] = useState<CaseStudy | null>(null);
   const [tutorMood, setTutorMood] = useState<string>('Supportiv');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo Mode: Case Library geladen. Hier trainieren Sie am interaktiven Patientenbeispiel.");
+      setTimeout(() => setToastMessage(null), 4000);
+    };
+    window.addEventListener('demo-step-case-training', handleDemo);
+    return () => window.removeEventListener('demo-step-case-training', handleDemo);
+  }, []);
 
   return (
     <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       <div className="relative z-10">
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">

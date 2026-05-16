@@ -1,146 +1,257 @@
 
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { Section } from '../components/Section';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { CheckCircleIcon, BrainCircuitIcon } from '../components/IconComponents';
-import { MembershipTier, PriceItem, PackageDeal, User } from '../types';
-import { coreProduct, packageDeals } from '../data/products';
-import { useCart } from '../context/CartContext';
+import { CheckCircleIcon, ChartBarIcon, TargetIcon, AcademicCapIcon, BrainCircuitIcon } from '../components/IconComponents';
 
 interface AngebotePageProps {
-  user: User | null;
+  user: any | null;
   onOpenHealthCheck: () => void;
 }
 
 export const AngebotePage: React.FC<AngebotePageProps> = ({ user, onOpenHealthCheck }) => {
-  const location = useLocation();
-  const [analysisReady, setAnalysisReady] = useState(false);
-  const { cart, addToCart } = useCart();
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
   useEffect(() => {
-      if (location.state && location.state.analysisReady) {
-          setAnalysisReady(true);
-      }
-  }, [location]);
+    window.scrollTo(0, 0);
+  }, []);
 
-  const handleAddToCart = (item: PriceItem | PackageDeal | MembershipTier) => {
-    addToCart(item);
-  };
+  useEffect(() => {
+    const handleDemo = () => {
+      setToastMessage("Demo Mode: Sie sehen nun die Lizenzmodelle von Körperfluss. Die Tour ist damit beendet!");
+      setTimeout(() => setToastMessage(null), 5000);
+    };
+    window.addEventListener('demo-step-angebote', handleDemo);
+    return () => window.removeEventListener('demo-step-angebote', handleDemo);
+  }, []);
 
   return (
     <div className="animate-fadeInUp bg-transparent min-h-screen pt-32 pb-24 overflow-hidden font-sans">
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
+          <div className="bg-[#C9A84C]/20 border border-[#C9A84C]/50 text-[#C9A84C] backdrop-blur-xl px-6 py-3 rounded-full text-sm font-medium shadow-[0_0_20px_rgba(201,168,76,0.3)]">
+            {toastMessage}
+          </div>
+        </div>
+      )}
       
-      {/* Dynamic Header based on Flow */}
-      {analysisReady ? (
-          <div className="relative py-24 md:py-40 text-center overflow-hidden">
-              <div className="absolute inset-0 bg-brand-primary/5 blur-[150px] rounded-full -top-1/2 left-1/2 -translate-x-1/2 w-full h-full"></div>
-              <div className="container mx-auto px-8 relative z-10">
-                  <div className="inline-flex items-center gap-4 glass px-10 py-4 rounded-full font-black uppercase text-[10px] tracking-[0.5em] mb-12 text-brand-primary border border-brand-primary/30 shadow-glow animate-pulse backdrop-blur-2xl">
-                      <BrainCircuitIcon className="w-5 h-5" /> Analyse Abgeschlossen
+      {/* 4.1 & 4.2 Header Section */}
+      <div className="pt-20 pb-16 text-center container mx-auto px-8 relative z-10">
+        <div className="flex flex-col items-center mb-16">
+          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-primary mb-6 opacity-80">Marketing & Vertrieb</span>
+          <div className="h-[1px] w-24 bg-brand-primary/30 mb-12"></div>
+          <h1 className="text-5xl md:text-8xl font-bold font-serif text-white mb-10 tracking-tighter leading-[0.9] uppercase">
+            Der <br/><span className="text-gradient-gold italic font-light lowercase">Verkaufsprozess</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-4xl mx-auto font-light leading-relaxed tracking-wide">
+            Strategische Positionierung, Go-to-Market-Strategie und wertbasiertes Erlösmodell.
+          </p>
+        </div>
+      </div>
+
+      <Section containerClassName="py-12 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 max-w-7xl mx-auto items-start">
+          <div className="glass-dark p-12 rounded-[40px] border border-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-primary/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-brand-primary/20 transition-colors duration-1000"></div>
+            <div className="relative z-10">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-6 block">4.1 Positionierung</span>
+              <h3 className="text-3xl font-bold font-serif text-white mb-6 tracking-tight uppercase">Der Compliance-Hebel</h3>
+              <p className="text-zinc-400 font-light leading-relaxed mb-8">
+                Körperfluss positioniert sich im DACH-Raum als spezialisierter Lösungsanbieter an der Schnittstelle von Physiotherapie-Ausbildung und digitaler Barrierefreiheit.
+              </p>
+              <ul className="space-y-6">
+                <li className="flex items-start gap-4">
+                  <TargetIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
+                  <span className="text-zinc-300 font-light text-sm">Primärer Kaufanreiz ist der regulatorische Druck: BFSG ab 2025.</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <CheckCircleIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
+                  <span className="text-zinc-300 font-light text-sm">„Sniper-Marketing“: Direkte Ansprache von strategischen Entscheidungsträgern bei ca. 300 relevanten Institutionen.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="glass-dark p-12 rounded-[40px] border border-white/5 relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-primary/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-brand-primary/20 transition-colors duration-1000"></div>
+            <div className="relative z-10">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-6 block">4.2 Strategie</span>
+              <h3 className="text-3xl font-bold font-serif text-white mb-6 tracking-tight uppercase">High Touch & Thought Leadership</h3>
+              <ul className="space-y-6">
+                 <li className="flex items-start gap-4">
+                  <AcademicCapIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
+                  <div>
+                    <strong className="text-white block mb-1">Thought Leadership</strong>
+                    <span className="text-zinc-400 font-light text-sm">Publikation von Whitepapern zur BFSG-Compliance und Expertenpräsenz.</span>
                   </div>
-                  <h1 className="text-7xl md:text-9xl font-bold font-serif text-white mb-10 tracking-tighter leading-[0.8] uppercase">Ihr Report ist <br/><span className="text-gradient-gold italic font-light lowercase">bereit.</span></h1>
-                  <p className="text-2xl md:text-3xl text-zinc-500 max-w-4xl mx-auto font-light leading-relaxed tracking-wide">
-                      Wir haben Ihre Daten mit adaptiver Intelligenz ausgewertet. Sichern Sie sich jetzt Ihren personalisierten Plan für <span className="text-white font-medium italic">maximale Evidenz</span>.
-                  </p>
+                </li>
+                <li className="flex items-start gap-4">
+                  <BrainCircuitIcon className="w-6 h-6 text-brand-primary flex-shrink-0" />
+                  <div>
+                     <strong className="text-white block mb-1">Vertrauensbildung & Lead-Gen</strong>
+                    <span className="text-zinc-400 font-light text-sm">Fachbeirat mit Branchengrößen (zB. Kneipp-Schulen) und personalisierte Direktansprache.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* 4.3 Go-To-Market */}
+      <Section containerClassName="py-16 relative z-10">
+        <div className="max-w-7xl mx-auto glass border border-white/10 p-12 md:p-20 rounded-[48px] shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-8 block text-center">4.3 Go-to-Market</span>
+            <h2 className="text-4xl md:text-6xl font-bold font-serif text-white mb-16 tracking-tighter uppercase text-center">Gezielte Pilotierung zur Skalierung</h2>
+            
+            <div className="grid md:grid-cols-3 gap-12">
+              <div className="relative border-l border-brand-primary/30 pl-8">
+                <div className="absolute w-3 h-3 bg-brand-primary rounded-full -left-[6.5px] top-0 shadow-glow"></div>
+                <h3 className="text-xl font-bold text-white mb-4">Phase 1: Pilot & PoC</h3>
+                <p className="text-zinc-400 font-light text-sm leading-relaxed">
+                   Fokus auf die Gewinnung von 3–5 strategischen Pilotpartnern (z.B. FH Linz, Campus Wien) zur Validierung in Q3/Q4. Erstellung einer White-Label Case Study.
+                </p>
               </div>
-          </div>
-      ) : (
-          <div className="pt-40 pb-24 text-center container mx-auto px-8 relative z-10">
-            <div className="flex flex-col items-center mb-16">
-              <span className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-primary mb-6 opacity-80">Preisgestaltung</span>
-              <div className="h-[1px] w-24 bg-brand-primary/30 mb-12"></div>
-              <h1 className="text-7xl md:text-9xl font-bold font-serif text-white mb-10 tracking-tighter leading-[0.8] uppercase">Angebote & <br/><span className="text-gradient-gold italic font-light lowercase">Preise</span></h1>
-              <p className="text-2xl md:text-3xl text-zinc-500 max-w-3xl mx-auto font-light leading-relaxed tracking-wide">Transparente Pakete für Ihre Gesundheit und Ausbildung.</p>
-            </div>
-          </div>
-      )}
-      
-      {/* Core Product Section - The "Solution" */}
-      <Section containerClassName="pt-12 pb-40 relative z-10">
-        <div className="glass-dark !p-0 overflow-hidden border border-white/5 shadow-[0_60px_150px_rgba(0,0,0,0.9)] group rounded-[48px] relative">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-[150px] -mr-300 -mt-300 group-hover:bg-brand-primary/10 transition-colors duration-1000"></div>
-            <div className="grid md:grid-cols-12 gap-0 items-stretch relative z-10">
-                <div className="md:col-span-8 p-16 md:p-24">
-                    <div className="relative">
-                      <span className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-primary mb-8 block opacity-80">Empfohlenes Ergebnis</span>
-                      <h3 className="text-6xl md:text-8xl font-bold font-serif text-white mt-4 mb-16 tracking-tighter leading-none uppercase">{coreProduct.name}</h3>
-                      <p className="text-zinc-500 mb-20 leading-relaxed text-2xl md:text-3xl font-light max-w-3xl tracking-wide">{coreProduct.description}</p>
-                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-10">
-                          {coreProduct.features?.map((feature) => (
-                            <li key={feature} className="flex items-start gap-8 group/item">
-                              <div className="w-10 h-10 rounded-2xl bg-brand-primary/10 flex items-center justify-center flex-shrink-0 mt-1 border border-brand-primary/20 group-hover/item:border-brand-primary/50 transition-colors">
-                                <CheckCircleIcon className="w-6 h-6 text-brand-primary" />
-                              </div>
-                              <span className="text-xl text-zinc-400 font-light tracking-wide group-hover/item:text-white transition-colors">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                    </div>
-                </div>
-                <div className="md:col-span-4 bg-white/[0.02] backdrop-blur-3xl p-16 md:p-24 flex flex-col justify-center items-center text-center border-l border-white/5">
-                    <div className="mb-20">
-                      <p className="text-9xl font-black text-white tracking-tighter mb-6">{coreProduct.price}</p>
-                      <p className="text-[11px] font-black text-zinc-600 uppercase tracking-[0.5em]">{coreProduct.priceSuffix}</p>
-                    </div>
-                    <button 
-                      onClick={() => handleAddToCart(coreProduct)} 
-                      className={`w-full py-9 rounded-[32px] text-[11px] font-black uppercase tracking-[0.4em] transition-all duration-1000 shadow-2xl transform hover:-translate-y-2 ${cart.some(i => i.id === coreProduct.id) ? 'bg-brand-primary/20 text-brand-primary border border-brand-primary/30' : 'bg-white text-black hover:bg-brand-primary shadow-brand-primary/20 hover:shadow-brand-primary/40'}`}
-                    >
-                        {cart.some(i => i.id === coreProduct.id) ? 'Im Warenkorb ✓' : (analysisReady ? 'Report freischalten' : 'In den Warenkorb')}
-                    </button>
-                    {analysisReady && <p className="text-[10px] text-center mt-10 text-zinc-600 uppercase tracking-[0.5em] font-black opacity-60">Sofortiger digitaler Download</p>}
-                </div>
+              <div className="relative border-l border-brand-primary/30 pl-8 opacity-70 hover:opacity-100 transition-opacity">
+                <div className="absolute w-3 h-3 bg-brand-primary rounded-full -left-[6.5px] top-0"></div>
+                <h3 className="text-xl font-bold text-white mb-4">Phase 2: Early Adopters</h3>
+                <p className="text-zinc-400 font-light text-sm leading-relaxed">
+                  Erweiterung der Zusammenarbeit über Verbandskonsortien (z.B. Physio Austria, DBfK) für institutionelle Glaubwürdigkeit.
+                </p>
+              </div>
+              <div className="relative border-l border-brand-primary/30 pl-8 opacity-40 hover:opacity-100 transition-opacity">
+                <div className="absolute w-3 h-3 bg-brand-primary rounded-full -left-[6.5px] top-0"></div>
+                <h3 className="text-xl font-bold text-white mb-4">Phase 3: Skalierung</h3>
+                <p className="text-zinc-400 font-light text-sm leading-relaxed">
+                   Export des validierten Ökosystems als Blaupause in den gesamten DACH-Markt. Relevanz spezialisierter Anbieter für Flächentests.
+                </p>
+              </div>
             </div>
         </div>
       </Section>
 
-      {/* Package Deals Section */}
-      <Section containerClassName="py-40 bg-black/40 border-y border-white/5 relative z-10 backdrop-blur-sm">
-        <div className="text-center mb-32">
-          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-primary mb-8 block opacity-80">Synergie-Effekte</span>
-          <h2 className="text-6xl md:text-8xl font-serif font-bold text-white mb-8 tracking-tighter uppercase">Kombi-Pakete</h2>
-          <p className="text-2xl text-zinc-500 font-light tracking-wide max-w-2xl mx-auto">Für den optimalen Start in Ihre Therapie oder Ausbildung.</p>
+      {/* 4.4 & 4.6 Pricing Tiers */}
+      <Section containerClassName="py-24 relative z-10">
+        <div className="text-center mb-24">
+          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-brand-primary mb-8 block opacity-80">4.4 & 4.6 Katalog</span>
+          <h2 className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 tracking-tighter uppercase">Wertbasiertes B2B-SaaS</h2>
+          <p className="text-xl text-zinc-400 font-light tracking-wide max-w-2xl mx-auto">
+            Dem Bildungsträger gezieltes Skalieren erlauben und Eintrittsbarrieren niedrig halten.
+          </p>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-8">
-            {packageDeals.map(deal => (
-                <div key={deal.id} className="glass-dark group hover:scale-[1.02] !p-16 rounded-[48px] border border-white/5 transition-all duration-1000 shadow-[0_40px_100px_rgba(0,0,0,0.5)]">
-                    <div className="flex flex-col h-full">
-                        <div className="mb-16">
-                          <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-6 block opacity-80">Best Value</span>
-                          <h3 className="text-5xl font-bold font-serif text-white mt-2 mb-8 tracking-tight uppercase">{deal.name}</h3>
-                          <p className="text-xl text-zinc-500 font-light leading-relaxed tracking-wide">{deal.description}</p>
-                        </div>
-                        <div className="mt-auto pt-12 border-t border-white/5 flex items-center justify-between">
-                            <div className="flex items-baseline gap-6">
-                                <span className="text-5xl font-black text-white tracking-tighter">{deal.price}</span>
-                                <span className="text-lg text-zinc-700 line-through font-light tracking-wide">{deal.originalPrice}</span>
-                            </div>
-                            <button 
-                              onClick={() => handleAddToCart(deal)} 
-                              className={`px-12 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.4em] transition-all duration-700 border ${cart.some(i => i.id === deal.id) ? 'bg-brand-primary/10 border-brand-primary/30 text-brand-primary' : 'border-white/10 text-white hover:bg-white/5 hover:border-white/20'}`}
-                            >
-                                {cart.some(i => i.id === deal.id) ? 'Im Warenkorb ✓' : 'Wählen'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            ))}
+
+        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {/* Tier 3 */}
+          <div className="flex flex-col p-10 relative group rounded-[40px] border border-white/5 bg-white/[0.02] backdrop-blur-3xl hover:bg-white/[0.04] transition-all duration-700">
+             <span className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-4 block">Tier 3</span>
+            <h3 className="text-3xl font-bold font-serif text-white mb-4 tracking-tight uppercase">Startup / Pilot</h3>
+            <p className="text-zinc-400 font-light text-sm mb-8 leading-relaxed h-[60px]">Kleine, Private Bildungseinrichtungen. Fokus auf spezifische Lehrbereiche.</p>
+            <div className="mb-10">
+              <span className="text-4xl font-black text-white tracking-tighter block mb-2">~€ 1.500<span className="text-sm font-light text-zinc-500 ml-2">p.a. Basis</span></span>
+              <span className="text-xl text-brand-primary block">+ € 18,00<span className="text-sm text-zinc-500 ml-2">pro User/Monat</span></span>
+            </div>
+            <ul className="space-y-4 flex-grow mb-12">
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Cloud-SaaS Modell</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Pay-as-you-go Struktur</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Geringste initiale Hürden</span></li>
+            </ul>
+             <button className="w-full py-4 text-[10px] uppercase tracking-[0.4em] font-black rounded-full border border-white/10 text-white hover:bg-white/10 transition-colors">
+              Details Ansehen
+            </button>
+          </div>
+
+          {/* Tier 2 */}
+          <div className="flex flex-col p-10 relative group rounded-[40px] border border-brand-primary/30 bg-brand-primary/5 backdrop-blur-3xl shadow-[0_30px_80px_rgba(212,175,55,0.15)] transform md:-translate-y-4">
+             <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-brand-primary text-black text-[10px] font-black uppercase tracking-[0.5em] px-8 py-2 rounded-full shadow-glow">
+              Kernmarkt
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-primary mb-4 block mt-4">Tier 2</span>
+            <h3 className="text-3xl font-bold font-serif text-white mb-4 tracking-tight uppercase">Mittelgroß / FHs</h3>
+            <p className="text-zinc-400 font-light text-sm mb-8 leading-relaxed h-[60px]">Spezialisierte FHs & Akademien. Fokus auf akademischen BFSG-Compliance-Nachweis.</p>
+            <div className="mb-10">
+              <span className="text-4xl font-black text-white tracking-tighter block mb-2">~€ 3.000<span className="text-sm font-light text-zinc-500 ml-2">p.a. Basis</span></span>
+              <span className="text-xl text-brand-primary block">+ € 12,50<span className="text-sm text-zinc-500 ml-2">pro User/Monat</span></span>
+            </div>
+            <ul className="space-y-4 flex-grow mb-12">
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-brand-primary" /><span className="text-sm text-zinc-300">Cloud-SaaS (Option Edge +25%)</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-brand-primary" /><span className="text-sm text-zinc-300">Compliance-Audit-Report Add-on</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-brand-primary" /><span className="text-sm text-zinc-300">Hohe Skalierungseffekte</span></li>
+            </ul>
+             <button className="w-full py-4 text-[10px] uppercase tracking-[0.4em] font-black rounded-full bg-brand-primary text-black hover:bg-white transition-colors shadow-glow">
+              Empfehlung
+            </button>
+          </div>
+
+          {/* Tier 1 */}
+          <div className="flex flex-col p-10 relative group rounded-[40px] border border-white/5 bg-white/[0.02] backdrop-blur-3xl hover:bg-white/[0.04] transition-all duration-700">
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-4 block">Tier 1</span>
+            <h3 className="text-3xl font-bold font-serif text-white mb-4 tracking-tight uppercase">Enterprise</h3>
+            <p className="text-zinc-400 font-light text-sm mb-8 leading-relaxed h-[60px]">Universitäten & große FHs (&gt;500 Nutzer). Höchste Anforderungen an Datenhoheit.</p>
+             <div className="mb-10">
+              <span className="text-4xl font-black text-white tracking-tighter block mb-2">TCO<span className="text-sm font-light text-zinc-500 ml-2">Custom</span></span>
+              <span className="text-xl text-brand-primary block">Hybrid<span className="text-sm text-zinc-500 ml-2">Edge + Cloud</span></span>
+            </div>
+            <ul className="space-y-4 flex-grow mb-12">
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Maßgeschneidertes Ökosystem</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Vollständige Integration</span></li>
+              <li className="flex gap-3"><CheckCircleIcon className="w-4 h-4 text-zinc-500" /><span className="text-sm text-zinc-400">Dedizierter Support & Wartung</span></li>
+            </ul>
+            <button className="w-full py-4 text-[10px] uppercase tracking-[0.4em] font-black rounded-full border border-white/10 text-white hover:bg-white/10 transition-colors">
+              Sales Kontaktieren
+            </button>
+          </div>
         </div>
       </Section>
 
-      {!analysisReady && (
-          <Section containerClassName="py-48 text-center relative z-10">
-              <p className="text-zinc-700 uppercase tracking-[0.6em] text-[11px] font-black mb-16 opacity-60">Noch unsicher was Sie brauchen?</p>
-              <button 
-                onClick={onOpenHealthCheck} 
-                className="px-20 py-8 rounded-full glass border border-white/10 text-white font-black uppercase tracking-[0.4em] text-[11px] hover:bg-white/5 transition-all duration-1000 transform hover:-translate-y-2 shadow-[0_40px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
-              >
-                Kostenlose Analyse starten
-              </button>
-          </Section>
-      )}
+      {/* 4.4.1 Ökonomie & 4.5 Architektur */}
+      <Section containerClassName="py-16 relative z-10">
+        <div className="grid md:grid-cols-2 gap-12 max-w-7xl mx-auto">
+           <div className="glass-dark p-12 rounded-[40px] border border-white/5 border-l-brand-primary/40">
+              <h3 className="text-2xl font-serif text-white mb-6 uppercase">4.4.1 Die Ökonomie pro Studierendem</h3>
+              <p className="text-zinc-400 font-light text-sm leading-relaxed mb-6">
+                Beispielrechnung für eine FH mit 300 aktiven Studierenden im ersten Jahr:
+              </p>
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between border-b border-white/10 pb-2">
+                  <span className="text-zinc-500 text-sm">Basis-Kosten (Campus)</span><span className="text-white">€ 2.250 p.a.</span>
+                </div>
+                <div className="flex justify-between border-b border-white/10 pb-2">
+                  <span className="text-zinc-500 text-sm">Nutzung (€ 12,50 × 12 Mon)</span><span className="text-white">€ 150,00 p.a.</span>
+                </div>
+                <div className="flex justify-between font-bold text-brand-primary pt-2">
+                   <span>Gesamtkosten/Studi</span><span>€ 157,50 / Jahr</span>
+                </div>
+              </div>
+              <div className="bg-brand-primary/10 p-6 rounded-2xl border border-brand-primary/20">
+                <p className="text-brand-primary text-sm font-light">
+                  <strong className="block mb-1">Strategisches Fazit:</strong>
+                  Erwarteter ROI &gt;90%. Die Investition amortisiert sich bereits durch Einsparung weniger physischer Simulationsstunden (&gt; € 60/Std.) sowie die Vermeidung von BFSG-Bußgeldern. Es ist eine sichernde Investition.
+                </p>
+              </div>
+           </div>
+
+           <div className="glass-dark p-12 rounded-[40px] border border-white/5 border-r-brand-primary/40">
+              <h3 className="text-2xl font-serif text-white mb-6 uppercase">4.5 Architekturmodelle</h3>
+              <p className="text-zinc-400 font-light text-sm leading-relaxed mb-8">
+               Drei flexible Implementierungsstrategien nach IT-Sicherheitsbedarf:
+              </p>
+              <div className="flex flex-col gap-6">
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <h4 className="text-white font-bold mb-1">Cloud-SaaS</h4>
+                  <p className="text-zinc-500 text-xs">Mittlere/Große FHs. Niedriger CAPEX. Vorhersehbarer OPEX. Sofort verfügbar.</p>
+                </div>
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <h4 className="text-white font-bold mb-1">Edge On-Premise</h4>
+                  <p className="text-zinc-500 text-xs">Akademien mit hohem Bedarf an Datenschutz. Hoher CAPEX. Full Air-Gap: DSGVO-Goldstandard.</p>
+                </div>
+                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <h4 className="text-white font-bold mb-1">Hybrid</h4>
+                  <p className="text-zinc-500 text-xs">Großinstitutionen. Variabler OPEX. Kernlogik lokal (Edge) + Skalierung über Cloud API.</p>
+                </div>
+              </div>
+           </div>
+        </div>
+      </Section>
     </div>
-  )
-}
+  );
+};

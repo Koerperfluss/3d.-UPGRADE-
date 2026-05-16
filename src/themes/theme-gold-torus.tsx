@@ -17,6 +17,8 @@ const AnamneseTrainerScene = () => {
     return pts;
   }, []);
 
+  const latheGeo = useMemo(() => new THREE.LatheGeometry(points, 30), [points]);
+
   useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y = state.clock.elapsedTime * 0.5;
@@ -26,8 +28,7 @@ const AnamneseTrainerScene = () => {
   });
 
   return (
-    <mesh ref={meshRef}>
-      <latheGeometry args={[points, 30]} />
+    <mesh ref={meshRef} geometry={latheGeo}>
       <meshBasicMaterial color={GOLD} wireframe transparent opacity={0.3} />
     </mesh>
   );
@@ -53,6 +54,12 @@ const AssessmentScene = () => {
     return positions;
   }, []);
 
+  const bgGeo = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    return geo;
+  }, [positions]);
+
   useFrame((state) => {
     if (pointsRef.current) {
       pointsRef.current.rotation.y = state.clock.elapsedTime * 0.2;
@@ -60,15 +67,7 @@ const AssessmentScene = () => {
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particlesCount}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
+    <points ref={pointsRef} geometry={bgGeo}>
       <pointsMaterial color={GOLD} size={0.05} transparent opacity={0.6} />
     </points>
   );
@@ -234,6 +233,12 @@ const CreativeScene = () => {
 
   const currentPos = useMemo(() => new Float32Array(particlesCount * 3), []);
 
+  const pointGeo = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(currentPos, 3));
+    return geo;
+  }, [currentPos]);
+
   useFrame((state) => {
     if(pointsRef.current) {
        // 0 to 1 based on sine wave (3s loop roughly)
@@ -247,15 +252,7 @@ const CreativeScene = () => {
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particlesCount}
-          array={currentPos}
-          itemSize={3}
-        />
-      </bufferGeometry>
+    <points ref={pointsRef} geometry={pointGeo}>
       <pointsMaterial color={GOLD} size={0.06} transparent opacity={0.6} />
     </points>
   );
@@ -310,6 +307,8 @@ const LandingScene = () => {
     return new THREE.CatmullRomCurve3(points, true);
   }, []);
 
+  const tubeGeo = useMemo(() => new THREE.TubeGeometry(curve, 64, 0.05, 8, true), [curve]);
+
   useFrame((state) => {
     if(torusRef.current) torusRef.current.rotation.y = state.clock.elapsedTime * 0.1;
     if(waveRef.current) {
@@ -324,8 +323,7 @@ const LandingScene = () => {
         <torusGeometry args={[2.5, 0.05, 16, 100]} />
         <meshBasicMaterial color={GOLD} transparent opacity={0.3} wireframe />
       </mesh>
-      <mesh ref={waveRef}>
-        <tubeGeometry args={[curve, 64, 0.05, 8, true]} />
+      <mesh ref={waveRef} geometry={tubeGeo}>
         <meshBasicMaterial color={GOLD} transparent opacity={0.6} wireframe />
       </mesh>
     </group>

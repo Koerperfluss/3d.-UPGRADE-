@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
   return (
@@ -14,7 +15,7 @@ export const Footer: React.FC = () => {
             <div className="footer-brand-flex">
               <div className="relative">
                 <div className="absolute -inset-4 bg-brand-primary/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                <img src="/logo.jpeg" alt="Körperfluss Logo" className="relative w-24 h-24 rounded-full border border-white/10 shadow-glow grayscale group-hover:grayscale-0 transition-all duration-1000 object-cover" referrerPolicy="no-referrer" />
+                <Logo className="relative w-24 h-24 rounded-full border border-white/10 shadow-glow grayscale group-hover:grayscale-0 transition-all duration-1000 object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="text-4xl font-bold font-serif text-white tracking-tighter uppercase">Körperfluss</span>
