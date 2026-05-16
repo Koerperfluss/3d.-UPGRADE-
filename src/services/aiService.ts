@@ -31,7 +31,7 @@ export interface ExtendedGenerationConfig extends GenerationConfig {
 
 export const generateClinicalContent = async (
   prompt: string | Part[] | Content[], 
-  modelName: string = 'gemini-2.0-flash', 
+  modelName: string = 'gemini-2.5-flash', 
   config?: ExtendedGenerationConfig, 
   safetySettings?: SafetySetting[],
   tools?: any[]
@@ -45,22 +45,30 @@ export const generateClinicalContent = async (
     contents = [{ role: 'user', parts: prompt as Part[] }];
   }
   
-  const response = await ai.models.generateContent({
-    model: modelName,
-    contents,
-    config: {
-      ...config,
-      systemInstruction: CLINICAL_REASONING_GUIDELINES,
-      tools: tools,
-      safetySettings: safetySettings,
-    },
-  });
-  return response;
+  try {
+    const [response] = await Promise.all([
+      ai.models.generateContent({
+        model: modelName,
+        contents,
+        config: {
+          ...config,
+          systemInstruction: CLINICAL_REASONING_GUIDELINES,
+          tools: tools,
+          safetySettings: safetySettings,
+        },
+      }),
+      new Promise(r => setTimeout(r, 1500))
+    ]);
+    return response;
+  } catch (error) {
+    console.error("AI Service Error:", error);
+    throw error;
+  }
 };
 
 export const generateClinicalContentStream = async (
   prompt: string | Part[] | Content[], 
-  modelName: string = 'gemini-2.0-flash', 
+  modelName: string = 'gemini-2.5-flash', 
   config?: ExtendedGenerationConfig, 
   safetySettings?: SafetySetting[],
   tools?: any[]
@@ -74,14 +82,19 @@ export const generateClinicalContentStream = async (
     contents = [{ role: 'user', parts: prompt as Part[] }];
   }
   
-  return ai.models.generateContentStream({
-    model: modelName,
-    contents,
-    config: {
-      ...config,
-      systemInstruction: CLINICAL_REASONING_GUIDELINES,
-      tools: tools,
-      safetySettings: safetySettings,
-    },
-  });
+  try {
+    return await ai.models.generateContentStream({
+      model: modelName,
+      contents,
+      config: {
+        ...config,
+        systemInstruction: CLINICAL_REASONING_GUIDELINES,
+        tools: tools,
+        safetySettings: safetySettings,
+      },
+    });
+  } catch (error) {
+    console.error("AI Stream Error:", error);
+    throw error;
+  }
 };

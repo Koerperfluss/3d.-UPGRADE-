@@ -78,7 +78,7 @@ export const WirkungskettenAnalyser: React.FC = () => {
         4. Nutze Deep Reasoning, um die physiologischen Zusammenhänge präzise aus den Befunden herzuleiten.
       `;
 
-      const response = await generateClinicalContent(prompt, 'gemini-2.0-flash-thinking-exp', {
+      const response = await generateClinicalContent(prompt, 'gemini-3.1-pro-preview', {
         thinkingConfig: { thinkingBudget: 16000 },
         responseMimeType: "application/json",
         responseSchema: {

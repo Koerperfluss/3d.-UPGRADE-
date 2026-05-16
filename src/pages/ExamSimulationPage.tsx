@@ -82,7 +82,7 @@ Bitte antworte AUSSCHLIESSLICH mit diesem JSON-Objekt:
 }
 `;
 
-      const response = await generateClinicalContent(prompt, 'gemini-2.0-flash', {
+      const response = await generateClinicalContent(prompt, 'gemini-2.5-flash', {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -287,7 +287,7 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
           `;
           
           try {
-              const response = await generateClinicalContent(prompt, 'gemini-2.0-flash', { responseMimeType: "application/json" });
+              const response = await generateClinicalContent(prompt, 'gemini-2.5-flash', { responseMimeType: "application/json" });
               const grading = JSON.parse(response.text || "{}");
               
               const qIndex = gradedQuestions.findIndex(gq => gq.id === q.id);
@@ -436,9 +436,15 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
                         {isSubmitted && q.aiGrading && (
                             <div className="mt-10 space-y-6 animate-fadeInUp">
                                 <div className={`p-8 rounded-[32px] border ${q.aiGrading.score > 0 ? 'bg-brand-primary/5 border-brand-primary/10' : 'bg-red-500/5 border-red-500/10'}`}>
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <BrainCircuitIcon className="w-5 h-5 text-brand-primary" />
-                                        <strong className="text-[10px] uppercase tracking-[0.2em] font-black text-white">KI-Bewertung:</strong>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <BrainCircuitIcon className="w-5 h-5 text-brand-primary" />
+                                            <strong className="text-[10px] uppercase tracking-[0.2em] font-black text-white">KI-Bewertung</strong>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-1 bg-brand-primary/10 border border-brand-primary/20 rounded-full">
+                                            <SimulationIcon className="w-3 h-3 text-brand-primary" />
+                                            <span className="text-[9px] uppercase tracking-[0.1em] font-bold text-brand-primary">Transparenz-Modus für Prüfer (CoT)</span>
+                                        </div>
                                     </div>
                                     <p className="text-sm text-zinc-300 font-light leading-relaxed mb-6">{q.aiGrading.feedback}</p>
                                     <div className="text-xs text-zinc-500 font-light leading-relaxed border-t border-white/5 pt-6">
@@ -459,7 +465,8 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
         ) : (
             <div className="flex items-center gap-6">
                 <Button onClick={onExit} variant="outline" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">Zurück zur Übersicht</Button>
-                <Button onClick={() => window.print()} variant="secondary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">Ergebnis drucken</Button>
+                <Button onClick={() => window.print()} variant="secondary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">PDF Export</Button>
+                <Button onClick={() => alert('Erfolgreich in Moodle synchronisiert! (LTI 1.3 Demo)')} variant="primary" className="px-10 py-6 text-[10px] uppercase tracking-[0.3em] font-bold">In Moodle sichern (LMS)</Button>
             </div>
         )}
       </div>

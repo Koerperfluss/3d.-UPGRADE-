@@ -123,7 +123,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
             Nahtlose Pipeline: Visuelle Befundung → Anamnese → Pathomechanismus-Herleitung.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <Button to="/diagnostik-bot" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Diagnostik-Bot</Button>
+            <Button to="/anamnese-trainer" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Anamnese Trainer</Button>
             <Button to="/vision-agent" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Vision Agent</Button>
             <Button to="/case-training" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Case Training</Button>
             <Button to="/education" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Wirkungsketten</Button>
@@ -264,7 +264,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
 
   return (
     <div className="relative animate-fadeInUp bg-transparent min-h-screen pt-48 pb-32 overflow-hidden font-sans">
-      
       <Section containerClassName="py-0 relative z-10">
         {/* Welcome Header */}
         <div className="mb-32 text-center md:text-left">

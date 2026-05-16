@@ -27,12 +27,23 @@ export const Footer: React.FC = () => {
           </div>
           <div>
             <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-white mb-12 opacity-80">Navigation</h3>
-            <ul className="space-y-6 text-lg">
+            <ul className="space-y-6 text-lg mb-12">
               <li><Link to="/ueber-uns" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Über Uns</Link></li>
               <li><Link to="/angebote" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Angebote</Link></li>
               <li><Link to="/blog" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Blog</Link></li>
               <li><Link to="/kontakt" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Kontakt</Link></li>
             </ul>
+
+            <button 
+              onClick={() => window.dispatchEvent(new Event('start-demo-tour'))}
+              className="flex items-center gap-3 text-[#d4af37] text-[11px] font-black uppercase tracking-[0.3em] hover:text-white transition-colors"
+            >
+              <div className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d4af37]"></span>
+              </div>
+              Live Demo Starten
+            </button>
           </div>
           <div>
             <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-white mb-12 opacity-80">Rechtliches</h3>

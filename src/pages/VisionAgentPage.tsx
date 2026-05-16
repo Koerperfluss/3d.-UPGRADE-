@@ -12,7 +12,8 @@ import {
   LightBulbIcon, 
   ArrowRightIcon, 
   CloseIcon,
-  SearchIcon 
+  SearchIcon,
+  WarningIcon
 } from '../components/IconComponents';
 
 interface ReasoningStep {
@@ -29,19 +30,30 @@ export const VisionAgentPage: React.FC = () => {
   const [reasoningSteps, setReasoningSteps] = useState<ReasoningStep[]>([]);
   const [groundingUrls, setGroundingUrls] = useState<{title: string, uri: string}[]>([]);
   const [isGaitMode, setIsGaitMode] = useState(false);
+  const [simulatedGaitData, setSimulatedGaitData] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const loadDemoImage = async () => {
-    try {
-      const response = await fetch('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2000');
-      const blob = await response.blob();
-      const demoFile = new File([blob], 'demo_runner.jpg', { type: 'image/jpeg' });
-      setFile(demoFile);
-      setPreview(URL.createObjectURL(demoFile));
-      setIsGaitMode(true);
-    } catch (e) {
-      console.error("Failed to load demo image:", e);
-    }
+  const loadDemoGait = () => {
+    setIsGaitMode(true);
+    setPreview('demo_gait_placeholder');
+    setAnalysis('');
+    setReasoningSteps([]);
+    setGroundingUrls([]);
+    setSimulatedGaitData(null);
+    setIsProcessing(true);
+    
+    setTimeout(() => {
+        setIsProcessing(false);
+        setSimulatedGaitData({
+            parameters: [
+                { name: 'Schrittlänge', current: '0.68m', target: '0.70-0.80m', status: 'warning' },
+                { name: 'Kadenz', current: '102 / min', target: '100-120', status: 'ok' },
+                { name: 'Hüftextension (R)', current: '8°', target: '10-15°', status: 'warning' },
+                { name: 'Knieflexion (Standphase)', current: '15°', target: '10-20°', status: 'ok' }
+            ]
+        });
+        setAnalysis('### [BEFUND]\nDeutliche Einschränkung der terminalen Standphase rechts. Leichte Verkürzung der Schrittlänge.\n\n### [BIOMECHANISCHE ANALYSE]\nEingeschränkte Hüftextension führt zu vorzeitigem Heel-Off (Kompensation). Das Lastmoment im Kniegelenk ist in der Mid-Stance Phase stabilisiert.\n\n### [EMPFEHLUNG]\nFokus auf Psoas-Längentraining und Aktivierung M. gluteus maximus am Ende der Standphase.');
+    }, 3000);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,15 +98,21 @@ export const VisionAgentPage: React.FC = () => {
           (Was ist sichtbar? Rein deskriptiv.)
           
           ### [BIOMECHANISCHE ANALYSE]
-          (Wirkungsketten unter Verwendung von Fachbegriffen wie 'Closed Kinetic Chain', 'Propriozeption', 'Joint-Alignment'. Inklusive Lastmoment-Berechnung.)
+          (Detaillierte Analyse des Ist-Zustands, Asymmetrien und Muskel-Dysbalancen.)
           
+          ### [WIRKUNGSKETTE / CHAIN OF THOUGHT]
+          - **Ursache (Root Cause):** Welche primäre Einschränkung triggert die Abweichung?
+          - **Kompensationsmechanismus:** Wie weicht das System aus? Was überkompensiert?
+          - **Symptomatik (Ausprägung):** Wie zeigt sich die manifeste Problematik beim Patienten?
+          - **Erklärung:** Detaillierte Herleitung dieser biomechanischen Kette.
+
           ### [EMPFEHLUNG]
           (Evidenzbasierte nächste Schritte basierend auf der Websuche.)
           
           Antworte ausschließlich auf DEUTSCH.` }
       ];
 
-      const response = await generateClinicalContent(promptParts, 'gemini-2.0-flash', {}, [], [{ googleSearch: {} }]);
+      const response = await generateClinicalContent(promptParts, 'gemini-2.5-flash', {}, [], [{ googleSearch: {} }]);
 
       setAnalysis(response.text || "Analyse abgeschlossen.");
 
@@ -122,7 +140,7 @@ export const VisionAgentPage: React.FC = () => {
 
   return (
     <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
-      
+      <div className="relative z-10">
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">
          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[200px] opacity-40"></div>
@@ -136,17 +154,22 @@ export const VisionAgentPage: React.FC = () => {
       >
         <div className="grid lg:grid-cols-12 gap-12 items-start mt-12">
           <div className="lg:col-span-7 space-y-10">
-            <Card className="glass-dark !p-2 border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative overflow-hidden aspect-[4/3] flex items-center justify-center rounded-[48px] group">
+             <Card className="glass-dark !p-2 border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative overflow-hidden aspect-[4/3] flex items-center justify-center rounded-[48px] group">
                {preview ? (
-                 <div className="w-full h-full relative rounded-[40px] overflow-hidden">
-                    {file?.type.startsWith('video') ? <video src={preview} autoPlay loop muted className="w-full h-full object-cover" /> : <img src={preview} className="w-full h-full object-cover" />}
+                 <div className={`w-full h-full relative rounded-[40px] overflow-hidden ${preview === 'demo_gait_placeholder' ? 'flex flex-col items-center justify-center bg-zinc-900 border border-brand-primary/20' : ''}`}>
+                    {preview === 'demo_gait_placeholder' ? (
+                      <div className="flex flex-col items-center justify-center">
+                        <RobotIcon className="w-16 h-16 text-brand-primary/50 mb-4" />
+                        <span className="text-brand-primary/50 text-xs font-black uppercase tracking-widest text-center px-4">Demo: Patient Ganganalyse (Laufbahn)</span>
+                      </div>
+                    ) : file?.type.startsWith('video') ? <video src={preview} autoPlay loop muted className="w-full h-full object-cover" /> : <img src={preview} className="w-full h-full object-cover" />}
                     <div className="absolute top-6 left-6 bg-brand-primary text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-2xl border border-brand-primary/20 tracking-[0.2em] uppercase">AGENTIC SCANNING</div>
                     
                     {isProcessing && (
                       <div className="absolute inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-20">
                          <div className="flex flex-col items-center gap-6">
                             <div className="animate-spin h-16 w-16 border-4 border-brand-primary border-t-transparent rounded-full shadow-glow"></div>
-                            <p className="text-white font-black text-[10px] uppercase tracking-[0.5em] animate-pulse">Deep Reasoning in Progress</p>
+                            <p className="text-white font-black text-[10px] uppercase tracking-[0.5em] animate-pulse">KI analysiert klinisches Bild...</p>
                          </div>
                       </div>
                     )}
@@ -158,7 +181,7 @@ export const VisionAgentPage: React.FC = () => {
                     </button>
                     <p className="text-white font-serif italic text-2xl mb-4 tracking-tight">Warte auf Clinical Media Input...</p>
                     <p className="text-zinc-600 text-[10px] uppercase tracking-[0.3em] font-bold mb-6">Supports: Video (MOV/MP4), Image (JPG/PNG)</p>
-                    <Button onClick={loadDemoImage} variant="outline" size="sm" className="mx-auto block text-[10px] py-1">Demo-Szenario laden</Button>
+                    <Button onClick={loadDemoGait} variant="outline" size="sm" className="mx-auto block text-[10px] py-1 border-white/20 hover:bg-white/5">▶️ Demo-Gang laden</Button>
                  </div>
                )}
                <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*,video/*" />
@@ -176,7 +199,7 @@ export const VisionAgentPage: React.FC = () => {
                 {isProcessing ? (
                   <>
                     <BrainCircuitIcon className="w-5 h-5 animate-pulse" />
-                    <span>Engine läuft...</span>
+                    <span>KI analysiert klinisches Bild...</span>
                   </>
                 ) : (
                   <>
@@ -217,13 +240,36 @@ export const VisionAgentPage: React.FC = () => {
                   <CheckCircleIcon className="w-8 h-8 text-brand-primary" /> Klinischer Analyse-Report
                </h3>
                <div className="prose prose-invert prose-sm flex-grow">
+                  {simulatedGaitData && (
+                    <div className="mb-8 animate-fadeInUp">
+                      <h4 className="text-white font-serif font-bold text-xl mb-6 tracking-tight">Kinematische Parameter</h4>
+                      <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 gap-y-3 items-center text-sm">
+                         <div className="text-[10px] uppercase font-black tracking-widest text-zinc-500 pb-2 border-b border-white/10">Parameter</div>
+                         <div className="text-[10px] uppercase font-black tracking-widest text-zinc-500 pb-2 border-b border-white/10 text-right">Soll</div>
+                         <div className="text-[10px] uppercase font-black tracking-widest text-zinc-500 pb-2 border-b border-white/10 text-right">Ist</div>
+                         <div className="text-[10px] uppercase font-black tracking-widest text-zinc-500 pb-2 border-b border-white/10 text-center">Status</div>
+                         
+                         {simulatedGaitData.parameters.map((p: any, idx: number) => (
+                           <React.Fragment key={idx}>
+                             <div className="text-zinc-300 font-medium">{p.name}</div>
+                             <div className="text-zinc-500 text-right">{p.target}</div>
+                             <div className={`text-right font-bold ${p.status === 'warning' ? 'text-brand-primary' : 'text-emerald-400'}`}>{p.current}</div>
+                             <div className="flex justify-center">
+                               {p.status === 'warning' ? <WarningIcon className="w-4 h-4 text-brand-primary" /> : <CheckCircleIcon className="w-4 h-4 text-emerald-400" />}
+                             </div>
+                           </React.Fragment>
+                         ))}
+                      </div>
+                    </div>
+                  )}
                   {analysis ? (
                     <div className="whitespace-pre-wrap leading-relaxed font-light text-zinc-300 text-sm animate-fadeInUp tracking-wide">
                       {analysis.split('\n').map((line, i) => {
                         if (line.startsWith('###')) {
-                          return <h4 key={i} className="text-white font-serif font-bold text-xl mt-10 mb-4 tracking-tight">{line.replace('### ', '')}</h4>;
+                          return <h4 key={i} className="text-white font-sans font-bold text-xl mt-10 mb-4 tracking-[0.05em]">{line.replace('### ', '')}</h4>;
                         }
-                        return <p key={i} className="mb-2">{line}</p>;
+                        const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>');
+                        return <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: formattedLine }} />;
                       })}
                     </div>
                   ) : (
@@ -261,6 +307,7 @@ export const VisionAgentPage: React.FC = () => {
           </div>
         </div>
       </Section>
+      </div>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const QuizGenerator: React.FC<{ onQuizGenerated: (questions: QuizQuestion[]) => 
       Fokussiere auf: ${input.lernziel || 'Allgemeines Wissen'}.
       Jede Frage muss 4 Optionen haben, genau eine korrekte Antwort und eine fachliche Begründung.`;
 
-      const response = await generateClinicalContent(prompt, 'gemini-2.0-flash', {
+      const response = await generateClinicalContent(prompt, 'gemini-2.5-flash', {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,

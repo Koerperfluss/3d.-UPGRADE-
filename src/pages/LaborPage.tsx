@@ -8,7 +8,6 @@ import { SimulationIcon, CameraIcon } from '../components/IconComponents';
 export const LaborPage: React.FC = () => {
   return (
     <div className="relative animate-fadeInUp bg-transparent min-h-screen pt-48 pb-32 overflow-hidden font-sans">
-      
       <Section containerClassName="py-0 relative z-10">
         {/* Header */}
         <div className="mb-32">

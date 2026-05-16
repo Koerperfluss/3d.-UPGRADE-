@@ -165,7 +165,7 @@ export const AIToolsModal: React.FC<AIToolsModalProps> = ({ isOpen, onClose, use
         const htmlContent = generatedResult
             .replace(/### (.*)/g, '<h3 class="text-xl font-semibold font-sans text-brand-secondary mt-6 mb-3">$1</h3>')
             .replace(/## (.*)/g, '<h2 class="text-2xl font-bold font-serif text-brand-secondary mt-8 mb-4">$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>')
             .replace(/\* (.*?)(?=\n|\* |$)/g, '<li class="ml-4 mb-1">$1</li>')
             .replace(/(\n)/g, '<br />')
             .replace(/(<br \/>\s*){2,}/g, '<br /><br />');
@@ -215,7 +215,7 @@ export const AIToolsModal: React.FC<AIToolsModalProps> = ({ isOpen, onClose, use
               </Button>
           ) : showGenerateButton ? (
             <Button onClick={handleGenerate} disabled={step === 'loading' || !userInput.trim()} variant="primary" size="sm">
-              {step === 'loading' ? 'Wird generiert...' : 'Generieren'}
+              {step === 'loading' ? 'KI analysiert klinisches Bild...' : 'Generieren'}
             </Button>
           ) : null}
         </footer>

@@ -13,10 +13,13 @@ import { literatureData } from '../data/literatureData';
 
 interface GeneratorInput {
   fachbereich: string;
-  difficulty: string;
+  difficultyValue: number; // 1-3
   lernziele: string;
   zeitbudget: number;
   tutorMood: string;
+  patientData: string;
+  mainComplaint: string;
+  medicalHistory: string;
 }
 
 const PRESETS = [
@@ -25,10 +28,13 @@ const PRESETS = [
     description: "Fokus auf Gesprächsführung und Basis-Tests",
     data: {
       fachbereich: 'Physiotherapie - Orthopädie',
-      difficulty: 'Anfänger',
+      difficultyValue: 1,
       lernziele: 'Anamnese, Erste Befunderhebung, Hypothesenbildung',
       zeitbudget: 20,
-      tutorMood: 'Supportiv'
+      tutorMood: 'Supportiv',
+      patientData: '45-jährige Büroangestellte',
+      mainComplaint: 'Unspezifischer Rückenschmerz',
+      medicalHistory: 'Keine Auffälligkeiten'
     }
   },
   {
@@ -36,10 +42,13 @@ const PRESETS = [
     description: "Stabilitätstests und Akutversorgung",
     data: {
       fachbereich: 'Sportphysiotherapie',
-      difficulty: 'Fortgeschritten',
+      difficultyValue: 2,
       lernziele: 'Stabilitäts-Tests, Wundheilungsphasen, PECH-Schema',
       zeitbudget: 25,
-      tutorMood: 'Prüfer'
+      tutorMood: 'Prüfer',
+      patientData: '22-jähriger Fußballspieler',
+      mainComplaint: 'Knieschmerz nach Verdrehtrauma',
+      medicalHistory: 'Z.n. VKB-Ruptur kontralateral'
     }
   },
   {
@@ -47,10 +56,13 @@ const PRESETS = [
     description: "Handling und Mobilisation",
     data: {
       fachbereich: 'Neurologie',
-      difficulty: 'Mittel',
+      difficultyValue: 2,
       lernziele: 'Tonusregulation, Bobath-Konzept, Transfer',
       zeitbudget: 30,
-      tutorMood: 'Supportiv'
+      tutorMood: 'Supportiv',
+      patientData: '72-jähriger Patient',
+      mainComplaint: 'Hemiparese nach Ischämie',
+      medicalHistory: 'Hypertonie, Diabetes Mellitus II'
     }
   },
   {
@@ -58,10 +70,13 @@ const PRESETS = [
     description: "Komplexe DDx & Therapie-Adaption",
     data: {
       fachbereich: 'Muskuloskelettal / Komplex',
-      difficulty: 'Experte',
+      difficultyValue: 3,
       lernziele: 'Interpretation widersprüchlicher Tests, Management von Yellow Flags, Therapie-Adaption',
       zeitbudget: 45,
-      tutorMood: 'Sokratisch'
+      tutorMood: 'Sokratisch',
+      patientData: '55-jähriger Handwerker',
+      mainComplaint: 'Ausstrahlende Schulterschmerzen, Kribbeln',
+      medicalHistory: 'Depression, Diabetes, Z.n. Schulterluxation'
     }
   }
 ];
@@ -86,7 +101,10 @@ const CaseGenerator: React.FC<{ onCaseGenerated: (caseStudy: CaseStudy, tutorMoo
     try {
       const promptInput = {
         fachbereich: input.fachbereich,
-        schwierigkeitsgrad: input.difficulty,
+        schwierigkeitsgrad: input.difficultyValue === 1 ? 'Anfänger' : input.difficultyValue === 2 ? 'Fortgeschritten' : 'Experte',
+        patientendaten: input.patientData,
+        hauptbeschwerde: input.mainComplaint,
+        vorerkrankungen: input.medicalHistory,
         lernziele: input.lernziele.split(',').map(s => s.trim()),
         zeitbudget_minuten: input.zeitbudget
       };
@@ -136,7 +154,7 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
 }
 `;
 
-      const response = await generateClinicalContent(prompt, 'gemini-2.0-flash-thinking-exp', {
+      const response = await generateClinicalContent(prompt, 'gemini-3.1-pro-preview', {
         thinkingConfig: { thinkingBudget: 16000 },
         responseMimeType: "application/json",
         responseSchema: {
@@ -169,7 +187,7 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
           title: data.title,
           patient_intro: data.patient_intro,
           steps: data.steps,
-          difficulty: input.difficulty,
+          difficulty: input.difficultyValue === 1 ? 'Anfänger' : input.difficultyValue === 2 ? 'Fortgeschritten' : 'Experte',
           learning_goals: data.learning_goals || []
         };
         onCaseGenerated(newCase, input.tutorMood);
@@ -220,8 +238,71 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
         </div>
       </div>
 
-      <div className="space-y-4 bg-brand-background p-4 rounded-xl border border-brand-border/50">
+      <div className="space-y-6 bg-brand-background p-6 rounded-xl border border-brand-border/50">
         <h4 className="font-bold text-brand-secondary text-sm mb-2">Individuelle Konfiguration</h4>
+        
+        {/* Difficulty Slider */}
+        <div className="bg-brand-surface p-4 rounded-lg border border-brand-border">
+            <div className="flex justify-between items-end mb-4">
+                <label className="block text-xs font-bold text-brand-secondary uppercase tracking-widest">Schwierigkeitsgrad</label>
+                <span className="text-xs font-medium text-brand-primary">
+                    {input.difficultyValue === 1 ? 'Anfänger (Fokus Basics)' : input.difficultyValue === 2 ? 'Fortgeschritten (Komplex)' : 'Experte (Red Flags)'}
+                </span>
+            </div>
+            <div className="relative pt-1">
+               <input 
+                  type="range" 
+                  min="1" 
+                  max="3" 
+                  step="1"
+                  value={input.difficultyValue}
+                  onChange={(e) => setInput({...input, difficultyValue: parseInt(e.target.value)})}
+                  className="w-full h-2 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-primary"
+               />
+               <div className="flex justify-between text-[10px] text-brand-text-on-light-secondary mt-2 px-1">
+                  <span>Level 1</span>
+                  <span>Level 2</span>
+                  <span>Level 3</span>
+               </div>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Patientendaten (Alter, Beruf, etc.)</label>
+                <input 
+                    type="text" 
+                    value={input.patientData || ''}
+                    onChange={(e) => setInput({...input, patientData: e.target.value})}
+                    placeholder="z.B. 45-jährige Büroangestellte"
+                    className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                />
+            </div>
+            <div>
+                <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Hauptbeschwerde</label>
+                <input 
+                    type="text" 
+                    value={input.mainComplaint || ''}
+                    onChange={(e) => setInput({...input, mainComplaint: e.target.value})}
+                    placeholder="z.B. Schulterschmerz rechts"
+                    className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                />
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+            <div>
+                <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Vorerkrankungen / Relevante Anamnese</label>
+                <input 
+                    type="text" 
+                    value={input.medicalHistory || ''}
+                    onChange={(e) => setInput({...input, medicalHistory: e.target.value})}
+                    placeholder="z.B. Z.n. VKB-Plastik, Hypertonie"
+                    className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                />
+            </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Fachbereich / Setting</label>
@@ -233,29 +314,17 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
                 />
             </div>
             <div>
-                <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Schwierigkeitsgrad</label>
-                <select 
-                    value={input.difficulty}
-                    onChange={(e) => setInput({...input, difficulty: e.target.value})}
-                    className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg outline-none text-sm cursor-pointer"
-                >
-                    <option value="Anfänger">Anfänger (Fokus Basics)</option>
-                    <option value="Fortgeschritten">Fortgeschritten (Komplex)</option>
-                    <option value="Experte">Experte (Red Flags, Co-Morbidität)</option>
-                </select>
+                <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Lernziele (Kommagetrennt)</label>
+                <input 
+                    type="text" 
+                    value={input.lernziele}
+                    onChange={(e) => setInput({...input, lernziele: e.target.value})}
+                    className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+                />
             </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-            <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Lernziele (Kommagetrennt)</label>
-            <input 
-                type="text" 
-                value={input.lernziele}
-                onChange={(e) => setInput({...input, lernziele: e.target.value})}
-                className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
-            />
-            </div>
              <div>
                 <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Tutor-Stil (Mood)</label>
                 <select 
@@ -268,16 +337,15 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
                     <option value="Prüfer">⚖️ Strenger Prüfer (Fakten)</option>
                 </select>
             </div>
-        </div>
-
-         <div>
-          <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Zeitbudget (Min)</label>
-          <input 
-            type="number" 
-            value={input.zeitbudget}
-            onChange={(e) => setInput({...input, zeitbudget: parseInt(e.target.value)})}
-            className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
-          />
+            <div>
+              <label className="block text-xs font-medium text-brand-text-on-light-secondary mb-1">Zeitbudget (Min)</label>
+              <input 
+                type="number" 
+                value={input.zeitbudget}
+                onChange={(e) => setInput({...input, zeitbudget: parseInt(e.target.value)})}
+                className="w-full p-2.5 bg-brand-surface border border-brand-border rounded-lg focus:ring-2 focus:ring-brand-primary outline-none text-sm"
+              />
+            </div>
         </div>
 
         {error && <p className="text-red-600 text-sm bg-red-50 p-2 rounded border border-red-100">{error}</p>}
@@ -400,7 +468,7 @@ OUTPUT JSON:
 }
 `;
 
-        const response = await generateClinicalContent(prompt, 'gemini-2.0-flash-thinking-exp', {
+        const response = await generateClinicalContent(prompt, 'gemini-3.1-pro-preview', {
             thinkingConfig: { thinkingBudget: 8000 },
             responseMimeType: "application/json",
             responseSchema: {
@@ -580,7 +648,7 @@ export const CaseTrainingPage: React.FC = () => {
 
   return (
     <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
-      
+      <div className="relative z-10">
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">
          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[200px] opacity-40"></div>
@@ -626,6 +694,7 @@ export const CaseTrainingPage: React.FC = () => {
             <CaseSession caseStudy={activeCase} tutorMood={tutorMood} onReset={() => setActiveCase(null)} />
         )}
       </Section>
+      </div>
     </div>
   );
 };

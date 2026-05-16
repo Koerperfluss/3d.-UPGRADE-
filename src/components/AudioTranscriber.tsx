@@ -52,7 +52,7 @@ export const AudioTranscriber: React.FC = () => {
           { inlineData: { data: base64, mimeType: 'audio/webm' } },
           { text: "Transkribiere dieses medizinische Diktat präzise. Korrigiere Fachbegriffe der Physiotherapie (z.B. Pronation, lumbal, propriozeptiv). Strukturiere den Text in Stichpunkten." }
         ],
-        'gemini-2.0-flash'
+        'gemini-2.5-flash'
       );
 
       setTranscription(prev => prev + (prev ? '\n' : '') + (response.text || ''));

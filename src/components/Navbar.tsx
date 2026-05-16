@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { User, Lecturer } from '../types';
 import { Logo } from './Logo';
 import { Button } from './Button';
-import { ShoppingCartIcon, AcademicCapIcon, DocumentTextIcon, VideoLibraryIcon, CameraIcon, BrainIcon } from './IconComponents';
+import { ShoppingCartIcon, AcademicCapIcon, DocumentTextIcon, VideoLibraryIcon, CameraIcon, BrainIcon, CheckCircleIcon } from './IconComponents';
 import { useCart } from '../context/CartContext';
 
 interface NavbarProps {
@@ -78,6 +78,13 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
   return (
     <nav className={`fixed w-full top-0 z-[100] transition-all duration-1000 ${scrolled ? 'glass-dark py-3 shadow-[0_20px_80px_rgba(0,0,0,0.8)] border-b border-white/5' : 'bg-transparent py-8'}`}>
       <div className="container mx-auto px-6 sm:px-8 lg:px-16">
+        {/* TOP STATUS BAR for LMS - Shown only for students and docents */}
+        {(user?.role === 'student' || lecturer) && (
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-brand-success/20 border border-brand-success/30 px-6 py-1.5 rounded-b-xl flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(16,185,129,0.2)] backdrop-blur-md">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-brand-success font-black text-center whitespace-nowrap">🟢 Verbunden mit Schul-Server (Moodle)</span>
+          </div>
+        )}
+
         <div className="nav-flex-container">
           <Link to="/" className="flex items-center gap-6 group transition-all duration-700 hover:scale-[1.02]" onClick={() => setIsOpen(false)}>
             <div className="relative">

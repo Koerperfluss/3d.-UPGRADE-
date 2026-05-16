@@ -21,16 +21,27 @@ export const CreativeLab: React.FC = () => {
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
 
   const handleImageGen = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() && !sourceFile) return;
     setIsGenerating(true);
     setError('');
     setResultImage(null);
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const contents: any[] = [{ text: prompt || "Optimiere dieses anatomische Bild." }];
+
+      if (sourceFile) {
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+          reader.readAsDataURL(sourceFile);
+        });
+        contents.push({ inlineData: { data: base64, mimeType: sourceFile.type } });
+      }
+
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-image-preview',
-        contents: [{ text: prompt }],
+        contents: contents,
         config: {
           imageConfig: {
             aspectRatio: aspectRatio as any,
@@ -39,7 +50,7 @@ export const CreativeLab: React.FC = () => {
         }
       });
 
-      for (const part of response.candidates[0].content.parts) {
+      for (const part of response.candidates?.[0]?.content?.parts || []) {
         if (part.inlineData) {
           setResultImage(`data:image/png;base64,${part.inlineData.data}`);
         }
@@ -76,7 +87,7 @@ export const CreativeLab: React.FC = () => {
       }
 
       let operation = await ai.models.generateVideos({
-        model: 'veo-3.1-fast-generate-preview',
+        model: 'veo-3.1-lite-generate-preview',
         prompt: prompt || 'Professional medical animation.',
         image: imagePart || undefined,
         config: {
@@ -92,7 +103,16 @@ export const CreativeLab: React.FC = () => {
       }
 
       const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-      setResultVideo(`${downloadLink}&key=${process.env.GEMINI_API_KEY}`);
+      if (downloadLink && process.env.GEMINI_API_KEY) {
+        const response = await fetch(downloadLink, {
+          method: 'GET',
+          headers: {
+            'x-goog-api-key': process.env.GEMINI_API_KEY,
+          },
+        });
+        const blob = await response.blob();
+        setResultVideo(URL.createObjectURL(blob));
+      }
     } catch (e) {
       console.error(e);
       setError("Video-Engine Error.");
@@ -150,15 +170,13 @@ export const CreativeLab: React.FC = () => {
 
       <div className="grid lg:grid-cols-2 gap-12">
         <div className="space-y-6">
-          {(mode === 'edit' || mode === 'video') && (
-            <div className="p-6 bg-brand-background rounded-3xl border-2 border-dashed border-brand-border cursor-pointer text-center" onClick={() => document.getElementById('lab-file')?.click()}>
-              {sourcePreview ? <img src={sourcePreview} className="h-40 mx-auto rounded-xl shadow-lg" /> : <p className="text-xs font-bold uppercase opacity-40">Drop Source Image</p>}
-              <input id="lab-file" type="file" className="hidden" onChange={(e) => {
-                const f = e.target.files?.[0];
-                if(f) { setSourceFile(f); setSourcePreview(URL.createObjectURL(f)); }
-              }} />
-            </div>
-          )}
+          <div className="p-6 bg-brand-background rounded-3xl border-2 border-dashed border-brand-border cursor-pointer text-center" onClick={() => document.getElementById('lab-file')?.click()}>
+            {sourcePreview ? <img src={sourcePreview} className="h-40 mx-auto rounded-xl shadow-lg" /> : <p className="text-xs font-bold uppercase opacity-40">Referenzbild/Video hier ablegen</p>}
+            <input id="lab-file" type="file" className="hidden" onChange={(e) => {
+              const f = e.target.files?.[0];
+              if(f) { setSourceFile(f); setSourcePreview(URL.createObjectURL(f)); }
+            }} />
+          </div>
 
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-brand-text-on-light-secondary mb-2">KI-Befehl (Prompt)</label>
@@ -189,10 +207,10 @@ export const CreativeLab: React.FC = () => {
              )}
           </div>
 
-          <Button onClick={mode === 'image' ? handleImageGen : handleVideoGen} disabled={isGenerating} variant="primary" className="w-full py-5 shadow-glow">
+          <Button onClick={mode === 'video' ? handleVideoGen : handleImageGen} disabled={isGenerating} variant="primary" className="w-full py-5 shadow-glow">
              <span className="font-serif uppercase tracking-widest flex items-center justify-center gap-3">
                 {isGenerating ? <div className="animate-spin h-5 w-5 border-2 border-brand-secondary border-t-transparent rounded-full" /> : <BrainCircuitIcon className="w-5 h-5" />}
-                {isGenerating ? 'Engine läuft...' : 'Medium generieren'}
+                {isGenerating ? 'KI analysiert klinisches Bild...' : 'Medium generieren'}
              </span>
           </Button>
         </div>
