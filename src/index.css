@@ -102,6 +102,22 @@ body {
   background-image: radial-gradient(circle at 50% 0%, #121212 0%, #000000 100%);
   color: #FFFFFF;
   overflow-x: hidden;
+  /* iOS PWA behavior */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* iOS Safe Areas */
+.safe-padding-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-padding-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Prevent auto-zoom on iOS inputs */
+input, textarea, select {
+  font-size: 16px !important;
 }
 
 ::-webkit-scrollbar {

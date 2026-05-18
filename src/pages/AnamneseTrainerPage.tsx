@@ -303,7 +303,7 @@ export const AnamneseTrainerPage: React.FC = () => {
           </div>
 
           {/* Main Area based on Step */}
-          <div className="lg:col-span-9 h-[600px] flex flex-col">
+          <div className="lg:col-span-9 h-[500px] md:h-[600px] lg:h-[700px] flex flex-col">
             {currentStep === 1 && (
               <Card className="flex flex-col h-full bg-black/40 border-white/5 relative z-10 transition-all duration-500 hover:border-white/10">
                 <div className="flex justify-between items-center mb-6 pl-6 pt-6 pr-6">

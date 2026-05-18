@@ -30,7 +30,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onStartChat }) => {
       {/* SPLIT SCREEN HERO (100vh) */}
       <div className="relative w-full h-screen flex flex-col md:flex-row">
         {/* VIGNETTE / GRADIENT OVERLAY */}
-        <div className="absolute inset-0 z-10 bg-gradient-radial from-transparent via-[#1a0f08]/10 to-[#0a0502]/60 pointer-events-none"></div>
+        <div className="absolute inset-0 z-10 bg-gradient-radial from-transparent via-[#1a0f08]/5 to-[#0a0502]/30 pointer-events-none"></div>
 
         {/* CENTER LOGO */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none hidden md:flex flex-col items-center">
@@ -116,7 +116,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onStartChat }) => {
       </div>
 
       {/* FEATURES SHOWCASE */}
-      <div className="relative z-20 w-full min-h-screen bg-black/80 backdrop-blur-2xl py-32 border-t border-white/10">
+      <div className="relative z-20 w-full min-h-screen bg-black/10 backdrop-blur-md py-32 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-24">
              <h2 className="text-sm font-black tracking-[0.5em] text-[#d4af37] uppercase mb-4">Plattform Features</h2>

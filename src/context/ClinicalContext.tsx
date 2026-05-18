@@ -33,7 +33,7 @@ const ClinicalContext = createContext<ClinicalContextType | undefined>(undefined
 
 export const ClinicalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [visionData, setVisionData] = useState<VisionData | null>(null);
-  const [isCotMode, setCotMode] = useState<boolean>(true); // Default to true for Demo
+  const [isCotMode, setCotMode] = useState<boolean>(false); // Hidden by default, manually enabled or triggered by analysis
   const [cotSteps, setCotSteps] = useState<CotStep[]>([]);
 
   const addCotStep = (step: Omit<CotStep, 'id'>) => {

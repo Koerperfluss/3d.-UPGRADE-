@@ -1,0 +1,21 @@
+{
+  "name": "Körperfluss Adaptive Intelligence",
+  "short_name": "Körperfluss",
+  "description": "Adaptive Intelligence für klinisches Reasoning und medizinische Ausbildung.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/logo-main.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-main.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

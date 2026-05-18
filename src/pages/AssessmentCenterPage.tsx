@@ -50,7 +50,7 @@ export const AssessmentCenterPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-background text-white relative">
+    <div className="min-h-screen bg-transparent text-white relative">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">
