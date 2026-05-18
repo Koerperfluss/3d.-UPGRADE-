@@ -26,7 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
   ariaLabel,
   tabIndex
 }) => {
-  const baseStyles = 'font-black rounded-[32px] shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all duration-1000 ease-in-out transform hover:-translate-y-1 disabled:opacity-30 disabled:cursor-not-allowed tracking-[0.6em] uppercase text-[11px]';
+  const baseStyles = 'font-black rounded-[32px] shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-primary/50 transition-all duration-1000 ease-in-out transform hover:-translate-y-1 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed tracking-[0.6em] uppercase text-[11px]';
 
   let variantStyles = '';
   switch (variant) {

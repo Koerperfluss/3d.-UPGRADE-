@@ -38,7 +38,7 @@ export const LiteraturPage: React.FC = () => {
   }, [searchTerm, selectedFachbereich, selectedDocType]);
 
   return (
-    <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
+    <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden">
       
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">
@@ -48,8 +48,8 @@ export const LiteraturPage: React.FC = () => {
 
       {/* Header */}
       <Section 
-        title="Medizinische Literatur-Datenbank"
-        subtitle="Durchsuchen Sie unsere kuratierte Sammlung von 147 hochwertigen Publikationen, S3-Leitlinien und systematischen Reviews."
+        title="Evidenz-Engine: Studien-Datenbank"
+        subtitle="Durchsuchen Sie unsere kuratierte Sammlung von 234 hochwertigen Publikationen, S3-Leitlinien und klinischen Studien für höchste diagnostische Präzision."
         containerClassName="py-0 relative z-10 mb-24"
       />
 
@@ -109,7 +109,7 @@ export const LiteraturPage: React.FC = () => {
       {/* Results List */}
       <Section containerClassName="py-12 relative z-10">
         <div className="mb-10 text-[10px] uppercase tracking-[0.3em] font-black text-zinc-500 ml-2">
-            {filteredData.length} Publikationen gefunden
+            Zeige {filteredData.length} von 234 verfügbaren Publikationen
         </div>
         
         <div className="grid grid-cols-1 gap-12">

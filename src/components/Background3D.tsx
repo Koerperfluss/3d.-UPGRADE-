@@ -20,11 +20,14 @@ function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ 
     const targetX = pointerPos.current.x * 0.3;
     const targetY = pointerPos.current.y * 0.3;
     
-    ref.current.rotation.y += (targetX - ref.current.rotation.y) * 0.05;
+    // PARALLAX: Reactive to scroll
+    const scrollParallax = (window.scrollY || 0) * 0.001;
+    
+    ref.current.rotation.y += (targetX - ref.current.rotation.y + scrollParallax * 0.5) * 0.05;
     ref.current.rotation.x += (-targetY - ref.current.rotation.x) * 0.05;
     
     // Subtle breathing/floating
-    ref.current.position.y = Math.sin(t * 1.5) * 0.05;
+    ref.current.position.y = Math.sin(t * 1.5) * 0.05 - scrollParallax * 0.2;
   });
 
   return (

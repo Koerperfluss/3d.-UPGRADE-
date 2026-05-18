@@ -150,7 +150,7 @@ export const QuizPage: React.FC = () => {
 
   if (mode === 'active') {
     return (
-        <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden font-sans">
+        <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden font-sans">
             {/* Background Atmosphere */}
             <div className="fixed inset-0 pointer-events-none">
                <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[200px] opacity-40"></div>
@@ -194,7 +194,7 @@ export const QuizPage: React.FC = () => {
   }
 
   return (
-    <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden font-sans">
+    <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden font-sans">
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">
          <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-[150px] opacity-20"></div>

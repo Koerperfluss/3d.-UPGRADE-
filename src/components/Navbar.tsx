@@ -7,6 +7,8 @@ import { Button } from './Button';
 import { ShoppingCartIcon, AcademicCapIcon, DocumentTextIcon, VideoLibraryIcon, CameraIcon, BrainIcon, CheckCircleIcon, SparklesIcon } from './IconComponents';
 import { useCart } from '../context/CartContext';
 import { useClinicalContext } from '../context/ClinicalContext';
+import { ConnectModal } from './ConnectModal';
+import { Share2 } from 'lucide-react';
 
 interface NavbarProps {
   user: User | null;
@@ -18,6 +20,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCartClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const { totalItems } = useCart();
   const { isCotMode, setCotMode } = useClinicalContext();
 
@@ -78,7 +81,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
   };
 
   return (
-    <nav className={`fixed w-full top-0 z-[100] transition-all duration-1000 ${scrolled ? 'glass-dark py-3 shadow-[0_20px_80px_rgba(0,0,0,0.8)] border-b border-white/5' : 'bg-transparent py-8'}`}>
+    <>
+    <nav className={`fixed w-full top-0 z-[100] transition-all duration-1000 pt-[calc(env(safe-area-inset-top)+20px)] pb-5 ${scrolled ? 'glass-dark shadow-[0_20px_80px_rgba(0,0,0,0.8)] border-b border-white/5' : 'bg-transparent pt-[calc(env(safe-area-inset-top)+32px)] pb-8'}`}>
       <div className="container mx-auto px-6 sm:px-8 lg:px-16">
         {/* TOP STATUS BAR for LMS - Shown only for students and docents */}
         {(user?.role === 'student' || lecturer) && (
@@ -117,6 +121,14 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                   <span className="text-[10px] uppercase font-black tracking-widest">{isCotMode ? 'CoT Aktiv' : 'CoT Modus'}</span>
                 </button>
               )}
+              
+              <button 
+                onClick={() => setIsShareOpen(true)}
+                className="p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5"
+              >
+                <Share2 className="w-5 h-5 text-zinc-500 group-hover:text-brand-primary transition-colors duration-500" />
+              </button>
+
               <button onClick={onCartClick} className="relative p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
                 <ShoppingCartIcon className="w-6 h-6 text-zinc-500 group-hover:text-brand-primary transition-colors duration-500" />
                 {totalItems > 0 && (
@@ -164,26 +176,33 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-3xl border-t border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.9)] p-8 flex flex-col gap-8 animate-fadeInUp">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-3xl border-t border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.9)] p-8 pb-[env(safe-area-inset-bottom)] flex flex-col gap-8 animate-fadeInUp">
            {(lecturer || user?.role === 'student' || user?.role === 'dozent') ? (
                <>
-                <NavLink to="/dashboard" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Dashboard</NavLink>
-                <NavLink to="/analyse" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Scanner</NavLink>
-                <NavLink to="/labor" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Labor</NavLink>
-                <NavLink to="/education" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Reasoning</NavLink>
-                <NavLink to="/curriculum" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Matrix</NavLink>
-                <NavLink to="/literatur" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Literatur</NavLink>
+                <NavLink to="/dashboard" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Dashboard</NavLink>
+                <NavLink to="/analyse" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Scanner</NavLink>
+                <NavLink to="/labor" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Labor</NavLink>
+                <NavLink to="/education" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Reasoning</NavLink>
+                <NavLink to="/curriculum" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Matrix</NavLink>
+                <NavLink to="/literatur" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Literatur</NavLink>
                </>
            ) : (
                <>
-                <NavLink to="/" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Start</NavLink>
-                <NavLink to="/ueber-uns" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Über Uns</NavLink>
-                <NavLink to="/angebote" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Angebote</NavLink>
-                <NavLink to="/blog" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Blog</NavLink>
-                <NavLink to="/kontakt" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all">Kontakt</NavLink>
+                <NavLink to="/" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Start</NavLink>
+                <NavLink to="/ueber-uns" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Über Uns</NavLink>
+                <NavLink to="/angebote" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Angebote</NavLink>
+                <NavLink to="/blog" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Blog</NavLink>
+                <NavLink to="/kontakt" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Kontakt</NavLink>
                </>
            )}
-           <div className="border-t border-white/5 pt-8">
+           <div className="border-t border-white/5 pt-8 flex flex-col gap-4">
+              <button 
+                onClick={() => { setIsShareOpen(true); setIsOpen(false); }}
+                className="w-full py-4 text-[11px] uppercase tracking-[0.4em] font-black bg-brand-primary/10 border border-brand-primary/20 rounded-[24px] text-brand-primary hover:bg-brand-primary/20 transition-all flex items-center justify-center gap-3"
+              >
+                <Share2 size={16} /> Mobile Connect
+              </button>
+
               {user || lecturer ? (
                   <button onClick={() => { onLogout(); setIsOpen(false); }} className="w-full py-4 text-[11px] uppercase tracking-[0.4em] font-black border border-white/10 rounded-[24px] text-zinc-500 hover:text-white hover:bg-white/5 transition-all">Abmelden</button>
               ) : (
@@ -193,5 +212,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
         </div>
       )}
     </nav>
+    <ConnectModal isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
+    </>
   );
 };

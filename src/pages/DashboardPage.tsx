@@ -140,7 +140,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Hub 1: Clinical Reasoning Hub */}
-        <div className="glass-dark group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl">
+        <div className="glass-dark !bg-black/20 group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl">
           <div className="flex items-center gap-8 mb-10">
             <div className="w-16 h-16 rounded-[24px] bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors border border-brand-primary/20 shadow-glow">
               <BrainIcon className="w-8 h-8 text-brand-primary" />
@@ -154,12 +154,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
             <Button to="/anamnese-trainer" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Anamnese Trainer</Button>
             <Button to="/vision-agent" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Vision Agent</Button>
             <Button to="/case-training" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Case Training</Button>
+            <Button to="/literatur" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Studien-DB</Button>
             <Button to="/education" variant="outline" size="sm" className="text-[10px] uppercase tracking-[0.2em] font-black py-4 border-white/10 text-zinc-500 hover:text-white hover:bg-white/5 !rounded-[20px]">Wirkungsketten</Button>
           </div>
         </div>
 
         {/* Hub 2: Assessment Center */}
-        <div className="glass-dark group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl">
+        <div className="glass-dark !bg-black/20 group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl">
           <div className="flex items-center gap-8 mb-10">
             <div className="w-16 h-16 rounded-[24px] bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors border border-brand-primary/20 shadow-glow">
               <EducationIcon className="w-8 h-8 text-brand-primary" />
@@ -177,7 +178,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
         </div>
 
         {/* Hub 3: System Overview (New) */}
-        <div className="glass-dark group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl bg-brand-primary/5">
+        <div className="glass-dark !bg-black/20 group hover:scale-[1.02] transition-all duration-1000 p-12 rounded-[48px] border border-white/5 shadow-2xl bg-brand-primary/5">
           <div className="flex items-center gap-8 mb-10">
             <div className="w-16 h-16 rounded-[24px] bg-brand-primary/10 flex items-center justify-center group-hover:bg-brand-primary/20 transition-colors border border-brand-primary/20 shadow-glow">
               <AcademicCapIcon className="w-8 h-8 text-brand-primary" />

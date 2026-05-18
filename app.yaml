@@ -1,0 +1,12 @@
+runtime: python39
+
+handlers:
+# Serve all static files with url routing
+- url: /(.*\..+)$
+  static_files: dist/\1
+  upload: dist/(.*\..+)$
+
+# Catch all handler to index.html for SPA routing
+- url: /.*
+  static_files: dist/index.html
+  upload: dist/index.html

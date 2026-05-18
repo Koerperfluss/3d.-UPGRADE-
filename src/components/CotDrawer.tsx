@@ -4,7 +4,7 @@ import { useClinicalContext } from '../context/ClinicalContext';
 import { BrainIcon, SparklesIcon, CheckCircleIcon, WarningIcon } from './IconComponents';
 
 export const CotDrawer: React.FC = () => {
-   const { isCotMode, cotSteps } = useClinicalContext();
+   const { isCotMode, cotSteps, setCotMode } = useClinicalContext();
 
    if (!isCotMode) return null;
 
@@ -14,23 +14,31 @@ export const CotDrawer: React.FC = () => {
          animate={{ x: 0, opacity: 1 }}
          exit={{ x: 400, opacity: 0 }}
          transition={{ type: "spring", stiffness: 200, damping: 25 }}
-         className="fixed right-6 top-6 bottom-6 w-96 glass-dark border-l border-brand-primary/30 rounded-3xl z-[60] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(212,175,55,0.1)] backdrop-blur-2xl"
+         className="fixed right-0 md:right-6 top-[env(safe-area-inset-top)] md:top-6 bottom-0 md:bottom-6 w-[320px] md:w-96 glass-dark border-l border-brand-primary/30 md:rounded-3xl z-[90] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(212,175,55,0.1)] backdrop-blur-2xl"
      >
-        <div className="p-6 border-b border-brand-primary/20 bg-brand-primary/5 flex items-center gap-4">
-             <div className="p-2 bg-brand-primary/20 rounded-xl relative overflow-hidden">
-                <BrainIcon className="w-8 h-8 text-brand-primary relative z-10" />
-                <div className="absolute inset-0 bg-brand-primary blur-xl opacity-50 mix-blend-screen animate-pulse"></div>
+        <div className="p-4 md:p-6 border-b border-brand-primary/20 bg-brand-primary/5 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                 <div className="p-2 bg-brand-primary/20 rounded-xl relative overflow-hidden">
+                    <BrainIcon className="w-6 h-6 md:w-8 md:h-8 text-brand-primary relative z-10" />
+                    <div className="absolute inset-0 bg-brand-primary blur-xl opacity-50 mix-blend-screen animate-pulse"></div>
+                 </div>
+                 <div>
+                    <h3 className="text-white font-bold font-serif text-lg md:text-xl tracking-tight">CoT-Engine</h3>
+                    <p className="text-[10px] text-brand-primary uppercase tracking-[0.3em] font-black opacity-80">Neuro-Symbolic</p>
+                 </div>
              </div>
-             <div>
-                <h3 className="text-white font-bold font-serif text-xl tracking-tight">CoT-Engine</h3>
-                <p className="text-[10px] text-brand-primary uppercase tracking-[0.3em] font-black opacity-80">Neuro-Symbolic Reasoning</p>
-             </div>
+             <button 
+                 onClick={() => setCotMode(false)}
+                 className="lg:hidden p-2 bg-white/5 rounded-full border border-white/10 text-white/50 hover:text-white"
+             >
+                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+             </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6 custom-scrollbar pb-[env(safe-area-inset-bottom)]">
             {cotSteps.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
-                    <SparklesIcon className="w-12 h-12 text-zinc-500 mb-4" />
+                    <SparklesIcon className="w-10 h-10 md:w-12 md:h-12 text-zinc-500 mb-4" />
                     <p className="text-zinc-400 text-sm">Warte auf klinische Daten...</p>
                     <p className="text-[10px] text-zinc-500 mt-2">Die Architektur analysiert im Hintergrund.</p>
                 </div>
@@ -50,7 +58,7 @@ export const CotDrawer: React.FC = () => {
                                 {step.status === 'complete' && <CheckCircleIcon className="w-4 h-4 text-brand-success" />}
                                 {step.status === 'error' && <WarningIcon className="w-4 h-4 text-brand-error" />}
                             </div>
-                            <p className="text-zinc-300 text-sm leading-relaxed mb-3">{step.description}</p>
+                            <p className="text-zinc-300 text-xs md:text-sm leading-relaxed mb-3">{step.description}</p>
                             
                             <div className="flex items-center justify-between mt-4">
                                 <div className="text-[10px] text-zinc-500">Konfidenz: <span className="text-white">{(step.confidence * 100).toFixed(0)}%</span></div>

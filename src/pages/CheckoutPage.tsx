@@ -30,7 +30,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymen
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-8 animate-fadeInUp relative overflow-hidden">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-8 animate-fadeInUp relative overflow-hidden">
       {/* Background Atmosphere */}
       <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[200px] opacity-40"></div>
       <div className="absolute bottom-0 right-1/4 w-[900px] h-[900px] bg-brand-primary/10 rounded-full blur-[250px] opacity-30"></div>

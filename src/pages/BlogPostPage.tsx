@@ -13,7 +13,7 @@ export const BlogPostPage: React.FC = () => {
   }
 
   return (
-    <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
+    <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden">
       
       {/* Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none">

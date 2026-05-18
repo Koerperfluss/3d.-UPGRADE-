@@ -12,7 +12,7 @@ export const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6 animate-fadeInUp relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-6 animate-fadeInUp relative overflow-hidden font-sans">
       {/* Background Atmosphere */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-brand-primary/5 rounded-full blur-[150px] opacity-30 animate-pulse-slow"></div>

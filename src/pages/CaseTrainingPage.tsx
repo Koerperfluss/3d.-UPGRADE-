@@ -657,7 +657,7 @@ export const CaseTrainingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="animate-fadeInUp bg-black min-h-screen pt-40 pb-32 relative overflow-hidden">
+    <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden">
       {/* Toast */}
       {toastMessage && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-fadeInUp">

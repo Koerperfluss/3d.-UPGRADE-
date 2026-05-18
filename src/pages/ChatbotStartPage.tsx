@@ -10,7 +10,7 @@ export const ChatbotStartPage: React.FC<ChatbotStartPageProps> = ({ onStartChat 
   }, [onStartChat]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-transparent p-4 relative overflow-hidden">
       {/* Background Atmosphere */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-[150px] opacity-40"></div>
       <div className="absolute bottom-0 right-1/4 w-[700px] h-[700px] bg-brand-primary/10 rounded-full blur-[200px] opacity-30"></div>

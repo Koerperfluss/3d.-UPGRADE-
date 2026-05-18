@@ -127,7 +127,7 @@ export const EducatorWorkspacePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-background text-white pt-32 pb-20 relative">
+    <div className="min-h-screen bg-transparent text-white pt-32 pb-20 relative">
       {/* Success/Info Toast */}
       <AnimatePresence>
         {toastMessage && (
