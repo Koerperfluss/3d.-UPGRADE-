@@ -27,7 +27,7 @@ export const CreativeLab: React.FC = () => {
     setResultImage(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       const contents: any[] = [{ text: prompt || "Optimiere dieses anatomische Bild." }];
 
       if (sourceFile) {
@@ -74,7 +74,7 @@ export const CreativeLab: React.FC = () => {
         await window.aistudio.openSelectKey();
       }
 
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       let imagePart: any = null;
 
       if (sourceFile) {
@@ -103,11 +103,11 @@ export const CreativeLab: React.FC = () => {
       }
 
       const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-      if (downloadLink && process.env.GEMINI_API_KEY) {
+      if (downloadLink && import.meta.env.VITE_GEMINI_API_KEY) {
         const response = await fetch(downloadLink, {
           method: 'GET',
           headers: {
-            'x-goog-api-key': process.env.GEMINI_API_KEY,
+            'x-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY,
           },
         });
         const blob = await response.blob();

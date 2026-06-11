@@ -5,6 +5,12 @@
   --color-brand-primary: #D4AF37;
   --color-brand-primary-light: #E5BF48;
   --color-brand-primary-dark: #B38F2D;
+  --color-brand-secondary: #0A0A0A;
+  --color-brand-background: #000000;
+  --color-brand-surface: #121212;
+  --color-brand-border: rgba(212, 175, 55, 0.2);
+  --color-brand-text-on-light: #1A1A1A;
+  --color-brand-text-on-light-secondary: #4B5563;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: var(--font-sans);
 }

@@ -39,6 +39,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
     { name: 'Studien-DB', path: '/literatur', icon: Library },
     { name: 'Assessment', path: '/assessment', icon: GraduationCap },
     { name: 'Educator Space', path: '/educator', icon: Users, requireLecturer: true },
+    { name: 'Pitch Dashboard', path: '/pitch-deck', icon: Sparkles, requireLecturer: true },
   ];
 
   const filteredNav = navigation.filter(item => !item.requireLecturer || lecturer);

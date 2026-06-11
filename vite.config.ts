@@ -4,6 +4,14 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({ 
   plugins: [react(), tailwindcss()],
+  build: {
+    target: 'esnext', // Support Top-Level Await and modern features of WebKit 22625
+    minify: 'esbuild',
+    cssMinify: true,
+    modulePreload: {
+      polyfill: false // Modern WebKit handles module preload natively
+    }
+  },
   server: {
     port: 3000,
     host: '0.0.0.0',

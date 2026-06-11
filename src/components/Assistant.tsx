@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { generateClinicalContentStream } from '../services/aiService';
+import { openOptimizedLink } from '../utils/demoFeatures';
 import { Card } from './Card';
 import { Button } from './Button';
 import { CloseIcon, SendIcon, BrainCircuitIcon, SearchIcon, MapPinIcon } from './IconComponents';
@@ -19,6 +21,7 @@ interface AssistantProps {
 }
 
 export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
+  const location = useLocation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,9 +30,9 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      setMessages([{ id: 'init', text: 'Hallo! Ich bin LUMI. Wie kann ich dir heute helfen? Ich kann tiefgründig analysieren (Deep Reasoning) oder schnell Standorte und Infos recherchieren.', sender: 'bot' }]);
+      setMessages([{ id: 'init', text: 'Willkommen! Ich bin LUMI, Ihre akademische KI-Assistenz für Körperfluss EDU. Wie kann ich Sie heute in Ihrem Studium oder Klinikalltag unterstützen?', sender: 'bot' }]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,10 +53,20 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      const modelName = useThinking ? 'gemini-3.1-pro-preview' : 'gemini-2.5-flash';
+      const modelName = useThinking ? 'gemini-3.1-pro-preview' : 'gemini-3.5-flash';
       
+      const contextPrompt = `
+        [SYSTEM CONTEXT: LUMI MENTOR MODE]
+        AKTUELLER STANDORT IN DER APP: ${location.pathname}
+        
+        Falls der Nutzer im Pfad "/moodle-simulation" ist: Verhalte dich wie ein technischer LTI-Experte.
+        Falls im Pfad "/anamnese-trainer": Verhalte dich STRENG SOKRATISCH (Gegenfragen statt Antworten).
+        Falls im Pfad "/labor" oder "/vision": Hilf bei biomechanischen Kennzahlen.
+        Ansonsten: Biete akademische Hilfe für Körperfluss EDU an.
+      `;
+
       const responseStream = await generateClinicalContentStream(
-        [...history, { role: 'user', parts: [{ text: currentInput }] }],
+        [...history, { role: 'user', parts: [{ text: contextPrompt + "\n\nNutzer-Anfrage: " + currentInput }] }],
         modelName,
         {
           thinkingConfig: useThinking ? { thinkingBudget: 16000 } : undefined,
@@ -61,6 +74,7 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
         [],
         useThinking ? [{ googleSearch: {} }] : [{ googleSearch: {} }, { googleMaps: {} }]
       );
+
 
       let fullText = '';
       const botMsgId = (Date.now() + 1).toString();
@@ -94,9 +108,9 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 w-full max-w-lg z-[1000] animate-fadeInUp shadow-glow">
-      <Card className="flex flex-col h-[75vh] max-h-[700px] bg-brand-background !p-0 rounded-3xl border-2 border-brand-primary/30 overflow-hidden">
-        <header className="bg-brand-secondary p-5 flex justify-between items-center text-white">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 sm:w-full sm:max-w-lg z-[1000] animate-fadeInUp shadow-glow">
+      <Card className="flex flex-col h-[80vh] sm:h-[75vh] max-h-[700px] bg-brand-background !p-0 rounded-3xl border-2 border-brand-primary/30 overflow-hidden shadow-2xl">
+        <header className="bg-brand-secondary p-5 flex justify-between items-center text-white shrink-0">
           <div className="flex items-center gap-3">
              <div className={`p-2 rounded-full ${useThinking ? 'bg-brand-primary text-brand-secondary animate-pulse' : 'bg-white/10'}`}>
                 <BrainCircuitIcon className="w-6 h-6" />
@@ -104,19 +118,19 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
              <div>
                 <h3 className="font-bold font-serif text-lg leading-none">LUMI Assistant</h3>
                 <p className="text-[10px] uppercase tracking-widest text-brand-primary mt-1">
-                    {useThinking ? 'Deep Reasoning Active' : 'Search & Maps Mode'}
+                    {useThinking ? 'Deep Reasoning Active' : 'Search & Analysis Mode'}
                 </p>
              </div>
           </div>
           <div className="flex gap-2">
              <button 
                 onClick={() => setUseThinking(!useThinking)}
-                className={`p-2 rounded-xl transition-all ${useThinking ? 'bg-brand-primary text-brand-secondary' : 'bg-white/10 text-white/40'}`}
+                className={`p-2 rounded-xl transition-all ${useThinking ? 'bg-brand-primary text-brand-secondary' : 'bg-white/10 text-white/40 hover:bg-white/20'}`}
                 title="Deep Thinking umschalten"
              >
                 <BrainCircuitIcon className="w-5 h-5" />
              </button>
-             <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
+             <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors bg-white/5" aria-label="Schließen">
                 <CloseIcon className="w-6 h-6" />
              </button>
           </div>
@@ -125,15 +139,19 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
         <div className="flex-grow p-5 overflow-y-auto space-y-6 bg-brand-surface-alt/30">
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${msg.sender === 'user' ? 'bg-brand-primary text-brand-secondary rounded-tr-none' : 'bg-white border border-brand-border rounded-tl-none'}`}>
+              <div className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${msg.sender === 'user' ? 'bg-brand-primary text-brand-secondary rounded-tr-none' : 'bg-white text-slate-900 border border-brand-border rounded-tl-none'}`}>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                 
                 {msg.grounding && msg.grounding.length > 0 && (
                   <div className="mt-4 pt-3 border-t border-brand-border/50 flex flex-wrap gap-2">
                     {msg.grounding.map((g, i) => (
-                      <a key={i} href={g.uri} target="_blank" rel="noopener noreferrer" className="text-[10px] bg-brand-primary/10 px-2 py-1 rounded-md flex items-center gap-1 font-bold text-brand-primary-dark">
+                      <button 
+                        key={i} 
+                        onClick={() => openOptimizedLink(g.uri)} 
+                        className="text-[10px] bg-brand-primary/10 px-2 py-1 rounded-md flex items-center gap-1 font-bold text-brand-primary-dark hover:bg-brand-primary/20 transition-colors"
+                      >
                         <SearchIcon className="w-3 h-3" /> {g.title}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -144,9 +162,13 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
                         <MapPinIcon className="w-3 h-3 text-brand-primary" /> Gefundene Standorte:
                     </p>
                     {msg.mapsGrounding.map((m, i) => (
-                      <a key={i} href={m.maps?.uri} target="_blank" rel="noopener noreferrer" className="block p-2 bg-brand-background rounded-lg border border-brand-border hover:border-brand-primary transition-colors">
+                      <button 
+                        key={i} 
+                        onClick={() => openOptimizedLink(m.maps?.uri || '#')} 
+                        className="w-full text-left p-2 bg-brand-background rounded-lg border border-brand-border hover:border-brand-primary transition-colors block"
+                      >
                          <p className="text-xs font-bold text-brand-secondary">{m.maps?.title || 'Standort'}</p>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -157,7 +179,7 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
             <div className="flex justify-start">
                <div className="bg-white border border-brand-border p-4 rounded-2xl flex items-center gap-3">
                   <div className="animate-spin h-4 w-4 border-2 border-brand-primary border-t-transparent rounded-full"></div>
-                  <span className="text-xs italic text-brand-text-on-light-secondary">LUMI denkt nach...</span>
+                  <span className="text-xs italic text-slate-500">LUMI denkt nach...</span>
                </div>
             </div>
           )}

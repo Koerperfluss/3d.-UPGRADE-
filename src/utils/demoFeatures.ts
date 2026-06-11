@@ -31,6 +31,21 @@ export const SHOWCASE_CASES = {
 /**
  * Simuliert die Anbindung an Schul-Systeme (Moodle/Ilias).
  */
+/**
+ * Optimiertes Öffnen von Links für Safari Technology Preview (WebKit 22625+)
+ * Nutzt die neuen Navigation-Standards für PWA/Standalone Modus.
+ */
+export const openOptimizedLink = (url: string) => {
+  const isSafariTP = navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Preview');
+  
+  if (isSafariTP && (window.navigator as any).standalone) {
+    // Im Standalone-Modus von Safari TP versuchen wir die Hardware-Beschleunigung für den Übergang zu nutzen
+    window.location.assign(url);
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+};
+
 export const simulateLmsExport = (moduleName: string): Promise<boolean> => {
   return new Promise((resolve) => {
     console.log(`Exportiere Daten von ${moduleName} nach Moodle...`);
