@@ -27,13 +27,13 @@ export const HealthAnalysis: React.FC = () => {
             setError('');
 
             try {
-                if (!process.env.GEMINI_API_KEY) {
+                if (!import.meta.env.VITE_GEMINI_API_KEY) {
                     throw new Error("API key is not configured.");
                 }
                 const chatbotVariables: CollectedVariables = JSON.parse(storedData);
                 setInputData(chatbotVariables);
 
-                const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+                const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
                 // --- PARAMETER PIPELINE DEFINITION ---
                 // Hier erfolgt die systematische Verkettung der Informationen nach den 5 Phasen.

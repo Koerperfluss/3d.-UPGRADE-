@@ -12,8 +12,9 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({ className = "h-12 w-12", variant = 'full' }) => {
   // Liste aller jemals genutzten Pfade als Fallback-Kette
   const logoPaths = [
-    '/logo.svg',
+    '/logo2.svg',
     '/logo-main.png',
+    '/logo.svg',
     '/logo.jpeg',
     '/logo.png',
     '/Ko%CC%88rperfluss%20Logo%20-%20Angepasst%20.png'

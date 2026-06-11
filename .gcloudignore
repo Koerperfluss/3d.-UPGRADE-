@@ -1,0 +1,17 @@
+.gcloudignore
+.git
+.gitignore
+node_modules/
+dist/
+.claude/
+*.md
+*.tsx.save
+model_structure.tsx
+*.pdf
+*.zip
+*.png
+*.jpeg
+*.svg
+!public/logo2.svg
+!public/logo-main.png
+!public/koerperfluss_model.glb

@@ -1,9 +1,9 @@
 # Use Node.js for building the app
-FROM node:18-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN rm -f package-lock.json && npm install
 
 COPY . .
 # Need to build the Vite app

@@ -13,7 +13,7 @@ echo "🌟 Starte Deployment für Körperfluss Web-App..."
 
 # 1. Projekt-ID auslesen (aus der .firebaserc oder manuell setzen)
 PROJECT_ID="gen-lang-client-0285074833"
-SERVICE_NAME="koerperfluss-hub"
+SERVICE_NAME="koerperfluss-edu-3d"
 REGION="europe-west3" # Frankfurt
 
 echo "📦 Baue Docker Container..."

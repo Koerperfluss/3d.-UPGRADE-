@@ -88,6 +88,48 @@ export const AboutPage: React.FC = () => {
         </div>
       </Section>
 
+      <Section containerClassName="py-40 relative z-10 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-brand-primary/5 rounded-full blur-[180px] opacity-20 pointer-events-none"></div>
+        <div className="max-w-7xl mx-auto px-8 relative">
+          <div className="text-center mb-32">
+            <h2 className="text-5xl md:text-7xl font-serif font-bold text-white mb-8 tracking-tighter">System <span className="text-gradient-gold italic font-light">Architektur</span></h2>
+            <p className="text-zinc-700 uppercase tracking-[0.5em] text-[10px] font-black">Enterprise-Grade AI Infrastructure</p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+             <div className="glass-dark p-12 rounded-[40px] border border-white/5 hover:border-brand-primary/20 transition-all group">
+                <div className="w-16 h-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                   <span className="text-2xl font-black text-brand-primary">GCP</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Google Cloud Infrastructure</h3>
+                <p className="text-zinc-500 font-light leading-relaxed">
+                   Skalierbare Cloud-Architektur auf Basis von Google Cloud Vertex AI für maximale Ausfallsicherheit und Performance bei der Modellverarbeitung.
+                </p>
+             </div>
+             
+             <div className="glass-dark p-12 rounded-[40px] border border-white/5 hover:border-brand-primary/20 transition-all group">
+                <div className="w-16 h-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                   <span className="text-2xl font-black text-brand-primary">xLSTM</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Deep Reasoning Core</h3>
+                <p className="text-zinc-500 font-light leading-relaxed">
+                   Einsatz modernster xLSTM-Architekturen für tiefgreifendes klinisches Reasoning und die Verarbeitung langer Kontextfenster in Echtzeit.
+                </p>
+             </div>
+
+             <div className="glass-dark p-12 rounded-[40px] border border-white/5 hover:border-brand-primary/20 transition-all group">
+                <div className="w-16 h-16 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                   <span className="text-2xl font-black text-brand-primary">RAG</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Knowledge Retrieval</h3>
+                <p className="text-zinc-500 font-light leading-relaxed">
+                   Advanced Retrieval Augmented Generation für den präzisen Abgleich von Nutzeranfragen mit klinischen Leitlinien und wissenschaftlichen Datenbanken.
+                </p>
+             </div>
+          </div>
+        </div>
+      </Section>
+
       <Section containerClassName="py-40 relative z-10">
         <div className="max-w-5xl mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-24">

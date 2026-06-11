@@ -414,7 +414,7 @@ const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: 
                   const downloadLink = operation.response.generatedVideos[0].video.uri;
                   // In a real app we'd fetch this blob, here we simulate setting the URI
                   // For the mock/prototype, we'd assume the URI is directly playable or fetchable
-                  setVideoUri(`${downloadLink}&key=${process.env.GEMINI_API_KEY}`);
+                  setVideoUri(`${downloadLink}&key=${import.meta.env.VITE_GEMINI_API_KEY}`);
               }
           }
       } catch (e) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useClinicalContext } from '../context/ClinicalContext';
+import { openOptimizedLink } from '../utils/demoFeatures';
 import { BrainIcon, SparklesIcon, CheckCircleIcon, WarningIcon } from './IconComponents';
 
 export const CotDrawer: React.FC = () => {
@@ -68,9 +69,13 @@ export const CotDrawer: React.FC = () => {
                                 <div className="mt-3 pt-3 border-t border-white/10">
                                     <span className="text-[8px] uppercase tracking-widest text-zinc-500 block mb-2">Evidenz-Referenzen</span>
                                     {step.sources.map((src, i) => (
-                                        <a key={i} href={src.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 bg-white/5 hover:bg-white/10 text-[#D4AF37] px-2 py-1 rounded text-[10px] transition-colors border border-brand-primary/30 mr-2 mb-2">
+                                        <button 
+                                            key={i} 
+                                            onClick={() => openOptimizedLink(src.url)} 
+                                            className="inline-flex items-center gap-1 bg-white/5 hover:bg-white/10 text-[#D4AF37] px-2 py-1 rounded text-[10px] transition-colors border border-brand-primary/30 mr-2 mb-2 text-left"
+                                        >
                                             {src.title}
-                                        </a>
+                                        </button>
                                     ))}
                                 </div>
                             )}

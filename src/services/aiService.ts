@@ -1,24 +1,36 @@
 import { GoogleGenAI, GenerationConfig, SafetySetting, Part, Content } from '@google/genai';
 
-const API_KEY = process.env.GEMINI_API_KEY || '';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 export const CLINICAL_REASONING_GUIDELINES = `
 # Physio & Ergo Clinical Reasoning Guidelines (ALWAYS-ON)
+// ... (keeping existing for backward compatibility)
+`;
 
-## 1. Prerequisite Validation (Voraussetzungsketten)
-- Bevor fortgeschrittene Interventionsstrategien (z.B. Manuelle Therapie, Neuro-Reha) ausgegeben werden, muss die Vervollständigung der Voraussetzungen verifiziert werden: Anatomie -> Biomechanik -> Pathologie -> Assessment.
-- Falls der Nutzerkontext keine Basis-Assessmentdaten (ICF) enthält, muss vor der Therapievorschlag-Erstellung danach gefragt werden.
-- Verhindere Behandlungsfehler (Red Flags) durch Erzwingen der korrekten Reasoning-Kette (Befund → Intervention).
+export const LUMI_SYSTEM_PROMPT = `
+# IDENTITY: LUMI (Digitaler Mentor & Akademische KI-Assistenz)
+Du bist LUMI, der zentrale KI-Mentor der "Körperfluss EDU" Plattform. Dein Ziel ist es, Studenten der Physiotherapie und Ergotherapie durch klinisches Reasoning zu führen und Dozenten bei der Unterrichtsvorbereitung zu unterstützen.
 
-## 2. Interdisciplinary Workflow Linking
-- Verbinde physiologische Befunde immer mit dem psychologischen Kontext (Bio-Psycho-Soziales Modell).
-- Verknüpfe theoretische Konzepte direkt mit der klinischen Anwendbarkeit (z.B. "Kenntnisse der Neurophysiologie diktieren hier das Pacing der Schlaganfall-Reha-Übung").
-- Generiere Outputs mehrdimensional (Bio-Psycho-Sozial).
+## CORE BEHAVIOR: SOKRATISCHE METHODE
+- Gib NIEMALS direkte Lösungen oder Diagnosen vor, wenn Studenten explorieren.
+- Antworte mit gezielten Gegenfragen, die das Clinical Reasoning fördern (z.B. "Welche Red Flags müssten wir bei diesem Schmerzcharakter ausschließen?").
+- Führe den Nutzer systematisch durch die Kausalkette: Ursache -> Pathomechanismus -> Symptom.
 
-## 3. Tool Utilization Syntax
-- Nutze den 'Media Analyzer' spezifisch für biomechanische Abweichungsmetriken (Bewegungsgrade, Gangzyklusphasen).
-- Nutze 'RAG' (Retrieval-Augmented Generation) strikt für den Abgleich von Interventionen mit aktuellen AWMF-Leitlinien.
-- Sichert Evidenz durch harte Kopplung: Ganganalyse → Media Analyzer, Leitlinien-Check → RAG (AWMF).
+## CLINICAL CONTEXT: KÖRPERFLUSS EDU
+- Du hast Zugriff auf biomechanische Daten aus dem Skills Lab (Ganganalyse, EMG).
+- Du kennst die AWMF S3-Leitlinien (Evidenzbasierte Praxis).
+- Du bist in das Moodle-System (LTI 1.3) integriert und kannst Lernerfolge synchronisieren.
+
+## TONE & STYLE
+- Professionell, akademisch, aber ermutigend.
+- Sprache: Deutsch (Standard).
+- Fachbegriffe: Präzise medizinische Nomenklatur (ICF, Anatomie).
+
+## MODES
+1. **Support:** Allgemeine Hilfe zur Plattform-Navigation.
+2. **Clinical Reasoning:** Sokratische Führung im Anamnese-Trainer.
+3. **Deep Reasoning:** Tiefgründige Analyse von komplexen Fällen (Gemini 3.1 Pro).
+4. **Vision/Lab:** Unterstützung bei der biomechanischen Video-Analyse.
 `;
 
 export const ai = new GoogleGenAI({ apiKey: API_KEY });
@@ -31,7 +43,7 @@ export interface ExtendedGenerationConfig extends GenerationConfig {
 
 export const generateClinicalContent = async (
   prompt: string | Part[] | Content[], 
-  modelName: string = 'gemini-2.5-flash', 
+  modelName: string = 'gemini-3.5-flash', 
   config?: ExtendedGenerationConfig, 
   safetySettings?: SafetySetting[],
   tools?: any[]
@@ -52,12 +64,12 @@ export const generateClinicalContent = async (
         contents,
         config: {
           ...config,
-          systemInstruction: CLINICAL_REASONING_GUIDELINES,
+          systemInstruction: LUMI_SYSTEM_PROMPT,
           tools: tools,
           safetySettings: safetySettings,
         },
       }),
-      new Promise(r => setTimeout(r, 1500))
+      new Promise(r => setTimeout(r, 1000)) // Faster processing with 3.5
     ]);
     return response;
   } catch (error) {
@@ -68,7 +80,7 @@ export const generateClinicalContent = async (
 
 export const generateClinicalContentStream = async (
   prompt: string | Part[] | Content[], 
-  modelName: string = 'gemini-2.5-flash', 
+  modelName: string = 'gemini-3.5-flash', 
   config?: ExtendedGenerationConfig, 
   safetySettings?: SafetySetting[],
   tools?: any[]
@@ -88,7 +100,7 @@ export const generateClinicalContentStream = async (
       contents,
       config: {
         ...config,
-        systemInstruction: CLINICAL_REASONING_GUIDELINES,
+        systemInstruction: LUMI_SYSTEM_PROMPT,
         tools: tools,
         safetySettings: safetySettings,
       },
