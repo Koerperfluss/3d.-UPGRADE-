@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Brainstorm Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #050505; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gold-text { background: linear-gradient(to right, #C9A84C, #F4D03F); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-12">
+            <h1 class="text-6xl font-black uppercase tracking-tighter">Brainstorm <span class="gold-text">Assistant</span></h1>
+            <p class="text-zinc-500 uppercase tracking-widest text-xs font-bold mt-2">Vibe Sales & Agent Suite</p>
+        </header>
+
+        <div id="chat-container" class="glass rounded-[40px] p-8 min-h-[500px] flex flex-col">
+            <div id="messages" class="flex-grow space-y-6 mb-8 overflow-y-auto">
+                <div class="bg-white/5 p-6 rounded-3xl rounded-tl-none border border-white/10 max-w-[90%]">
+                    <p class="font-bold mb-2">BLUF: Ich bin jetzt dein Tool-Monetarisierungs-Assistent.</p>
+                    <p class="text-sm text-zinc-400">Ich begleite dich durch den Prozess, sammle deine Tools und zeige dir, wo und wie du sie verkaufen kannst.</p>
+                    <p class="text-sm text-zinc-400 mt-4 font-bold text-white">Was ich jetzt brauche: Kopiere einfach ALLES (Tools, Programme, AI-Projekte, Skripte) hier rein. Ein wilder Text-Dump ist perfekt.</p>
+                </div>
+            </div>
+
+            <div class="relative">
+                <textarea id="input" placeholder="Hau deine Tool-Liste hier rein..." class="w-full bg-white/5 border border-white/10 rounded-3xl p-6 pr-16 text-sm focus:outline-none focus:border-[#C9A84C] transition-all resize-none h-32"></textarea>
+                <button onclick="processDump()" class="absolute right-4 bottom-4 bg-white text-black p-4 rounded-2xl hover:bg-[#C9A84C] transition-all font-black uppercase text-[10px]">Analysieren</button>
+            </div>
+        </div>
+
+        <div id="result-table" class="mt-12 hidden transition-all">
+            <h2 class="text-2xl font-bold mb-6 gold-text">Dein strukturiertes Inventar</h2>
+            <div class="glass rounded-[30px] overflow-hidden">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-white/5 uppercase tracking-widest text-zinc-500 font-black">
+                        <tr>
+                            <th class="p-4">Asset</th>
+                            <th class="p-4">Typ</th>
+                            <th class="p-4">Reifegrad</th>
+                            <th class="p-4">Plattform</th>
+                            <th class="p-4">Preis-Indikation</th>
+                            <th class="p-4">Aufwand</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-white/5">
+                        <!-- Data injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function processDump() {
+            const input = document.getElementById('input').value;
+            if(!input) return;
+
+            // Mock processing for demo, in real usage this would call the API
+            const resultTable = document.getElementById('result-table');
+            const tableBody = document.getElementById('table-body');
+
+            // Artificial delay
+            document.getElementById('messages').innerHTML += '<div class="text-zinc-500 italic text-xs animate-pulse">Analysiere Tools...</div>';
+
+            setTimeout(() => {
+                resultTable.classList.remove('hidden');
+                tableBody.innerHTML = `
+                    <tr>
+                        <td class="p-4 font-bold text-[#C9A84C]">Körperfluss PILOT</td>
+                        <td class="p-4 text-zinc-400">Web-App</td>
+                        <td class="p-4">Funktioniert</td>
+                        <td class="p-4">eigene Domain</td>
+                        <td class="p-4">29-99 €/Mo</td>
+                        <td class="p-4"><span class="text-yellow-500 font-bold">MITTEL</span></td>
+                    </tr>
+                    <tr>
+                        <td class="p-4 font-bold text-[#C9A84C]">Bleicher Dispo</td>
+                        <td class="p-4 text-zinc-400">B2B Software</td>
+                        <td class="p-4">Prototyp</td>
+                        <td class="p-4">Direktvertrieb</td>
+                        <td class="p-4">99-499 €/Mo</td>
+                        <td class="p-4"><span class="text-red-500 font-bold">HOCH</span></td>
+                    </tr>
+                `;
+                document.getElementById('messages').innerHTML += '<div class="bg-[#C9A84C]/10 border border-[#C9A84C]/30 p-6 rounded-3xl text-sm">Tabelle wurde erstellt! Das ist dein stärkster Weg.</div>';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

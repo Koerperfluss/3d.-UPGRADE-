@@ -24,9 +24,6 @@ import { EducationPage } from './pages/EducationPage';
 import { CurriculumPage } from './pages/CurriculumPage';
 import { LiteraturPage } from './pages/LiteraturPage';
 import { DozentenLoginPage } from './pages/DozentenLoginPage';
-import { AssetInventoryPage } from "./pages/AssetInventoryPage";
-import { CompliancePanelPage } from "./pages/CompliancePanelPage";
-import { SalesGeneratorPage } from "./pages/SalesGeneratorPage";
 
 import { AssessmentCenterPage } from './pages/AssessmentCenterPage';
 import { AnamneseTrainerPage } from './pages/AnamneseTrainerPage';
@@ -123,10 +120,6 @@ const AppRoutes = () => {
         <Route path="/educator" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><EducatorWorkspacePage /></LmsLayout>} />
         <Route path="/dozenten-dashboard" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><DozentenDashboardPage lecturer={lecturer} /></LmsLayout>} />
         <Route path="/pitch-deck" element={<PitchDashboardPage />} />
-        <Route path="/inventory" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><AssetInventoryPage /></LmsLayout>} />
-        <Route path="/compliance" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><CompliancePanelPage /></LmsLayout>} />
-        <Route path="/sales-gen" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><SalesGeneratorPage /></LmsLayout>} />
-        <Route path="/brainstorm" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><BrainstormPage /></LmsLayout>} />
         <Route path="/moodle-simulation" element={<MoodleSimulationPage />} />
         <Route path="/virtual-classroom" element={<VirtualClassroomPage />} />
         
