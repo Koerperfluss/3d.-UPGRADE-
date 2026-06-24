@@ -52,48 +52,6 @@ export const PitchDashboardPage: React.FC = () => {
           </Card>
         </motion.div>
 
-        {/* ROI Calculator */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="h-full border-brand-primary/30 bg-brand-primary/5">
-            <div className="p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-brand-primary/20 flex items-center justify-center">
-                  <ChartBarIcon className="w-6 h-6 text-brand-primary" />
-                </div>
-                <h3 className="text-xl font-bold">ROI & Effizienz</h3>
-              </div>
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-xs mb-2">
-                    <span className="text-white/60">Zeitersparnis (Korrektur)</span>
-                    <span className="text-brand-primary font-bold">4.5h / Woche</span>
-                  </div>
-                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: '85%' }}
-                      className="h-full bg-brand-primary shadow-[0_0_15px_rgba(212,175,55,0.5)]"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
-                    <div className="text-2xl font-bold text-brand-primary">€ 157</div>
-                    <div className="text-[10px] text-white/40 uppercase font-black">Pro Student / Jahr</div>
-                  </div>
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
-                    <div className="text-2xl font-bold text-brand-primary">{">"} 90%</div>
-                    <div className="text-[10px] text-white/40 uppercase font-black">Amortisation</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
 
         {/* Safety Guard Status */}
         <motion.div

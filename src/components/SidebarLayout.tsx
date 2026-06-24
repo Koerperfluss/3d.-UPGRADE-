@@ -6,6 +6,9 @@ import {
   Stethoscope, 
   ActivitySquare, 
   GraduationCap, 
+  Rocket,
+  ShieldCheck,
+  FileText,
   Users,
   LogOut,
   Sparkles,
@@ -33,13 +36,10 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
 
   const navigation = [
     { name: 'Dashboard (Cockpit)', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Kurs-Theorie', path: '/education', icon: Library },
-    { name: 'Skills Lab', path: '/vision', icon: ActivitySquare },
-    { name: 'Clinical Hub', path: '/anamnese-trainer', icon: Stethoscope },
-    { name: 'Studien-DB', path: '/literatur', icon: Library },
-    { name: 'Assessment', path: '/assessment', icon: GraduationCap },
-    { name: 'Educator Space', path: '/educator', icon: Users, requireLecturer: true },
-    { name: 'Pitch Dashboard', path: '/pitch-deck', icon: Sparkles, requireLecturer: true },
+    { name: 'Asset-Inventar', path: '/inventory', icon: Rocket, requireLecturer: true },
+    { name: 'Wert & Zielmarkt', path: '/compliance', icon: ShieldCheck, requireLecturer: true },
+    { name: 'Sales-Asset Gen', path: '/sales-gen', icon: FileText, requireLecturer: true },
+    { name: 'Akademische Hubs', path: '/education', icon: Library },
   ];
 
   const filteredNav = navigation.filter(item => !item.requireLecturer || lecturer);

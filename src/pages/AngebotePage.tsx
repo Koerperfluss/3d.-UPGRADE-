@@ -205,30 +205,6 @@ export const AngebotePage: React.FC<AngebotePageProps> = ({ user, onOpenHealthCh
 
       {/* 4.4.1 Ökonomie & 4.5 Architektur */}
       <Section containerClassName="py-16 relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 max-w-7xl mx-auto">
-           <div className="glass-dark p-12 rounded-[40px] border border-white/5 border-l-brand-primary/40">
-              <h3 className="text-2xl font-serif text-white mb-6 uppercase">4.4.1 Die Ökonomie pro Studierendem</h3>
-              <p className="text-zinc-400 font-light text-sm leading-relaxed mb-6">
-                Beispielrechnung für eine FH mit 300 aktiven Studierenden im ersten Jahr:
-              </p>
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between border-b border-white/10 pb-2">
-                  <span className="text-zinc-500 text-sm">Basis-Kosten (Campus)</span><span className="text-white">€ 2.250 p.a.</span>
-                </div>
-                <div className="flex justify-between border-b border-white/10 pb-2">
-                  <span className="text-zinc-500 text-sm">Nutzung (€ 12,50 × 12 Mon)</span><span className="text-white">€ 150,00 p.a.</span>
-                </div>
-                <div className="flex justify-between font-bold text-brand-primary pt-2">
-                   <span>Gesamtkosten/Studi</span><span>€ 157,50 / Jahr</span>
-                </div>
-              </div>
-              <div className="bg-brand-primary/10 p-6 rounded-2xl border border-brand-primary/20">
-                <p className="text-brand-primary text-sm font-light">
-                  <strong className="block mb-1">Strategisches Fazit:</strong>
-                  Erwarteter ROI &gt;90%. Die Investition amortisiert sich bereits durch Einsparung weniger physischer Simulationsstunden (&gt; € 60/Std.) sowie die Vermeidung von BFSG-Bußgeldern. Es ist eine sichernde Investition.
-                </p>
-              </div>
-           </div>
 
            <div className="glass-dark p-12 rounded-[40px] border border-white/5 border-r-brand-primary/40">
               <h3 className="text-2xl font-serif text-white mb-6 uppercase">4.5 Architekturmodelle</h3>
