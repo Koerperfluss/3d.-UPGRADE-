@@ -73,7 +73,7 @@ export const PitchDashboardPage: React.FC = () => {
                     <span className="text-brand-primary font-bold">4.5h / Woche</span>
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: '85%' }}
                       className="h-full bg-brand-primary shadow-[0_0_15px_rgba(212,175,55,0.5)]"
