@@ -3,8 +3,10 @@ import React, { useEffect } from 'react';
 import { Section } from '../components/Section';
 import { CheckCircleIcon, ChartBarIcon, TargetIcon, AcademicCapIcon, BrainCircuitIcon } from '../components/IconComponents';
 
+import { User } from '../types';
+
 interface AngebotePageProps {
-  user: any | null;
+  user: User | null;
   onOpenHealthCheck: () => void;
 }
 
