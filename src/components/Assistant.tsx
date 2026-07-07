@@ -80,6 +80,10 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
       const botMsgId = (Date.now() + 1).toString();
       setMessages(prev => [...prev, { id: botMsgId, text: '', sender: 'bot' }]);
 
+      let lastGroundingLength = 0;
+      let currentSearchLinks: any = undefined;
+      let currentMapsLinks: any = undefined;
+
       for await (const chunk of responseStream) {
         const textPart = chunk.text;
         if (textPart) {
@@ -87,14 +91,26 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
         }
         
         const grounding = chunk.candidates?.[0]?.groundingMetadata?.groundingChunks;
-        const searchLinks = grounding?.filter((c: any) => c.web).map((c: any) => ({ title: c.web.title, uri: c.web.uri }));
-        const mapsLinks = grounding?.filter((c: any) => c.maps);
+
+        if (grounding && grounding.length !== lastGroundingLength) {
+          lastGroundingLength = grounding.length;
+
+          const newSearchLinks = grounding.filter((c: any) => c.web).map((c: any) => ({ title: c.web.title, uri: c.web.uri }));
+          if (newSearchLinks.length) {
+            currentSearchLinks = newSearchLinks;
+          }
+
+          const newMapsLinks = grounding.filter((c: any) => c.maps);
+          if (newMapsLinks.length) {
+            currentMapsLinks = newMapsLinks;
+          }
+        }
 
         setMessages(prev => prev.map(msg => msg.id === botMsgId ? { 
           ...msg, 
           text: fullText,
-          grounding: searchLinks?.length ? searchLinks : msg.grounding,
-          mapsGrounding: mapsLinks?.length ? mapsLinks : msg.mapsGrounding
+          grounding: currentSearchLinks ? currentSearchLinks : msg.grounding,
+          mapsGrounding: currentMapsLinks ? currentMapsLinks : msg.mapsGrounding
         } : msg));
       }
     } catch (e) {
