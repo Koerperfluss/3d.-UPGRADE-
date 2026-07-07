@@ -23,7 +23,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymen
 
     // Simulate API call for payment
     setTimeout(() => {
-      console.log('Payment processed for user:', user.email, 'Plan:', plan.name);
       setIsProcessing(false);
       onPaymentSuccess();
     }, 2000);
