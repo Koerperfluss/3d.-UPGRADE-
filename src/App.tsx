@@ -11,37 +11,40 @@ import { SidebarLayout } from './components/SidebarLayout';
 import { Global3DBackground } from './components/Background3D';
 import { CotDrawer } from './components/CotDrawer';
 
-import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { AngebotePage } from './pages/AngebotePage';
-import { BlogPage } from './pages/BlogPage';
-import { ContactPage } from './pages/ContactPage';
-import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { AnalysisPage } from './pages/AnalysisPage';
-import { LaborPage } from './pages/LaborPage';
-import { EducationPage } from './pages/EducationPage';
-import { CurriculumPage } from './pages/CurriculumPage';
-import { LiteraturPage } from './pages/LiteraturPage';
-import { DozentenLoginPage } from './pages/DozentenLoginPage';
 
-import { AssessmentCenterPage } from './pages/AssessmentCenterPage';
-import { AnamneseTrainerPage } from './pages/AnamneseTrainerPage';
-import { VisionAgentPage } from './pages/VisionAgentPage';
-import { CaseTrainingPage } from './pages/CaseTrainingPage';
-import { ExamSimulationPage } from './pages/ExamSimulationPage';
-import { QuizPage } from './pages/QuizPage';
-import { EducatorWorkspacePage } from './pages/EducatorWorkspacePage';
-import { DozentenDashboardPage } from './pages/DozentenDashboardPage';
-import { PitchDashboardPage } from './pages/PitchDashboardPage';
-import { MoodleSimulationPage } from './pages/MoodleSimulationPage';
-import { VirtualClassroomPage } from './pages/VirtualClassroomPage';
 
 import { DemoTourOverlay } from './components/DemoTourOverlay';
 import { AccessibilityOverlay } from './components/AccessibilityOverlay';
 import { IntroSplashScreen } from './components/IntroSplashScreen';
 import { Assistant } from './components/Assistant';
 import { MessageIcon, CloseIcon } from './components/IconComponents';
+
+// Lazy load route components
+const HomePage = React.lazy(() => import('./pages/HomePage').then(module => ({ default: module.HomePage })));
+const AboutPage = React.lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
+const AngebotePage = React.lazy(() => import('./pages/AngebotePage').then(module => ({ default: module.AngebotePage })));
+const BlogPage = React.lazy(() => import('./pages/BlogPage').then(module => ({ default: module.BlogPage })));
+const ContactPage = React.lazy(() => import('./pages/ContactPage').then(module => ({ default: module.ContactPage })));
+const LoginPage = React.lazy(() => import('./pages/LoginPage').then(module => ({ default: module.LoginPage })));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage').then(module => ({ default: module.DashboardPage })));
+const AnalysisPage = React.lazy(() => import('./pages/AnalysisPage').then(module => ({ default: module.AnalysisPage })));
+const LaborPage = React.lazy(() => import('./pages/LaborPage').then(module => ({ default: module.LaborPage })));
+const EducationPage = React.lazy(() => import('./pages/EducationPage').then(module => ({ default: module.EducationPage })));
+const CurriculumPage = React.lazy(() => import('./pages/CurriculumPage').then(module => ({ default: module.CurriculumPage })));
+const LiteraturPage = React.lazy(() => import('./pages/LiteraturPage').then(module => ({ default: module.LiteraturPage })));
+const DozentenLoginPage = React.lazy(() => import('./pages/DozentenLoginPage').then(module => ({ default: module.DozentenLoginPage })));
+const AssessmentCenterPage = React.lazy(() => import('./pages/AssessmentCenterPage').then(module => ({ default: module.AssessmentCenterPage })));
+const AnamneseTrainerPage = React.lazy(() => import('./pages/AnamneseTrainerPage').then(module => ({ default: module.AnamneseTrainerPage })));
+const VisionAgentPage = React.lazy(() => import('./pages/VisionAgentPage').then(module => ({ default: module.VisionAgentPage })));
+const CaseTrainingPage = React.lazy(() => import('./pages/CaseTrainingPage').then(module => ({ default: module.CaseTrainingPage })));
+const ExamSimulationPage = React.lazy(() => import('./pages/ExamSimulationPage').then(module => ({ default: module.ExamSimulationPage })));
+const QuizPage = React.lazy(() => import('./pages/QuizPage').then(module => ({ default: module.QuizPage })));
+const EducatorWorkspacePage = React.lazy(() => import('./pages/EducatorWorkspacePage').then(module => ({ default: module.EducatorWorkspacePage })));
+const DozentenDashboardPage = React.lazy(() => import('./pages/DozentenDashboardPage').then(module => ({ default: module.DozentenDashboardPage })));
+const PitchDashboardPage = React.lazy(() => import('./pages/PitchDashboardPage').then(module => ({ default: module.PitchDashboardPage })));
+const MoodleSimulationPage = React.lazy(() => import('./pages/MoodleSimulationPage').then(module => ({ default: module.MoodleSimulationPage })));
+const VirtualClassroomPage = React.lazy(() => import('./pages/VirtualClassroomPage').then(module => ({ default: module.VirtualClassroomPage })));
+
 
 // --- GLOBAL ERROR BOUNDARY ---
 class GlobalErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
@@ -93,7 +96,12 @@ const AppRoutes = () => {
         {showSplash && <IntroSplashScreen onComplete={handleSplashComplete} />}
       </AnimatePresence>
 
-      <Routes>
+      <React.Suspense fallback={
+        <div className="fixed inset-0 flex items-center justify-center bg-black/90 z-50">
+          <div className="w-16 h-16 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }>
+        <Routes>
         {/* Public Routes with standard Navbar & Footer */}
         <Route path="/" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><HomePage onStartChat={() => setIsChatOpen(true)} /></PublicLayout>} />
         <Route path="/ueber-uns" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><AboutPage /></PublicLayout>} />
@@ -125,6 +133,7 @@ const AppRoutes = () => {
         
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </React.Suspense>
 
       <AccessibilityOverlay />
 
