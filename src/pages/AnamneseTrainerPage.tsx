@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { generateClinicalContent } from '../services/aiService';
 import { safetyGuard } from '../services/safetyGuard';
 import { Section } from '../components/Section';
@@ -318,7 +319,7 @@ export const AnamneseTrainerPage: React.FC = () => {
                   {messages.map((msg, i) => (
                     <motion.div initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-brand-primary text-black rounded-br-sm font-medium' : 'bg-white/5 text-white rounded-bl-sm border border-white/10'} shadow-sm`}>
-                        <p className="text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        <p className="text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.content) }} />
                       </div>
                     </motion.div>
                   ))}
