@@ -266,10 +266,8 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
       setIsGrading(true);
       
       const openQuestions = examToGrade.questions.filter(q => q.type === 'open_text');
-      const gradedQuestions = [...examToGrade.questions];
-
-      // Grade open questions in parallel-ish
-      await Promise.all(openQuestions.map(async (q) => {
+      // Grade open questions in parallel
+      const gradings = await Promise.all(openQuestions.map(async (q) => {
           const userAnswer = userAnswers[q.id] || "Keine Antwort gegeben.";
           const prompt = `
             ROLLE: Korrektor für medizinische Prüfungen.
@@ -291,33 +289,49 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
               const response = await generateClinicalContent(prompt, 'gemini-2.5-flash', { responseMimeType: "application/json" });
               const grading = JSON.parse(response.text || "{}");
               
-              const qIndex = gradedQuestions.findIndex(gq => gq.id === q.id);
-              if (qIndex >= 0) {
-                  gradedQuestions[qIndex] = {
-                      ...gradedQuestions[qIndex],
-                      aiGrading: {
-                          score: grading.score || 0,
-                          feedback: grading.feedback || "Keine Bewertung möglich."
-                      }
-                  };
-              }
+              return {
+                  id: q.id,
+                  aiGrading: {
+                      score: grading.score || 0,
+                      feedback: grading.feedback || "Keine Bewertung möglich."
+                  }
+              };
           } catch (e) {
               console.error("Grading error", e);
+              return {
+                  id: q.id,
+                  aiGrading: {
+                      score: 0,
+                      feedback: "Keine Bewertung möglich."
+                  }
+              };
           }
       }));
 
-      // Grade MC questions locally
-      gradedQuestions.forEach((q, idx) => {
+      const gradingsMap = new Map(gradings.map(g => [g.id, g.aiGrading]));
+
+      // Merge open question gradings and grade MC questions locally in a single pass
+      const gradedQuestions = examToGrade.questions.map((q) => {
           if (q.type === 'multiple_choice') {
-             const isCorrect = userAnswers[q.id] === q.correctAnswer;
-             gradedQuestions[idx] = {
-                 ...gradedQuestions[idx],
-                 aiGrading: {
-                     score: isCorrect ? q.points : 0,
-                     feedback: isCorrect ? "Korrekt!" : `Falsch. Richtige Antwort: ${q.correctAnswer}`
-                 }
-             }
+              const isCorrect = userAnswers[q.id] === q.correctAnswer;
+              return {
+                  ...q,
+                  aiGrading: {
+                      score: isCorrect ? q.points : 0,
+                      feedback: isCorrect ? "Korrekt!" : `Falsch. Richtige Antwort: ${q.correctAnswer}`
+                  }
+              };
           }
+
+          const aiGrading = gradingsMap.get(q.id);
+          if (aiGrading) {
+              return {
+                  ...q,
+                  aiGrading
+              };
+          }
+
+          return q;
       });
 
       setGradedExam({ ...examToGrade, questions: gradedQuestions });
