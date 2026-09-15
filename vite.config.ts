@@ -1,9 +1,14 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({ 
   plugins: [react(), tailwindcss()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+  },
   build: {
     target: 'esnext', // Support Top-Level Await and modern features of WebKit 22625
     minify: 'esbuild',
