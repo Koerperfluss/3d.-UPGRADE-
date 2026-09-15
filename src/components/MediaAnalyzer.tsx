@@ -533,10 +533,6 @@ export const MediaAnalyzer: React.FC = () => {
         </Card>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #FDE68A; border-radius: 10px; }
-      `}} />
     </div>
   );
 };
