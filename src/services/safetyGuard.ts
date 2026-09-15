@@ -77,9 +77,7 @@ Antworte strikt im JSON Format:
       const result = JSON.parse(response.text || "{}");
 
       const grounding = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
-      let sourceUri = undefined;
-      const urls = grounding?.filter((c: any) => c.web)?.map((c: any) => c.web.uri);
-      if(urls && urls.length > 0) sourceUri = urls[0];
+      const sourceUri = grounding?.find((c: any) => c.web?.uri)?.web.uri;
 
       if (updateCotStep && stepId) {
           updateCotStep(stepId, {
