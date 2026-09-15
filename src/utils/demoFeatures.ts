@@ -48,7 +48,6 @@ export const openOptimizedLink = (url: string) => {
 
 export const simulateLmsExport = (moduleName: string): Promise<boolean> => {
   return new Promise((resolve) => {
-    console.log(`Exportiere Daten von ${moduleName} nach Moodle...`);
     // Simulierter Netzwerk-Delay
     setTimeout(() => {
       resolve(true);
