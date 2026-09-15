@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { generateClinicalContent } from '../services/aiService';
@@ -295,7 +296,7 @@ export const VisionAgentPage: React.FC = () => {
                           return <h4 key={i} className="text-white font-sans font-bold text-sm mt-6 mb-2 tracking-wide">{line.replace('### ', '')}</h4>;
                         }
                         const formattedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>');
-                        return <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: formattedLine }} />;
+                        return <p key={i} className="mb-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formattedLine) }} />;
                       })}
                     </div>
                   ) : (
