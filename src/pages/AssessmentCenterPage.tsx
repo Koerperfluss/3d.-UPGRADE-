@@ -13,6 +13,11 @@ export const AssessmentCenterPage: React.FC = () => {
   const [activeView, setActiveView] = useState<'overview' | 'path'>('overview');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   React.useEffect(() => {
     const handleDemo = () => {
       setToastMessage("Demo Mode: Exam Assistant geladen. Hier simulieren Sie Prüfungssituationen.");
@@ -189,8 +194,8 @@ export const AssessmentCenterPage: React.FC = () => {
               {/* Chain of Thought Visualization */}
               <div className="mt-12 p-8 rounded-3xl bg-black/40 border border-white/5 relative">
                 <div className="absolute top-4 right-4 flex gap-2">
-                   <Button onClick={() => alert('PDF wird generiert...')} variant="outline" className="text-[10px] py-1 px-3 border-white/20">Als Arbeitsblatt (PDF)</Button>
-                   <Button onClick={() => alert('An Moodle gesendet!')} variant="primary" className="text-[10px] py-1 px-3 bg-brand-primary text-black">Nach Moodle exportieren</Button>
+                   <Button onClick={() => showToast('PDF wird generiert...')} variant="outline" className="text-[10px] py-1 px-3 border-white/20">Als Arbeitsblatt (PDF)</Button>
+                   <Button onClick={() => showToast('An Moodle gesendet!')} variant="primary" className="text-[10px] py-1 px-3 bg-brand-primary text-black">Nach Moodle exportieren</Button>
                 </div>
                 <h4 className="text-sm font-bold mb-2 flex items-center gap-2 text-brand-primary">
                   <TargetIcon className="w-4 h-4" />
