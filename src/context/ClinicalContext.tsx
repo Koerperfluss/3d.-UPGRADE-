@@ -37,7 +37,7 @@ export const ClinicalProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [cotSteps, setCotSteps] = useState<CotStep[]>([]);
 
   const addCotStep = (step: Omit<CotStep, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = crypto.randomUUID();
     setCotSteps(prev => [...prev, { ...step, id }]);
     return id;
   };
