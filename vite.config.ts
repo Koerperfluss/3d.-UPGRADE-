@@ -11,13 +11,15 @@ export default defineConfig({
     modulePreload: {
       polyfill: false // Modern WebKit handles module preload natively
     },
-    // SPEED: Vendor-Splitting — stabile Cache-Chunks statt einem 2,6-Monolithen
+    // SPEED: Vendor-Splitting — Function-Form, da bare 'firebase' als Entry nicht auflösbar ist
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
-          'vendor-firebase': ['firebase']
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('/three/') || id.includes('@react-three')) return 'vendor-three';
+          if (id.includes('firebase')) return 'vendor-firebase';
+          if (id.includes('/react') || id.includes('scheduler') || id.includes('react-router')) return 'vendor-react';
+          return undefined;
         }
       }
     }

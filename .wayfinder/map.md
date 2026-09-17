@@ -36,4 +36,4 @@ Website koerperfluss.web.app von „System-Fehler + unsichtbarem 3D-Modell" zu e
 | 05 | speed-seo | wayfinder:research | DONE (Explorer-Bericht) |
 | 06 | speed-seo-fixes | wayfinder:task | DONE (SEO+Split+Bilder+Cache) |
 | 07 | antigravity-review-commit | wayfinder:task | DONE (Commit c6a18f3) |
-| 08 | deploy | wayfinder:task | OPEN → Nutzer-Terminal (siehe Ticket-File) |
+| 08 | deploy | wayfinder:task | DONE — LIVE (node_modules repariert, Deploy EXIT:0, verifiziert) |
