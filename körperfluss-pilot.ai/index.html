@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+    <!-- iOS / Safari Web App Capable -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Körperfluss EDU" />
+    <link rel="apple-touch-icon" href="/vite.svg" />
+    <title>Funding Ecosystem Navigator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-primary': '#0D47A1', // Deep Blue
+              'brand-secondary': '#1976D2', // Medium Blue
+              'brand-accent': '#42A5F5', // Light Blue
+              'status-approved': '#4CAF50', // Green
+              'status-pending': '#FFC107', // Amber
+              'status-action': '#F44336', // Red
+              'status-future': '#9E9E9E', // Grey
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+      @keyframes pulse-ring {
+        0% {
+          stroke-width: 3px;
+          stroke-opacity: 1;
+        }
+        50% {
+          stroke-width: 8px;
+          stroke-opacity: 0.3;
+        }
+        100% {
+          stroke-width: 3px;
+          stroke-opacity: 1;
+        }
+      }
+      .node-action-required circle {
+        stroke: #F44336; /* Corresponds to status-action color */
+        stroke-width: 3px;
+        animation: pulse-ring 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+      .pulse-animation {
+        animation: pulse 2.5s infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "d3": "https://aistudiocdn.com/d3@^7.9.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 dark:bg-gray-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

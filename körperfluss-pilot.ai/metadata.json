@@ -1,0 +1,6 @@
+{
+  "name": "Remix: Förder-Cockpit & Jules AI Studio",
+  "description": "Ein interaktives Cockpit zur Visualisierung, Verwaltung und strategischen Planung von Förderanträgen. Enthält den Vertex AI Design & Web-Dev Agenten 'Jules', ein Dokumentenarchiv und Analyse-Tools.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

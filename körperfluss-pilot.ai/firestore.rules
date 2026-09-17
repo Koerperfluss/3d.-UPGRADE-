@@ -1,0 +1,130 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.authorUid;
+    }
+    
+    function uidUnchanged() {
+      return !('authorUid' in request.resource.data) || request.resource.data.authorUid == request.auth.uid;
+    }
+    
+    function uidNotModified() {
+      return !('authorUid' in request.resource.data) || request.resource.data.authorUid == resource.data.authorUid;
+    }
+    
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+        (request.auth.token.email == "koerperfluss@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
+             data.email is string && data.email.size() > 0 && data.email.size() < 150 &&
+             data.role in ['admin', 'user'];
+    }
+
+    function isValidNode(data) {
+      return data.keys().hasAll(['id', 'label', 'type', 'status', 'authorUid']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 100 &&
+             data.label is string && data.label.size() > 0 && data.label.size() < 200 &&
+             data.type is string && data.type.size() > 0 && data.type.size() < 50 &&
+             data.status is string && data.status.size() > 0 && data.status.size() < 50 &&
+             data.authorUid is string && data.authorUid.size() > 0 && data.authorUid.size() < 100;
+    }
+
+    function isValidLink(data) {
+      return data.keys().hasAll(['id', 'source', 'target', 'type', 'authorUid']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 100 &&
+             data.source is string && data.source.size() > 0 && data.source.size() < 100 &&
+             data.target is string && data.target.size() > 0 && data.target.size() < 100 &&
+             data.type is string && data.type.size() > 0 && data.type.size() < 50 &&
+             data.authorUid is string && data.authorUid.size() > 0 && data.authorUid.size() < 100;
+    }
+
+    function isValidDocument(data) {
+      return data.keys().hasAll(['id', 'name', 'url', 'size', 'type', 'authorUid', 'createdAt']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 100 &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             data.url is string && data.url.size() > 0 && data.url.size() < 1000 &&
+             data.size is number && data.size >= 0 &&
+             data.type is string && data.type.size() > 0 && data.type.size() < 100 &&
+             data.authorUid is string && data.authorUid.size() > 0 && data.authorUid.size() < 100 &&
+             data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['id', 'docId', 'text', 'authorUid', 'createdAt']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 100 &&
+             data.docId is string && data.docId.size() > 0 && data.docId.size() < 100 &&
+             data.text is string && data.text.size() > 0 && data.text.size() < 2000 &&
+             data.authorUid is string && data.authorUid.size() > 0 && data.authorUid.size() < 100 &&
+             data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+                    ((isOwner(userId) && request.resource.data.role == 'user') || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && 
+                    ((isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /nodes/{nodeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidNode(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidNode(request.resource.data) && uidNotModified() && (isDocOwner() || isAdmin());
+      allow delete: if isAdmin() || isDocOwner();
+    }
+
+    match /links/{linkId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidLink(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidLink(request.resource.data) && uidNotModified() && (isDocOwner() || isAdmin());
+      allow delete: if isAdmin() || isDocOwner();
+    }
+
+    match /documents/{docId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidDocument(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidDocument(request.resource.data) && uidNotModified() && (isDocOwner() || isAdmin());
+      allow delete: if isAdmin() || isDocOwner();
+    }
+
+    match /comments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidComment(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidComment(request.resource.data) && uidNotModified() && (isDocOwner() || isAdmin());
+      allow delete: if isAdmin() || isDocOwner();
+    }
+  }
+}

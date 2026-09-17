@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Node": {
+      "title": "Funding Node",
+      "description": "Represents a funding program, task, or opportunity",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "type": { "type": "string" },
+        "status": { "type": "string" },
+        "group": { "type": "string" },
+        "details": { "type": "object" },
+        "authorUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "label", "type", "status", "authorUid"]
+    },
+    "Link": {
+      "title": "Funding Link",
+      "description": "Represents a connection between two nodes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "type": { "type": "string" },
+        "authorUid": { "type": "string" }
+      },
+      "required": ["id", "source", "target", "type", "authorUid"]
+    },
+    "Document": {
+      "title": "Document",
+      "description": "Uploaded document associated with a node",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "size": { "type": "number" },
+        "type": { "type": "string" },
+        "nodeId": { "type": "string" },
+        "authorUid": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "url", "size", "type", "authorUid", "createdAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Comment on a document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "docId": { "type": "string" },
+        "text": { "type": "string" },
+        "authorUid": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "docId", "text", "authorUid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "nodes/{nodeId}": {
+      "schema": { "$ref": "#/entities/Node" },
+      "description": "Funding nodes"
+    },
+    "links/{linkId}": {
+      "schema": { "$ref": "#/entities/Link" },
+      "description": "Funding links"
+    },
+    "documents/{docId}": {
+      "schema": { "$ref": "#/entities/Document" },
+      "description": "Uploaded documents"
+    },
+    "comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Comments on documents"
+    }
+  }
+}
