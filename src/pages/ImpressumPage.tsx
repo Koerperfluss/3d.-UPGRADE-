@@ -18,37 +18,27 @@ export const ImpressumPage: React.FC = () => {
       >
         <div className="max-w-4xl mx-auto glass-dark !p-12 md:!p-20 border-white/5 rounded-[60px] shadow-[0_40px_100px_rgba(0,0,0,0.8)] space-y-12">
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Angaben gemäß § 5 TMG</h2>
+            <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Angaben gemäß § 5 ECG / § 25 Mediengesetz</h2>
             <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
-              Sascha Lagler (Beispiel)<br />
-              Körperfluss<br />
-              Musterstraße 1<br />
-              12345 Musterstadt<br />
+              Körperfluss Technologies FlexCo (i.G.)<br />
+              Sebastianistraße 15<br />
+              3382 Loosdorf<br />
               Österreich
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Vertreten durch</h2>
+            <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
+              Sascha Lagler<br />
+              Peter Fischer
             </p>
           </div>
 
           <div className="space-y-6">
             <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Kontakt</h2>
             <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
-              Telefon: +43 123 456789 (Beispiel)<br />
-              E-Mail: info@koerperfluss.at (Beispiel)
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Umsatzsteuer-ID</h2>
-            <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
-              Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br />
-              ATU12345678 (Beispiel)
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold font-serif text-white tracking-tight">Redaktionell verantwortlich</h2>
-            <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
-              Sascha Lagler<br />
-              Anschrift wie oben
+              E-Mail: sascha.lagler@koerperfluss.at
             </p>
           </div>
 

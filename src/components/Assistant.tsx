@@ -59,7 +59,7 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
         [SYSTEM CONTEXT: LUMI MENTOR MODE]
         AKTUELLER STANDORT IN DER APP: ${location.pathname}
         
-        Falls der Nutzer im Pfad "/moodle-simulation" ist: Verhalte dich wie ein technischer LTI-Experte.
+        Falls der Nutzer im Pfad "/moodle-simulation" ist: Verhalte dich wie ein technischer LTI-Experte. Wenn der Nutzer einen LTI Grade Sync oder eine Notenübertragung simulieren möchte, antworte passend und füge EXAKT den Text "[ACTION: LTI_SYNC]" in deine Antwort ein.
         Falls im Pfad "/anamnese-trainer": Verhalte dich STRENG SOKRATISCH (Gegenfragen statt Antworten).
         Falls im Pfad "/labor" oder "/vision": Hilf bei biomechanischen Kennzahlen.
         Ansonsten: Biete akademische Hilfe für Körperfluss EDU an.
@@ -84,6 +84,11 @@ export const Assistant: React.FC<AssistantProps> = ({ isOpen, onClose }) => {
         const textPart = chunk.text;
         if (textPart) {
           fullText += textPart;
+        }
+
+        if (fullText.includes('[ACTION: LTI_SYNC]')) {
+          fullText = fullText.replace('[ACTION: LTI_SYNC]', '');
+          window.dispatchEvent(new Event('simulate-lti-sync'));
         }
         
         const grounding = chunk.candidates?.[0]?.groundingMetadata?.groundingChunks;

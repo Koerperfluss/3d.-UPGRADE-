@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { GoogleGenAI } from '@google/genai';
 import { Card } from './Card';
 import { Button } from './Button';
@@ -99,19 +100,16 @@ export const AIToolsModal: React.FC<AIToolsModalProps> = ({ isOpen, onClose, use
     setGeneratedResult('');
 
     try {
-      if (!import.meta.env.VITE_GEMINI_API_KEY) {
-        throw new Error("API key is not configured.");
-      }
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: userInput,
-        config: {
+      const { generateClinicalContent } = await import('../services/aiService');
+      
+      const response = await generateClinicalContent(
+        userInput,
+        'gemini-2.5-flash',
+        {
           systemInstruction: selectedTool.systemInstruction,
           temperature: 0.5,
         }
-      });
+      );
       
       setGeneratedResult(response.text);
       setStep('result');
@@ -172,7 +170,7 @@ export const AIToolsModal: React.FC<AIToolsModalProps> = ({ isOpen, onClose, use
 
         return (
             <div className="prose prose-lg max-w-none text-brand-text-on-light-secondary leading-relaxed bg-brand-surface p-4 rounded-md border border-brand-border max-h-96 overflow-y-auto">
-                <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }} />
             </div>
         );
     }

@@ -8,11 +8,18 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { SidebarLayout } from './components/SidebarLayout';
-import { Global3DBackground } from './components/Background3D';
 import { CotDrawer } from './components/CotDrawer';
+
+// SPEED: 3D-Hintergrund lazy laden — three.js/drei (~1,5 MB) landen damit in einem
+// eigenen Async-Chunk und blockieren den Initial-Load nicht mehr.
+const Global3DBackground = React.lazy(() =>
+  import('./components/Background3D').then(m => ({ default: m.Global3DBackground }))
+);
 
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
+import { StartupPage } from './pages/StartupPage';
+import { ShowcasePage } from './pages/ShowcasePage';
 import { AngebotePage } from './pages/AngebotePage';
 import { BlogPage } from './pages/BlogPage';
 import { ContactPage } from './pages/ContactPage';
@@ -36,6 +43,9 @@ import { DozentenDashboardPage } from './pages/DozentenDashboardPage';
 import { PitchDashboardPage } from './pages/PitchDashboardPage';
 import { MoodleSimulationPage } from './pages/MoodleSimulationPage';
 import { VirtualClassroomPage } from './pages/VirtualClassroomPage';
+import { ImpressumPage } from './pages/ImpressumPage';
+import { DatenschutzPage } from './pages/DatenschutzPage';
+import { CheckoutPage } from './pages/CheckoutPage';
 
 import { DemoTourOverlay } from './components/DemoTourOverlay';
 import { AccessibilityOverlay } from './components/AccessibilityOverlay';
@@ -97,9 +107,15 @@ const AppRoutes = () => {
         {/* Public Routes with standard Navbar & Footer */}
         <Route path="/" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><HomePage onStartChat={() => setIsChatOpen(true)} /></PublicLayout>} />
         <Route path="/ueber-uns" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><AboutPage /></PublicLayout>} />
+        <Route path="/startup" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><StartupPage /></PublicLayout>} />
+        <Route path="/showcase" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><ShowcasePage /></PublicLayout>} />
         <Route path="/angebote" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><AngebotePage user={user} onOpenHealthCheck={() => setIsChatOpen(true)} /></PublicLayout>} />
+        <Route path="/pricing" element={<Navigate to="/angebote" replace />} />
+        <Route path="/checkout" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><CheckoutPage /></PublicLayout>} />
         <Route path="/blog" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><BlogPage /></PublicLayout>} />
         <Route path="/kontakt" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><ContactPage /></PublicLayout>} />
+        <Route path="/impressum" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><ImpressumPage /></PublicLayout>} />
+        <Route path="/datenschutz" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><DatenschutzPage /></PublicLayout>} />
         <Route path="/login" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><LoginPage onLogin={() => {}} onLecturerLogin={() => {}} /></PublicLayout>} />
         <Route path="/dozenten-login" element={<PublicLayout user={user} lecturer={lecturer} onLogout={signOut} onCartClick={handleCartClick}><DozentenLoginPage onLecturerLogin={() => {}} /></PublicLayout>} />
         
@@ -112,16 +128,25 @@ const AppRoutes = () => {
         <Route path="/curriculum" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><CurriculumPage /></LmsLayout>} />
         <Route path="/literatur" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><LiteraturPage /></LmsLayout>} />
         <Route path="/assessment" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><AssessmentCenterPage /></LmsLayout>} />
+        <Route path="/assessment-center" element={<Navigate to="/assessment" replace />} />
         <Route path="/anamnese-trainer" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><AnamneseTrainerPage /></LmsLayout>} />
+        <Route path="/anamnese" element={<Navigate to="/anamnese-trainer" replace />} />
         <Route path="/vision" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><VisionAgentPage /></LmsLayout>} />
+        <Route path="/vision-agent" element={<Navigate to="/vision" replace />} />
+        <Route path="/visionagent" element={<Navigate to="/vision" replace />} />
         <Route path="/case-training" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><CaseTrainingPage /></LmsLayout>} />
         <Route path="/exam-simulation" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><ExamSimulationPage /></LmsLayout>} />
         <Route path="/quiz" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><QuizPage /></LmsLayout>} />
         <Route path="/educator" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><EducatorWorkspacePage /></LmsLayout>} />
+        <Route path="/educator-workspace" element={<Navigate to="/educator" replace />} />
+        <Route path="/handout-builder" element={<Navigate to="/educator" replace />} />
         <Route path="/dozenten-dashboard" element={<LmsLayout user={user} lecturer={lecturer} onLogout={signOut}><DozentenDashboardPage lecturer={lecturer} /></LmsLayout>} />
         <Route path="/pitch-deck" element={<PitchDashboardPage />} />
+        <Route path="/pitch" element={<Navigate to="/pitch-deck" replace />} />
         <Route path="/moodle-simulation" element={<MoodleSimulationPage />} />
+        <Route path="/moodle" element={<Navigate to="/moodle-simulation" replace />} />
         <Route path="/virtual-classroom" element={<VirtualClassroomPage />} />
+        <Route path="/classroom" element={<Navigate to="/virtual-classroom" replace />} />
         
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -159,7 +184,9 @@ export default function App() {
         <ClinicalProvider>
           <CartProvider>
             <Router>
-              <Global3DBackground />
+              <React.Suspense fallback={null}>
+                <Global3DBackground />
+              </React.Suspense>
               <DemoTourOverlay />
               <AppRoutes />
             </Router>

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /educator
+Disallow: /dozenten-dashboard
+Disallow: /checkout
+
+Sitemap: https://koerperfluss.web.app/sitemap.xml

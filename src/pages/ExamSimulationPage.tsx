@@ -268,6 +268,9 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
       const openQuestions = examToGrade.questions.filter(q => q.type === 'open_text');
       const gradedQuestions = [...examToGrade.questions];
 
+      // Pre-compute map for O(1) access
+      const gradedQuestionsMap = new Map(gradedQuestions.map((gq, idx) => [gq.id, idx]));
+      
       // Grade open questions in parallel-ish
       await Promise.all(openQuestions.map(async (q) => {
           const userAnswer = userAnswers[q.id] || "Keine Antwort gegeben.";
@@ -291,8 +294,8 @@ const ExamSession: React.FC<{ exam: Exam, onExit: () => void }> = ({ exam, onExi
               const response = await generateClinicalContent(prompt, 'gemini-2.5-flash', { responseMimeType: "application/json" });
               const grading = JSON.parse(response.text || "{}");
               
-              const qIndex = gradedQuestions.findIndex(gq => gq.id === q.id);
-              if (qIndex >= 0) {
+              const qIndex = gradedQuestionsMap.get(q.id);
+              if (qIndex !== undefined) {
                   gradedQuestions[qIndex] = {
                       ...gradedQuestions[qIndex],
                       aiGrading: {

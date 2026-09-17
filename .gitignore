@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Monster-Ordner vom Git ausschliessen (eingebettete Repos/Worktrees/Riesig-Assets)
+aktuell-3d-upgrade*/
+*MErch*/
+(0) Körperfluss- Website Local*/
+körperfluss-pilot.ai/
+dist/

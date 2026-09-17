@@ -10,7 +10,21 @@ import {
 
 export const MoodleSimulationPage: React.FC = () => {
   const [isLtiLaunching, setIsLtiLaunching] = useState(false);
+  const [isGradeSyncing, setIsGradeSyncing] = useState(false);
+  const [gradeSynced, setGradeSynced] = useState(false);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const handleLtiSync = () => {
+      setIsGradeSyncing(true);
+      setTimeout(() => {
+        setIsGradeSyncing(false);
+        setGradeSynced(true);
+      }, 3000);
+    };
+    window.addEventListener('simulate-lti-sync', handleLtiSync);
+    return () => window.removeEventListener('simulate-lti-sync', handleLtiSync);
+  }, []);
 
   const handleLaunchLti = () => {
     setIsLtiLaunching(true);
@@ -77,6 +91,26 @@ export const MoodleSimulationPage: React.FC = () => {
             <div className="p-6 border-b border-slate-100 bg-slate-50/50">
               <h2 className="text-lg font-bold">Lernaktivitäten: Woche 12</h2>
             </div>
+            
+            <AnimatePresence>
+              {gradeSynced && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="bg-green-50 border-b border-green-100 p-4 px-6 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">✓</div>
+                    <div>
+                      <h4 className="font-bold text-green-900 text-sm">Noten-Synchronisation erfolgreich</h4>
+                      <p className="text-green-700 text-xs">87% (Bestanden) wurden erfolgreich via LTI in das Moodle-Notenbuch übertragen.</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] uppercase font-bold text-green-600 tracking-widest">AGS 2.0</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="divide-y divide-slate-100">
               
               {/* Standard PDF Link */}
@@ -112,6 +146,9 @@ export const MoodleSimulationPage: React.FC = () => {
                   <p className="text-sm text-slate-500 max-w-lg mt-2 leading-relaxed">
                     Starten Sie die generative Clinical Reasoning Simulation. Ihre Ergebnisse werden automatisch an das Moodle-Notenbuch übertragen.
                   </p>
+                  <div className="mt-2 text-xs font-semibold text-red-600 bg-red-50 p-2 rounded max-w-lg">
+                    This Craniomandibuläre Dysfunktion (CMD) feature is strictly a biomechanical simulation designed for educational purposes only. It is NOT a clinical diagnostic tool and MUST NOT be used to make therapy recommendations or clinical decisions.
+                  </div>
                   <div className="mt-6 flex items-center gap-2 text-brand-primary font-black text-[10px] uppercase tracking-widest group-hover:translate-x-2 transition-transform">
                     Simulation in Moodle starten <ArrowRightIcon className="w-4 h-4" />
                   </div>
@@ -166,6 +203,36 @@ export const MoodleSimulationPage: React.FC = () => {
             <p className="text-white/40 text-xs mt-12 animate-pulse">
               Redirecting to secure training environment...
             </p>
+          </motion.div>
+        )}
+
+        {isGradeSyncing && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[5000] bg-black/80 flex flex-col items-center justify-center p-12 text-center backdrop-blur-sm"
+          >
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="w-24 h-24 border-4 border-green-500/20 border-t-green-500 rounded-full mb-8"
+            />
+            <h2 className="text-3xl font-serif text-white mb-4 italic">LTI 1.3 AGS 2.0 (Grade Sync)</h2>
+            <div className="flex flex-col gap-2 max-w-sm">
+              <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest text-green-400">
+                <span>Connecting to Assignment & Grade Services...</span>
+                <span className="text-white">200 OK</span>
+              </div>
+              <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest text-green-400">
+                <span>Transferring Score (87%)...</span>
+                <span className="text-white">SUCCESS</span>
+              </div>
+              <div className="flex justify-between items-center text-[10px] uppercase font-black tracking-widest text-green-400">
+                <span>Updating Moodle Gradebook...</span>
+                <span className="text-white">DONE</span>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

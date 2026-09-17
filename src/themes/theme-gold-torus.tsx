@@ -80,9 +80,10 @@ const VisionScene = () => {
   useFrame((state) => {
     if (groupRef.current) {
       const t = state.clock.elapsedTime * 2;
-      groupRef.current.children.forEach((child, i) => {
-        child.position.y = Math.sin(t + i * Math.PI * 0.6) * 0.5;
-      });
+      const children = groupRef.current.children;
+      for (let i = 0; i < children.length; i++) {
+        children[i].position.y = Math.sin(t + i * Math.PI * 0.6) * 0.5;
+      }
     }
   });
 
@@ -183,12 +184,14 @@ const MatrixScene = () => {
   useFrame((state) => {
     if(groupRef.current) {
       groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-      groupRef.current.children.forEach((child, i) => {
-        if((child as THREE.Mesh).isMesh) {
+      const children = groupRef.current.children;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as THREE.Mesh;
+        if(child.isMesh) {
            const scale = 1 + Math.sin(state.clock.elapsedTime * 2 + i) * 0.3;
            child.scale.set(scale, scale, scale);
         }
-      });
+      }
     }
   });
 
@@ -212,9 +215,10 @@ const CreativeScene = () => {
   const pointsRef = useRef<THREE.Points>(null);
   const particlesCount = 800;
 
-  const { pos1, pos2 } = useMemo(() => {
+  const { pos1, posDiff } = useMemo(() => {
     const p1 = new Float32Array(particlesCount * 3);
     const p2 = new Float32Array(particlesCount * 3);
+    const diff = new Float32Array(particlesCount * 3);
     for(let i=0; i<particlesCount; i++) {
        // Chaos
        p1[i*3] = (Math.random() - 0.5) * 10;
@@ -227,8 +231,13 @@ const CreativeScene = () => {
        p2[i*3] = r * Math.sin(phi) * Math.cos(theta);
        p2[i*3+1] = r * Math.sin(phi) * Math.sin(theta) * 1.5; // taller
        p2[i*3+2] = r * Math.cos(phi);
+       
+       // Precompute difference
+       diff[i*3] = p2[i*3] - p1[i*3];
+       diff[i*3+1] = p2[i*3+1] - p1[i*3+1];
+       diff[i*3+2] = p2[i*3+2] - p1[i*3+2];
     }
-    return { pos1: p1, pos2: p2 };
+    return { pos1: p1, posDiff: diff };
   }, []);
 
   const currentPos = useMemo(() => new Float32Array(particlesCount * 3), []);
@@ -244,7 +253,7 @@ const CreativeScene = () => {
        // 0 to 1 based on sine wave (3s loop roughly)
        const lerpFactor = (Math.sin(state.clock.elapsedTime * (Math.PI / 3)) + 1) / 2;
        for(let i=0; i<particlesCount * 3; i++) {
-         currentPos[i] = pos1[i] + (pos2[i] - pos1[i]) * lerpFactor;
+         currentPos[i] = pos1[i] + posDiff[i] * lerpFactor;
        }
        pointsRef.current.geometry.attributes.position.needsUpdate = true;
        pointsRef.current.rotation.y = state.clock.elapsedTime * 0.2;
@@ -267,9 +276,10 @@ const ReportScene = () => {
        const t = state.clock.elapsedTime;
        groupRef.current.rotation.y = Math.sin(t * 0.5) * 0.2;
        const factor = (Math.sin(t) + 1) / 2; // 0 to 1
-       groupRef.current.children.forEach((child, i) => {
-          child.rotation.z = -factor * i * 0.3;
-       });
+       const children = groupRef.current.children;
+       for (let i = 0; i < children.length; i++) {
+          children[i].rotation.z = -factor * i * 0.3;
+       }
     }
   });
 

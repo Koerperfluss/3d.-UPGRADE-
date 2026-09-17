@@ -67,6 +67,9 @@ export const VirtualClassroomPage: React.FC = () => {
                      <span>Propriozeption</span>
                      <span className="text-brand-primary">KOMPROMITTIERT</span>
                    </div>
+                   <div className="mt-2 text-[8px] leading-tight text-red-400 bg-red-900/30 p-2 rounded border border-red-500/20">
+                     This Craniomandibuläre Dysfunktion (CMD) feature is strictly a biomechanical simulation designed for educational purposes only. It is NOT a clinical diagnostic tool and MUST NOT be used to make therapy recommendations or clinical decisions.
+                   </div>
                  </div>
                </div>
 

@@ -1,6 +1,6 @@
 import { GoogleGenAI, GenerationConfig, SafetySetting, Part, Content } from '@google/genai';
-
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../lib/firebase';
 
 export const CLINICAL_REASONING_GUIDELINES = `
 # Physio & Ergo Clinical Reasoning Guidelines (ALWAYS-ON)
@@ -33,12 +33,11 @@ Du bist LUMI, der zentrale KI-Mentor der "Körperfluss EDU" Plattform. Dein Ziel
 4. **Vision/Lab:** Unterstützung bei der biomechanischen Video-Analyse.
 `;
 
-export const ai = new GoogleGenAI({ apiKey: API_KEY });
-
 export interface ExtendedGenerationConfig extends GenerationConfig {
   thinkingConfig?: {
     thinkingBudget: number;
   };
+  systemInstruction?: string;
 }
 
 export const generateClinicalContent = async (
@@ -58,20 +57,52 @@ export const generateClinicalContent = async (
   }
   
   try {
+    const generateFn = httpsCallable(functions, 'generateClinicalContentProxy');
+    
     const [response] = await Promise.all([
-      ai.models.generateContent({
-        model: modelName,
+      generateFn({
+        modelName,
         contents,
         config: {
           ...config,
-          systemInstruction: LUMI_SYSTEM_PROMPT,
+          systemInstruction: config?.systemInstruction || LUMI_SYSTEM_PROMPT,
           tools: tools,
           safetySettings: safetySettings,
-        },
+        }
       }),
       new Promise(r => setTimeout(r, 1000)) // Faster processing with 3.5
     ]);
-    return response;
+    
+    const resultData = response.data as any;
+
+    // Interleaved RAG Verification Guardrail
+    const verificationResponse = await generateFn({
+      modelName: 'gemini-3.5-flash',
+      contents: [{
+        role: 'user',
+        parts: [{ 
+          text: `Evaluate the following AI response for medical accuracy and adherence to AWMF S3 guidelines.\n\nGuidelines: ${CLINICAL_REASONING_GUIDELINES}\n\nAI Response to evaluate:\n${resultData.text}\n\nProvide a JSON response with:\n1. "isVerified": boolean (true if it adheres to the guidelines without hallucinations)\n2. "confidenceScore": number (0-100, indicating factuality against guidelines)\n3. "hallucinationCheck": string (brief explanation of any unverified claims or deviations).` 
+        }]
+      }],
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    let guardrailData = { isVerified: false, confidenceScore: 0, hallucinationCheck: "Verification failed." };
+    try {
+      const vText = (verificationResponse.data as any).text;
+      // Strip potential markdown JSON formatting
+      const cleanJson = vText.replace(/```json/g, '').replace(/```/g, '').trim();
+      guardrailData = JSON.parse(cleanJson);
+    } catch (e) {
+      console.warn("Failed to parse RAG guardrail verification JSON", e);
+    }
+
+    return {
+      ...resultData,
+      guardrail: guardrailData
+    };
   } catch (error) {
     console.error("AI Service Error:", error);
     throw error;
@@ -85,28 +116,11 @@ export const generateClinicalContentStream = async (
   safetySettings?: SafetySetting[],
   tools?: any[]
 ) => {
-  let contents: Content[];
-  if (typeof prompt === 'string') {
-    contents = [{ role: 'user', parts: [{ text: prompt }] }];
-  } else if (Array.isArray(prompt) && prompt.length > 0 && 'parts' in prompt[0]) {
-    contents = prompt as Content[];
-  } else {
-    contents = [{ role: 'user', parts: prompt as Part[] }];
-  }
-  
-  try {
-    return await ai.models.generateContentStream({
-      model: modelName,
-      contents,
-      config: {
-        ...config,
-        systemInstruction: LUMI_SYSTEM_PROMPT,
-        tools: tools,
-        safetySettings: safetySettings,
-      },
-    });
-  } catch (error) {
-    console.error("AI Stream Error:", error);
-    throw error;
-  }
+  const response = await generateClinicalContent(prompt, modelName, config, safetySettings, tools);
+  return {
+    async *[Symbol.asyncIterator]() {
+      yield response;
+    }
+  };
 };
+export const ai = new GoogleGenAI({ apiKey: 'API_KEY_MOVED_TO_BACKEND' });

@@ -309,16 +309,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ user, lecturer }) 
                 <div className="h-[1px] w-24 bg-brand-primary/40"></div>
               </div>
             </div>
-            <h1 className="text-7xl md:text-9xl font-bold font-serif text-white tracking-tighter leading-[0.8] mb-12 uppercase">
-              Willkommen, <br/><span className="text-gradient-gold italic font-light lowercase">{name.split(' ')[0]}</span>
-            </h1>
-            <p className="text-zinc-500 max-w-4xl leading-relaxed text-3xl font-light mx-auto md:mx-0 tracking-wide">
-              {role === 'dozent' 
-                ? 'Verwalten Sie Ihre akademischen Ressourcen und analysieren Sie den Fortschritt Ihrer Studierenden mit adaptiver Intelligenz.' 
-                : role === 'student'
-                ? 'Optimieren Sie Ihren Lernprozess. Nutzen Sie unsere Reasoning-Tools für eine evidenzbasierte Ausbildung.'
-                : 'Ihre personalisierte Reise zum Körperfluss. Entdecken Sie Ihre Analysen und optimierten Therapiepläne.'}
-            </p>
+            <div className="inline-block p-8 md:p-12 rounded-[36px] bg-black/50 backdrop-blur-2xl border border-white/10 shadow-2xl max-w-4xl">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold font-serif text-white tracking-tight leading-tight mb-6">
+                <span className="uppercase tracking-[0.2em] text-brand-primary text-2xl sm:text-3xl md:text-4xl block mb-2 font-sans font-black">Willkommen</span>
+                <span className="text-gradient-gold italic font-light capitalize">{name}</span>
+              </h1>
+              <p className="text-zinc-300 leading-relaxed text-lg sm:text-xl md:text-2xl font-light tracking-wide">
+                {role === 'dozent' 
+                  ? 'Verwalten Sie Ihre akademischen Ressourcen und analysieren Sie den Fortschritt Ihrer Studierenden mit adaptiver Intelligenz.' 
+                  : role === 'student'
+                  ? 'Optimieren Sie Ihren Lernprozess. Nutzen Sie unsere Reasoning-Tools für eine evidenzbasierte Ausbildung.'
+                  : 'Ihre personalisierte Reise zum Körperfluss. Entdecken Sie Ihre Analysen und optimierten Therapiepläne.'}
+              </p>
+            </div>
         </div>
 
         {role === 'dozent' ? renderDozentView() : role === 'student' ? renderStudentView() : renderPatientView()}

@@ -6,24 +6,35 @@ export const IntroSplashScreen: React.FC<{ onComplete: () => void }> = ({ onComp
   const [status, setStatus] = useState('loading');
 
   useEffect(() => {
-    // 1. Initial Logo Fade In (0 - 1s)
-    // 2. Logo Pulse and Expansion (1 - 2.5s)
-    // 3. Name Reveal (2.5 - 3.5s)
-    // 4. Fade out entire screen (3.5 - 4.5s)
-    
+    // If already seen in this session, fast-track
+    const hasSeen = sessionStorage.getItem('kf_splash_seen');
+    if (hasSeen === 'true') {
+      const fastTimer = setTimeout(onComplete, 800);
+      return () => clearTimeout(fastTimer);
+    }
+
+    sessionStorage.setItem('kf_splash_seen', 'true');
     const timer = setTimeout(() => {
       onComplete();
-    }, 4500);
+    }, 2200);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
     <motion.div 
-      exit={{ opacity: 0, scale: 1.1 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
-      className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center overflow-hidden"
+      exit={{ opacity: 0, scale: 1.05 }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      onClick={onComplete}
+      className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center overflow-hidden cursor-pointer select-none"
     >
+      {/* Skip Button */}
+      <button 
+        onClick={(e) => { e.stopPropagation(); onComplete(); }}
+        className="absolute top-6 right-6 z-50 text-[10px] uppercase font-black tracking-[0.3em] text-zinc-400 hover:text-brand-primary border border-white/10 hover:border-brand-primary/40 bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full transition-all backdrop-blur-md"
+      >
+        Überspringen ➔
+      </button>
       {/* Cinematic Particles Background */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary/10 via-transparent to-transparent" />

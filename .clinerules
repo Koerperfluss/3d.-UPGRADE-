@@ -1,0 +1,17 @@
+# Körperfluss 3D – Cline Workspace Rules
+
+## Projekt-Kontext
+- Framework: React 18 + TypeScript 5 + Vite 5 + Tailwind CSS 4
+- Live URL: https://gen-lang-client-0285074833.web.app
+- GCP Project: gen-lang-client-0285074833
+
+## Kritische Regeln
+1. NIEMALS die 3D-Z-Index Struktur zerstören
+2. Mobile-First: Safe-Areas für iPhone
+3. TypeScript: Keine any-Casts außer für Three.js/GLTFResult
+
+## Deployment Command
+npm run build && npx firebase deploy --only hosting --project=gen-lang-client-0285074833
+
+## Jules Sessions
+- 3 parallele Sessions aktiv (Bundle-Splitting, Genkit, StartupPage)

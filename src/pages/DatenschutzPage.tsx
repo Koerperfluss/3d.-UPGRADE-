@@ -42,9 +42,24 @@ export const DatenschutzPage: React.FC = () => {
             <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
           </div>
           
-           <div className="p-10 glass border border-brand-primary/20 rounded-[40px] shadow-glow">
-            <p className="text-zinc-400 font-light italic tracking-wide">
-              Dies ist ein Platzhaltertext. Eine vollständige, rechtssichere Datenschutzerklärung sollte von einem juristischen Experten oder mithilfe eines Datenschutz-Generators erstellt werden.
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold font-serif text-white tracking-tight">4. Google Cloud Services & Authentifizierung</h2>
+            <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
+              Unsere Anwendung wird auf <strong>Google Cloud Run</strong> und <strong>Firebase Hosting</strong> gehostet. Zum Zwecke der Benutzerauthentifizierung und Sitzungsverwaltung nutzen wir <strong>Firebase Authentication</strong>. Hierbei werden E-Mail-Adressen und Zugangsdaten sicher in der Google Cloud (Region: europe-west3, Frankfurt) verarbeitet. Es werden keine gesundheitsbezogenen Daten an Dritte übermittelt.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold font-serif text-white tracking-tight">5. Lokaler Speicher (Session Storage)</h2>
+            <p className="text-zinc-400 font-light leading-relaxed tracking-wide text-lg">
+              Die Analyseergebnisse aus den 3D-Modulen und die KI-Dialogverläufe werden ausschließlich im lokalen Speicher Ihres Browsers (Session Storage / Local Storage) vorgehalten und verarbeitet, um eine maximale Datensparsamkeit gemäß DSGVO zu gewährleisten.
+            </p>
+          </div>
+
+          <div className="p-10 glass border border-brand-primary/20 rounded-[40px] shadow-glow bg-brand-primary/5">
+            <h3 className="text-xl font-bold text-brand-primary uppercase tracking-[0.2em] mb-4">Strikter MDR-Freiheits-Disclaimer (Education-Only)</h3>
+            <p className="text-zinc-300 font-light italic leading-relaxed text-lg">
+              Körperfluss dient ausschließlich Lehr- und Demonstrationszwecken im Rahmen der Ausbildung und therapeutischen Fortbildung (Education-Only). Die Anwendung führt keine Diagnostik oder Therapieempfehlungen am Patienten durch. Es werden keine Heilaussagen getroffen. Somit fällt Körperfluss unter keinen Umständen in den Anwendungsbereich der Medizinprodukteverordnung (MDR). <strong>Education-Only. Not a medical device. No diagnostic or therapeutic claims.</strong>
             </p>
           </div>
         </div>

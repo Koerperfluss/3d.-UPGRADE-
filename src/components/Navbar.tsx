@@ -66,6 +66,12 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                 <NavLink to="/ueber-uns" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
                     Über Uns
                 </NavLink>
+                <NavLink to="/startup" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
+                    Startup
+                </NavLink>
+                <NavLink to="/showcase" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
+                    Showcase
+                </NavLink>
                 <NavLink to="/angebote" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
                     Angebote
                 </NavLink>
@@ -190,6 +196,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                <>
                 <NavLink to="/" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Start</NavLink>
                 <NavLink to="/ueber-uns" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Über Uns</NavLink>
+                <NavLink to="/startup" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Startup</NavLink>
+                <NavLink to="/showcase" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Showcase</NavLink>
                 <NavLink to="/angebote" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Angebote</NavLink>
                 <NavLink to="/blog" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Blog</NavLink>
                 <NavLink to="/kontakt" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Kontakt</NavLink>

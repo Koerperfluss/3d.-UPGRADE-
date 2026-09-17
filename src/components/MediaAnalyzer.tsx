@@ -1,5 +1,5 @@
-
 import React, { useState, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { generateClinicalContent } from '../services/aiService';
 import { Card } from './Card';
 import { Button } from './Button';
@@ -533,10 +533,10 @@ export const MediaAnalyzer: React.FC = () => {
         </Card>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #FDE68A; border-radius: 10px; }
-      `}} />
+      `)}} />
     </div>
   );
 };

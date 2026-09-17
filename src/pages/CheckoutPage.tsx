@@ -7,14 +7,36 @@ import { CheckCircleIcon, CreditCardIcon } from '../components/IconComponents';
 import { Logo } from '../components/Logo';
 
 interface CheckoutPageProps {
-  user: User;
-  plan: MembershipTier;
-  onPaymentSuccess: () => void;
+  user?: User | null;
+  plan?: MembershipTier | null;
+  onPaymentSuccess?: () => void;
 }
 
-export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymentSuccess }) => {
+const defaultPlan: MembershipTier = {
+  id: 'pro-edu',
+  name: 'Körperfluss Pro EdTech Access',
+  price: '49,00 €',
+  priceDetails: ' / Monat',
+  description: 'Zugang zu allen 18 KI-Tools und Moodle LTI 1.3',
+  features: [
+    'Voller Zugriff auf alle 18 KI-Tools',
+    'LUMI Anamnese-Trainer unbegrenzt',
+    '246 Evidenzquellen & Leitlinien',
+    'Moodle LTI 1.3 Hochschul-Sync'
+  ],
+  isPopular: true,
+  ctaText: 'Jetzt Starten',
+  ctaVariant: 'primary'
+};
+
+export const CheckoutPage: React.FC<CheckoutPageProps> = ({ 
+  user = { id: 'guest', name: 'Gast-Nutzer', email: 'demo@koerperfluss.at', role: 'student' } as any, 
+  plan = defaultPlan, 
+  onPaymentSuccess = () => window.location.href = '/dashboard' 
+}) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
+  const activePlan = plan || defaultPlan;
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +45,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymen
 
     // Simulate API call for payment
     setTimeout(() => {
-      console.log('Payment processed for user:', user.email, 'Plan:', plan.name);
+      console.log('Payment processed for user:', user?.email, 'Plan:', activePlan.name);
       setIsProcessing(false);
       onPaymentSuccess();
     }, 2000);
@@ -47,19 +69,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymen
                 <div className="space-y-6 text-zinc-500 font-light tracking-wide">
                     <div className="flex justify-between items-center">
                         <span className="text-sm uppercase tracking-widest">Plan</span>
-                        <span className="font-bold text-white text-lg">{plan.name}</span>
+                        <span className="font-bold text-white text-lg">{activePlan.name}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-sm uppercase tracking-widest">Preis</span>
-                        <span className="font-bold text-white text-lg">{plan.price}{plan.priceDetails}</span>
+                        <span className="font-bold text-white text-lg">{activePlan.price}{activePlan.priceDetails}</span>
                     </div>
                      <div className="flex justify-between pt-8 border-t border-white/5 mt-8 items-center">
                         <span className="font-black text-brand-primary uppercase tracking-[0.3em] text-xs">Gesamt</span>
-                        <span className="font-bold text-brand-primary text-3xl shadow-glow">{plan.price}</span>
+                        <span className="font-bold text-brand-primary text-3xl shadow-glow">{activePlan.price}</span>
                     </div>
                 </div>
                 <ul className="mt-12 space-y-4">
-                    {plan.features.slice(0, 4).map((feature, index) => (
+                    {activePlan.features.slice(0, 4).map((feature, index) => (
                         <li key={index} className="flex items-start group">
                             <CheckCircleIcon className="w-5 h-5 text-brand-primary mr-4 mt-0.5 flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity" />
                             <span className="text-zinc-400 text-sm font-light leading-relaxed">{feature}</span>
@@ -81,7 +103,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ user, plan, onPaymen
           <form onSubmit={handlePayment} className="space-y-8">
             <div className="space-y-2">
               <label htmlFor="cardName" className="block text-[10px] font-black text-brand-primary uppercase tracking-[0.3em] ml-2">Name auf der Karte</label>
-              <input id="cardName" type="text" required defaultValue={user.name} className="w-full px-6 py-4 bg-white/5 border border-white/5 rounded-2xl text-white focus:ring-1 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all duration-500 font-light placeholder:text-zinc-700" />
+              <input id="cardName" type="text" required defaultValue={user?.name || ''} className="w-full px-6 py-4 bg-white/5 border border-white/5 rounded-2xl text-white focus:ring-1 focus:ring-brand-primary focus:border-brand-primary outline-none transition-all duration-500 font-light placeholder:text-zinc-700" />
             </div>
              <div className="space-y-2">
               <label htmlFor="cardNumber" className="block text-[10px] font-black text-brand-primary uppercase tracking-[0.3em] ml-2">Kartennummer</label>

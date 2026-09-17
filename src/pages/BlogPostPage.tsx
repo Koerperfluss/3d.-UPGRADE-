@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Section } from '../components/Section';
 import { blogPosts } from '../data/blogPosts';
@@ -37,7 +38,7 @@ export const BlogPostPage: React.FC = () => {
               prose-strong:text-white prose-strong:font-bold
               prose-a:text-brand-primary prose-a:no-underline hover:prose-a:text-white transition-colors
               prose-img:rounded-[40px] prose-img:shadow-2xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
         </div>
 

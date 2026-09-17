@@ -30,6 +30,7 @@ export const Footer: React.FC = () => {
             <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-white mb-12 opacity-80">Navigation</h3>
             <ul className="space-y-6 text-lg mb-12">
               <li><Link to="/ueber-uns" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Über Uns</Link></li>
+              <li><Link to="/showcase" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Showcase</Link></li>
               <li><Link to="/angebote" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Angebote</Link></li>
               <li><Link to="/blog" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Blog</Link></li>
               <li><Link to="/kontakt" className="hover:text-brand-primary transition-colors duration-700 font-light tracking-wide">Kontakt</Link></li>

@@ -97,7 +97,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
         </button>
 
         <div className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-xl mb-2 border border-white/5">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-primary to-yellow-600 flex items-center justify-center font-bold text-black text-sm shrink-0">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-white to-zinc-400 flex items-center justify-center font-bold text-black text-sm shrink-0">
             {user?.name?.substring(0, 2).toUpperCase() || lecturer?.name?.substring(0, 2).toUpperCase() || 'KF'}
           </div>
           <div className="overflow-hidden">
