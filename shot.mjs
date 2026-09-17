@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core';
+import fs from 'fs';
+fs.mkdirSync('/work/ui-test-evidence', { recursive: true });
+const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', args: ['--no-sandbox', '--disable-dev-shm-usage'] });
+const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+await page.goto('https://koerperfluss.web.app', { waitUntil: 'load', timeout: 60000 });
+await page.waitForTimeout(15000);
+await page.screenshot({ path: '/work/ui-test-evidence/99-verify-3d.png' });
+await browser.close();
+console.log('SHOT_DONE');

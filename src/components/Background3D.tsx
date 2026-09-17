@@ -23,7 +23,7 @@ function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ 
     // Authentic Körperfluss 3D model with ergonomic right-offset
     if (ref.current) {
       const isWide = typeof window !== 'undefined' && window.innerWidth >= 1280;
-      const targetBaseX = isWide ? 1.3 : 0.6;
+      const targetBaseX = isWide ? 2.4 : 1.0;
       ref.current.position.x += (targetBaseX - ref.current.position.x) * 0.05;
       ref.current.rotation.y += (targetX - ref.current.rotation.y + scrollParallax * 0.5) * 0.05;
       ref.current.rotation.x += (-targetY - ref.current.rotation.x) * 0.05;
@@ -51,7 +51,7 @@ function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ 
       geom.boundingBox.getSize(size);
       geom.boundingBox.getCenter(center);
       const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const TARGET = 4.4; // Welteinheiten ≈ 75 % der sichtbaren Kamera-Höhe (fov 45, z=7)
+      const TARGET = 4.0; // Welteinheiten ≈ 75 % der sichtbaren Kamera-Höhe (fov 45, z=7)
       geom.translate(-center.x, -center.y, -center.z);
       const s = TARGET / maxDim;
       geom.scale(s, s, s);
@@ -67,23 +67,13 @@ function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ 
     <group ref={ref} position={[0, -0.65, 0]}>
       <mesh
         geometry={modelGeometry}
-        rotation={[0, Math.PI, 0]}
+        rotation={[0, 0, Math.PI / 2]}
         castShadow
         receiveShadow
       >
-        {/* FIX D3: meshPhysicalMaterial statt MeshTransmissionMaterial —
-            gleiche Glas-Gold-Optik, aber ohne teure Extra-Render-Pässe (Speed) */}
-        <meshPhysicalMaterial
-          transmission={0.92}
-          thickness={1.2}
-          roughness={0.12}
-          ior={1.4}
-          metalness={0.1}
-          color="#f5ead0"
-          emissive={GOLD_DARK}
-          emissiveIntensity={0.18}
-          transparent
-        />
+        {/* FIX D3+UX: sichtbares Gold-Glas statt unsichtbarem Klarglas —
+            transmission 0.92 auf schwarzem BG = optisch nicht existent */}
+        <meshStandardMaterial color="#d4af37" emissive="#8a6d1f" emissiveIntensity={0.55} metalness={0.85} roughness={0.3} />
       </mesh>
     </group>
   );

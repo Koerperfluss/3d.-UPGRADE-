@@ -1,0 +1,62 @@
+{
+  "console": [
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] [.WebGL-0x1c0019dc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[desktop-console-warning] [.WebGL-0x1c0019dc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[desktop-console-warning] [.WebGL-0x1c0019dc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+    "[desktop-console-warning] [.WebGL-0x1c0019dc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[desktop-console-warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ],
+  "pages": [
+    {
+      "p": "home",
+      "title": "Körperfluss | Adaptive Intelligence für Physiotherapie & Gesundheitsausbildung",
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN PLATTFORM ENTDECKEN ▶ LIVE TOUR CAMPUS DER STUDENTEN-PFAD FAKULTÄT DIE DOZENTEN-AKADEMIE EVIDENZ · DIDAKTIK · KI Die Next-Gen edtech suite Interaktive 3D-Anatomie, sokratische Fallsimulationen und rechtssic"
+    },
+    {
+      "p": "/",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN PLATTFORM ENTDECKEN ▶ LIVE TOUR CAMPUS DER STUDENTEN-PFA"
+    },
+    {
+      "p": "/ueber-uns",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN UNSERE MISSION Über Körperfluss Menschen befähigen, ihre"
+    },
+    {
+      "p": "/startup",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN GOOGLE FOR STARTUPS CLOUD PROGRAM · APPLICATION Körperfl"
+    },
+    {
+      "p": "/showcase",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN DIGIARK · F&E DEMONSTRATION HUB Die KI-Lernplattform für"
+    },
+    {
+      "p": "/angebote",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN MARKETING & VERTRIEB DER verkaufsprozess Strategische Po"
+    },
+    {
+      "p": "/blog",
+      "ok": true,
+      "text": "KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN Wissen & Ratgeber Wertvolle Tipps, Artikel und tiefgehen"
+    }
+  ],
+  "flows": [
+    "LOGIN-WRONG-CREDS: Reaktion sichtbar: PRÜFEN — Textprobe: KÖRPERFLUSS EVIDENZ & INTELLIGENZ START ÜBER UNS STARTUP SHOWCASE ANGEBOTE BLOG KONTAKT LOGIN Körperfluss ADAPTIVE INTEL",
+    "MOBILE-NAV: Hamburger gefunden + geklickt"
+  ],
+  "canvas3D": {
+    "present": true,
+    "webgl": true,
+    "w": 1440
+  }
+}

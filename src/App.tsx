@@ -200,7 +200,7 @@ export default function App() {
 // Utility components for Layouts
 const PublicLayout: React.FC<{ children: React.ReactNode, user: any, lecturer: any, onLogout: () => void, onCartClick: () => void }> = ({ children, user, lecturer, onLogout, onCartClick }) => (
   <div style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <div className="fixed inset-0 pointer-events-none z-0 bg-[#020202] bg-opacity-20" />
+    <div className="fixed inset-0 pointer-events-none z-0 bg-[#020202]/20" />
     <div style={{ position: 'relative', zIndex: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Navbar user={user} lecturer={lecturer} onLogout={onLogout} onCartClick={onCartClick} />
       <main style={{ flex: 1 }}>{children}</main>
