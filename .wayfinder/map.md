@@ -29,11 +29,11 @@ Website koerperfluss.web.app von „System-Fehler + unsichtbarem 3D-Modell" zu e
 | NN | Name | Label | Status |
 |----|------|-------|--------|
 | 00 | wayfinder-map | wayfinder:research | DONE |
-| 01 | bugfix-3d-crash | wayfinder:task | — |
-| 02 | ui-ux-audit-iris | wayfinder:research | — |
-| 03 | ui-ux-fixes | wayfinder:task | — |
-| 04 | 3d-glb-optimierung | wayfinder:task | — |
-| 05 | speed-seo | wayfinder:research | — |
-| 06 | speed-seo-fixes | wayfinder:task | — |
-| 07 | antigravity-review-commit | wayfinder:task | — |
-| 08 | deploy | wayfinder:task | — |
+| 01 | bugfix-3d-crash | wayfinder:task | DONE (c6a18f3) |
+| 02 | ui-ux-audit-iris | wayfinder:research | DONE (Iris shell-blocked, statisches Audit) |
+| 03 | ui-ux-fixes | wayfinder:task | DONE (Logos restauriert, ~8,7 MB) |
+| 04 | 3d-glb-optimierung | wayfinder:task | DONE (Material-Swap, Draco bewusst nein) |
+| 05 | speed-seo | wayfinder:research | DONE (Explorer-Bericht) |
+| 06 | speed-seo-fixes | wayfinder:task | DONE (SEO+Split+Bilder+Cache) |
+| 07 | antigravity-review-commit | wayfinder:task | DONE (Commit c6a18f3) |
+| 08 | deploy | wayfinder:task | OPEN → Nutzer-Terminal (siehe Ticket-File) |
