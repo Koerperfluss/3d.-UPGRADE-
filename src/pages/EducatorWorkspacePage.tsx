@@ -11,6 +11,7 @@ import {
 } from '../components/IconComponents';
 import { CreativeLab } from '../components/CreativeLab';
 import { generateClinicalContent } from '../services/aiService';
+import DOMPurify from 'dompurify';
 
 type TabType = 'cases' | 'analytics' | 'config' | 'lab' | 'database';
 
@@ -313,7 +314,7 @@ export const EducatorWorkspacePage: React.FC = () => {
                       <div className="prose prose-invert prose-sm max-w-none text-zinc-300">
                           {rubricResult.split('\n').map((line, i) => {
                              if (line.startsWith('###')) return <h4 key={i} className="text-white text-lg font-bold mt-4 mb-2">{line.replace('### ', '')}</h4>;
-                             return <p key={i} dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>') }} />;
+                             return <p key={i} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>')) }} />;
                           })}
                       </div>
                   </Card>
