@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!userSnap.exists()) {
         await setDoc(userRef, {
           email: user.email,
-          role: role,
+          role: role === 'lecturer' ? 'student' : role, // Default onboarding role is student; lecturer role requires backend/admin provisioning
           name: user.displayName,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
