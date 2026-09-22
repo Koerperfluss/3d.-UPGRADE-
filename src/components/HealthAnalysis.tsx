@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { generateClinicalContent } from '../services/aiService';
 import { Card } from './Card';
 import { Button } from './Button'; // Import button
 import { CollectedVariables } from './Chatbot';
@@ -27,13 +26,8 @@ export const HealthAnalysis: React.FC = () => {
             setError('');
 
             try {
-                if (!import.meta.env.VITE_GEMINI_API_KEY) {
-                    throw new Error("API key is not configured.");
-                }
                 const chatbotVariables: CollectedVariables = JSON.parse(storedData);
                 setInputData(chatbotVariables);
-
-                const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
                 // --- PARAMETER PIPELINE DEFINITION ---
                 // Hier erfolgt die systematische Verkettung der Informationen nach den 5 Phasen.
@@ -83,16 +77,12 @@ QUALITÄTSSICHERUNG:
             Wende die Chain-of-Verification an. Erstelle den Plan strikt nach Workflow.
         `;
 
-                const response = await ai.models.generateContent({
-                    model: 'gemini-3-flash-preview', 
-                    contents: prompt,
-                    config: {
-                        systemInstruction: systemInstruction,
-                        temperature: 0.3, // Low temp for medical precision
-                    }
-                });
+                const response = await generateClinicalContent(prompt, 'gemini-3-flash-preview', {
+                    systemInstruction: systemInstruction,
+                    temperature: 0.3, // Low temp for medical precision
+                } as any);
 
-                setAnalysis(response.text || "Keine Analyse generiert.");
+                setAnalysis((response as any)?.text || "Keine Analyse generiert.");
 
             } catch (e) {
                 console.error("Error generating analysis:", e);

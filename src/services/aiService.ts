@@ -1,6 +1,4 @@
-import { GoogleGenAI, GenerationConfig, SafetySetting, Part, Content } from '@google/genai';
-
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+import { GenerationConfig, SafetySetting, Part, Content } from '@google/genai';
 
 export const CLINICAL_REASONING_GUIDELINES = `
 # Physio & Ergo Clinical Reasoning Guidelines (ALWAYS-ON)
@@ -27,19 +25,115 @@ Du bist LUMI, der zentrale KI-Mentor der "Körperfluss EDU" Plattform. Dein Ziel
 - Fachbegriffe: Präzise medizinische Nomenklatur (ICF, Anatomie).
 
 ## MODES
-1. **Support:** Allgemeine Hilfe zur Plattform-Navigation.
-2. **Clinical Reasoning:** Sokratische Führung im Anamnese-Trainer.
-3. **Deep Reasoning:** Tiefgründige Analyse von komplexen Fällen (Gemini 3.1 Pro).
-4. **Vision/Lab:** Unterstützung bei der biomechanischen Video-Analyse.
+1. Support: Allgemeine Hilfe zur Plattform-Navigation.
+2. Clinical Reasoning: Sokratische Führung im Anamnese-Trainer.
+3. Deep Reasoning: Tiefgründige Analyse von komplexen Fällen (Gemini 3.1 Pro).
+4. Vision/Lab: Unterstützung bei der biomechanischen Video-Analyse.
 `;
-
-export const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 export interface ExtendedGenerationConfig extends GenerationConfig {
   thinkingConfig?: {
     thinkingBudget: number;
   };
 }
+
+// Proxied client compatibility interface replacing raw GoogleGenAI client exposure in browser
+export const ai = {
+  models: {
+    generateContent: async (params: { model: string; contents: Content[]; config?: any }) => {
+      const response = await fetch('/api/generate-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    },
+
+    generateContentStream: async function* (params: { model: string; contents: Content[]; config?: any }) {
+      const response = await fetch('/api/generate-content-stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok || !response.body) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('data: ')) {
+            const dataStr = trimmed.slice(6);
+            if (dataStr === '[DONE]') {
+              return;
+            }
+            try {
+              const chunk = JSON.parse(dataStr);
+              if (chunk.error) {
+                throw new Error(chunk.error);
+              }
+              yield chunk;
+            } catch (e) {
+              if (e instanceof Error && e.message !== 'Unexpected token') {
+                throw e;
+              }
+            }
+          }
+        }
+      }
+    },
+
+    generateVideos: async (params: { model?: string; prompt?: string; image?: any; config?: any }) => {
+      const response = await fetch('/api/generate-videos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    },
+  },
+  operations: {
+    getVideosOperation: async (params: { operation: any }) => {
+      const response = await fetch('/api/get-videos-operation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    },
+  },
+};
 
 export const generateClinicalContent = async (
   prompt: string | Part[] | Content[], 
@@ -95,7 +189,7 @@ export const generateClinicalContentStream = async (
   }
   
   try {
-    return await ai.models.generateContentStream({
+    return ai.models.generateContentStream({
       model: modelName,
       contents,
       config: {

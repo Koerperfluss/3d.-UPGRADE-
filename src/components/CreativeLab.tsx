@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { ai } from '../services/aiService';
 import { Card } from './Card';
 import { Button } from './Button';
-import { CameraIcon, SimulationIcon, ArrowRightIcon, BrainCircuitIcon, BackArrowIcon, SkipIcon, SaveIcon } from './IconComponents';
+import { CameraIcon, SimulationIcon, BrainCircuitIcon, BackArrowIcon, SkipIcon, SaveIcon } from './IconComponents';
 
 type LabMode = 'image' | 'video' | 'edit';
 
@@ -27,7 +27,6 @@ export const CreativeLab: React.FC = () => {
     setResultImage(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       const contents: any[] = [{ text: prompt || "Optimiere dieses anatomische Bild." }];
 
       if (sourceFile) {
@@ -70,11 +69,12 @@ export const CreativeLab: React.FC = () => {
     setResultVideo(null);
 
     try {
-      if (!(await window.aistudio.hasSelectedApiKey())) {
-        await window.aistudio.openSelectKey();
+      if ((window as any).aistudio && typeof (window as any).aistudio.hasSelectedApiKey === 'function') {
+        if (!(await (window as any).aistudio.hasSelectedApiKey())) {
+          await (window as any).aistudio.openSelectKey();
+        }
       }
 
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       let imagePart: any = null;
 
       if (sourceFile) {
@@ -103,12 +103,9 @@ export const CreativeLab: React.FC = () => {
       }
 
       const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-      if (downloadLink && import.meta.env.VITE_GEMINI_API_KEY) {
+      if (downloadLink) {
         const response = await fetch(downloadLink, {
           method: 'GET',
-          headers: {
-            'x-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY,
-          },
         });
         const blob = await response.blob();
         setResultVideo(URL.createObjectURL(blob));

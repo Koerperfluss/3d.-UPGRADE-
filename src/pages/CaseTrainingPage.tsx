@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Type } from '@google/genai';
 import { generateClinicalContent, ai } from '../services/aiService';
@@ -177,9 +176,9 @@ Antworte bitte ausschließlich im folgenden JSON-Format:
             learning_goals: { type: Type.ARRAY, items: { type: Type.STRING } }
           }
         }
-      });
+      } as any);
 
-      const data = JSON.parse(response.text || "{}");
+      const data = JSON.parse((response as any)?.text || "{}");
       
       if (data && data.steps) {
         const newCase: CaseStudy = {
@@ -389,40 +388,34 @@ const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: 
   const handleGenerateVideo = async () => {
       setGeneratingVideo(true);
       try {
-          if (!window.aistudio?.hasSelectedApiKey) {
-              // Assuming a polyfill or window extension for the challenge context
-              alert('Bitte wählen Sie zuerst einen API-Key für die Video-Generierung aus (siehe Prompt-Instruktionen).');
-              await window.aistudio?.openSelectKey();
+          if ((window as any).aistudio && typeof (window as any).aistudio.hasSelectedApiKey === 'function') {
+              if (!(await (window as any).aistudio.hasSelectedApiKey())) {
+                  await (window as any).aistudio.openSelectKey();
+              }
           }
-          if (await window.aistudio?.hasSelectedApiKey()) {
-              let operation = await ai.models.generateVideos({
-                  model: 'veo-3.1-fast-generate-preview',
-                  prompt: `Cinematic medical simulation shot of: ${caseStudy.patient_intro}. Professional lighting, 4k resolution, medical educational context.`,
-                  config: {
-                      numberOfVideos: 1,
-                      resolution: '720p', // Fast preview
-                      aspectRatio: '16:9'
-                  }
-              });
-
-              while (!operation.done) {
-                  await new Promise(resolve => setTimeout(resolve, 5000));
-                  operation = await ai.operations.getVideosOperation({operation: operation});
+          let operation = await ai.models.generateVideos({
+              model: 'veo-3.1-fast-generate-preview',
+              prompt: `Cinematic medical simulation shot of: ${caseStudy.patient_intro}. Professional lighting, 4k resolution, medical educational context.`,
+              config: {
+                  numberOfVideos: 1,
+                  resolution: '720p',
+                  aspectRatio: '16:9'
               }
+          });
 
-              if (operation.response?.generatedVideos?.[0]?.video?.uri) {
-                  const downloadLink = operation.response.generatedVideos[0].video.uri;
-                  // In a real app we'd fetch this blob, here we simulate setting the URI
-                  // For the mock/prototype, we'd assume the URI is directly playable or fetchable
-                  setVideoUri(`${downloadLink}&key=${import.meta.env.VITE_GEMINI_API_KEY}`);
-              }
+          while (!operation.done) {
+              await new Promise(resolve => setTimeout(resolve, 5000));
+              operation = await ai.operations.getVideosOperation({operation: operation});
+          }
+
+          if (operation.response?.generatedVideos?.[0]?.video?.uri) {
+              const downloadLink = operation.response.generatedVideos[0].video.uri;
+              setVideoUri(downloadLink);
           }
       } catch (e) {
           console.error("Video generation failed", e);
           alert("Video-Generierung fehlgeschlagen. Bitte versuchen Sie es später.");
-      } finally {
-          setGeneratingVideo(false);
-      }
+      } finally { setGeneratingVideo(false); }
   };
 
   const handleEvaluate = async () => {
@@ -480,9 +473,9 @@ OUTPUT JSON:
                     next_step_hint: { type: Type.STRING }
                 }
             }
-        });
+        } as any);
 
-        const result = JSON.parse(response.text || "{}");
+        const result = JSON.parse((response as any)?.text || "{}");
         setEvaluation(result);
 
     } catch (e) {

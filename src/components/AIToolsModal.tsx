@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { generateClinicalContent } from '../services/aiService';
 import { Card } from './Card';
 import { Button } from './Button';
 import { CloseIcon, BackArrowIcon, ArrowRightIcon } from './IconComponents';
@@ -99,21 +99,12 @@ export const AIToolsModal: React.FC<AIToolsModalProps> = ({ isOpen, onClose, use
     setGeneratedResult('');
 
     try {
-      if (!import.meta.env.VITE_GEMINI_API_KEY) {
-        throw new Error("API key is not configured.");
-      }
-      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: userInput,
-        config: {
-          systemInstruction: selectedTool.systemInstruction,
-          temperature: 0.5,
-        }
-      });
+      const response = await generateClinicalContent(userInput, 'gemini-2.5-flash', {
+        systemInstruction: selectedTool.systemInstruction,
+        temperature: 0.5,
+      } as any);
       
-      setGeneratedResult(response.text);
+      setGeneratedResult((response as any)?.text || '');
       setStep('result');
     } catch (e) {
       console.error("Error generating AI content:", e);
