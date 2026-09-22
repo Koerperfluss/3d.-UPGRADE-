@@ -373,7 +373,7 @@ interface EvaluationResult {
     next_step_hint: string;
 }
 
-const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: () => void }> = ({ caseStudy, tutorMood, onReset }) => {
+const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: () => void, onShowToast?: (msg: string) => void }> = ({ caseStudy, tutorMood, onReset, onShowToast }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [userNotes, setUserNotes] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -391,7 +391,7 @@ const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: 
       try {
           if (!window.aistudio?.hasSelectedApiKey) {
               // Assuming a polyfill or window extension for the challenge context
-              alert('Bitte wählen Sie zuerst einen API-Key für die Video-Generierung aus (siehe Prompt-Instruktionen).');
+              onShowToast?.('Bitte wählen Sie zuerst einen API-Key für die Video-Generierung aus (siehe Prompt-Instruktionen).');
               await window.aistudio?.openSelectKey();
           }
           if (await window.aistudio?.hasSelectedApiKey()) {
@@ -419,7 +419,7 @@ const CaseSession: React.FC<{ caseStudy: CaseStudy, tutorMood: string, onReset: 
           }
       } catch (e) {
           console.error("Video generation failed", e);
-          alert("Video-Generierung fehlgeschlagen. Bitte versuchen Sie es später.");
+          onShowToast?.("Video-Generierung fehlgeschlagen. Bitte versuchen Sie es später.");
       } finally {
           setGeneratingVideo(false);
       }
@@ -647,6 +647,11 @@ export const CaseTrainingPage: React.FC = () => {
   const [tutorMood, setTutorMood] = useState<string>('Supportiv');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   React.useEffect(() => {
     const handleDemo = () => {
       setToastMessage("Demo Mode: Case Library geladen. Hier trainieren Sie am interaktiven Patientenbeispiel.");
@@ -709,7 +714,7 @@ export const CaseTrainingPage: React.FC = () => {
                 </div>
              </div>
         ) : (
-            <CaseSession caseStudy={activeCase} tutorMood={tutorMood} onReset={() => setActiveCase(null)} />
+            <CaseSession caseStudy={activeCase} tutorMood={tutorMood} onReset={() => setActiveCase(null)} onShowToast={showToast} />
         )}
       </Section>
       </div>
