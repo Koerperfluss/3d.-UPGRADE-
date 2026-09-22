@@ -7,8 +7,6 @@ import { Logo } from '../components/Logo';
 export const ForgotPasswordPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would trigger an email. For now, it does nothing.
-    // alert('Anweisungen zum Zurücksetzen des Passworts wurden (simuliert) gesendet.');
   };
 
   return (
