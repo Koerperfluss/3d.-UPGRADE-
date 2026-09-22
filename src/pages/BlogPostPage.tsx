@@ -1,5 +1,6 @@
 import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { Section } from '../components/Section';
 import { blogPosts } from '../data/blogPosts';
 import { Button } from '../components/Button';
@@ -11,6 +12,8 @@ export const BlogPostPage: React.FC = () => {
   if (!post) {
     return <Navigate to="/blog" />;
   }
+
+  const sanitizedContent = DOMPurify.sanitize(post.content);
 
   return (
     <div className="animate-fadeInUp bg-transparent min-h-screen pt-40 pb-32 relative overflow-hidden">
@@ -37,7 +40,7 @@ export const BlogPostPage: React.FC = () => {
               prose-strong:text-white prose-strong:font-bold
               prose-a:text-brand-primary prose-a:no-underline hover:prose-a:text-white transition-colors
               prose-img:rounded-[40px] prose-img:shadow-2xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
         </div>
 
