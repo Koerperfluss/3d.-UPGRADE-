@@ -45,7 +45,6 @@ export const ContactPage: React.FC = () => {
             setError("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
             return;
         }
-        console.log('Form data submitted:', formData);
         setIsSubmitted(true);
     } else {
         setError("Bitte füllen Sie alle Pflichtfelder aus.");
