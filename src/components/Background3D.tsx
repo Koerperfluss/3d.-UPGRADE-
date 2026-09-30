@@ -9,6 +9,9 @@ import * as THREE from 'three';
 import { useLocation } from 'react-router-dom';
 
 const GOLD = '#D4AF37';
+// Cache-Buster (String statt Kommentar — landet im Bundle und erzwingt einen neuen
+// Content-Hash-Dateinamen, damit Browser mit immutable-Cache den Fix neu laden):
+const __BG3D_BUILD = 'platzierungsfix-v1-20260930';
 const GOLD_LIGHT = '#E5BF48';
 const GOLD_DARK = '#B38F2D';
 
@@ -265,7 +268,7 @@ export const Global3DBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1, opacity: isHome ? 1 : 0.3, transition: 'opacity 0.5s ease' }}>
+    <div className="fixed inset-0 pointer-events-none" data-bg3d={__BG3D_BUILD} style={{ zIndex: -1, opacity: isHome ? 1 : 0.3, transition: 'opacity 0.5s ease' }}>
       {show3D && isDesktop && !prefersReducedMotion ? (
         <CanvasGuard>
           <Canvas
