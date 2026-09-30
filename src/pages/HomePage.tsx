@@ -203,7 +203,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
             <span className="text-[10px] uppercase tracking-[0.4em] text-brand-success font-black">100% MDR-Frei · Education-First</span>
             <h4 className="text-2xl md:text-3xl font-serif font-bold text-white">Neuro-Symbolischer Safety Guard</h4>
             <p className="text-zinc-400 text-sm font-light max-w-2xl leading-relaxed">
-              246 kuratierte AWMF S3-Leitlinien & ICF-Kriterien garantieren null Heilaussagen und höchste akademische Exzellenz.
+              Kuratierte Wissensbasis nach AWMF-S3-Leitlinien und WHO-ICF — evidenzgeprüft über eine versionierte Quellensammlung (23 Kernquellen im FFG-F&amp;E-Projekt). Medizinische Aussagen werden gegen die hinterlegte Evidenz validiert — ohne Heilaussagen.
             </p>
           </div>
           <button 

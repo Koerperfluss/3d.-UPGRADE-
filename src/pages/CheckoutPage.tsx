@@ -21,7 +21,7 @@ const defaultPlan: MembershipTier = {
   features: [
     'Voller Zugriff auf alle 18 KI-Tools',
     'LUMI Anamnese-Trainer unbegrenzt',
-    '246 Evidenzquellen & Leitlinien',
+    'Evidenzbasiert: AWMF-S3 & WHO-ICF',
     'Moodle LTI 1.3 Hochschul-Sync'
   ],
   isPopular: true,
