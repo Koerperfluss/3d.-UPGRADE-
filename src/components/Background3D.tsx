@@ -6,12 +6,17 @@ import { Canvas, useFrame } from '@react-three/fiber';
 // Das goldene Anatomie-Modell ist wieder Teil der Landing-Szene.
 import { useGLTF, Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
+import { useLocation } from 'react-router-dom';
 
 const GOLD = '#D4AF37';
 const GOLD_LIGHT = '#E5BF48';
 const GOLD_DARK = '#B38F2D';
 
-function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ x: number, y: number }> }) {
+// PLATZIERUNGS-FIX (30.09.2026, Nacht): Das Modell ist für die STARTSEITEN-Komposition
+// gebaut (zentraler Anker zwischen CAMPUS/FAKULTÄT). Auf Unterseiten verdeckte es
+// Headlines — dort steht es jetzt dezent rechts-unten, kleiner und über CSS-Opacity
+// des Canvas-Wrappers als Hintergrund. Startseite bleibt exakt der 17.09.-Zustand.
+function AnatomicalModel({ pointerPos, home = true }: { pointerPos: React.MutableRefObject<{ x: number, y: number }>; home?: boolean }) {
   // Load the authentic Körperfluss Full-Body Anatomical 3D Model
   const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
   const ref = useRef<THREE.Group>(null);
@@ -68,7 +73,7 @@ function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ 
   if (!modelGeometry) return null;
 
   return (
-    <group ref={ref} position={[0, -0.65, 0]}>
+    <group ref={ref} position={home ? [0, -0.65, 0] : [2.7, -1.0, 0]} scale={home ? 1 : 0.7}>
       <mesh
         geometry={modelGeometry}
         rotation={[0, 0, Math.PI / 2]}
@@ -192,7 +197,7 @@ const AbstractPremiumScene = () => {
             ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
             die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
         {/* Anatomie-Modell WIEDER AKTIV (30.09. Abend) — zusammen mit den Orbit-Ringen */}
-        <AnatomicalModel pointerPos={pointerPos} />
+        <AnatomicalModel pointerPos={pointerPos} home={isHome} />
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
       </Suspense>
@@ -213,6 +218,9 @@ class CanvasGuard extends Component<{ children: React.ReactNode }, { failed: boo
 }
 
 export const Global3DBackground = () => {
+  const location = useLocation();
+  // Startseite = originale Modell-Komposition (17.09.); Unterseiten = dezenter Hintergrund
+  const isHome = location.pathname === '/';
   const [show3D, setShow3D] = React.useState(() => {
     const stored = localStorage.getItem('show3D');
     if (stored === null) return true; // Default to active
@@ -257,7 +265,7 @@ export const Global3DBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1 }}>
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1, opacity: isHome ? 1 : 0.3, transition: 'opacity 0.5s ease' }}>
       {show3D && isDesktop && !prefersReducedMotion ? (
         <CanvasGuard>
           <Canvas
