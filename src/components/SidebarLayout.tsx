@@ -27,40 +27,49 @@ interface SidebarLayoutProps {
   onLogout: () => void;
 }
 
-export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, lecturer, onLogout }) => {
+// REVIEW-FIX (30.09.2026): SidebarContent war vorher im Render-Body von SidebarLayout
+// definiert → bei jedem Render eine neue Komponenten-Identität → kompletter Sidebar-Remount
+// und Fokusverlust bei Tastaturnavigation. Jetzt stabil am Modul-Scope mit expliziten Props.
+const SIDEBAR_NAVIGATION = [
+  { name: 'Dashboard (Cockpit)', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'Kurs-Theorie', path: '/education', icon: Library },
+  { name: 'Skills Lab', path: '/vision', icon: ActivitySquare },
+  { name: 'Clinical Hub', path: '/anamnese-trainer', icon: Stethoscope },
+  { name: 'Moodle-Simulation', path: '/moodle-simulation', icon: School },
+  { name: 'Studien-DB', path: '/literatur', icon: Library },
+  { name: 'Assessment', path: '/assessment', icon: GraduationCap },
+  { name: 'Educator Space', path: '/educator', icon: Users, requireLecturer: true },
+  { name: 'Pitch Dashboard', path: '/pitch-deck', icon: Sparkles, requireLecturer: true },
+];
+
+interface SidebarContentProps {
+  user: any;
+  lecturer: any;
+  onLogout: () => void;
+  isCotMode: boolean;
+  setCotMode: (active: boolean) => void;
+  onCloseMobileMenu: () => void;
+  onOpenShare: () => void;
+}
+
+const SidebarContent: React.FC<SidebarContentProps> = ({ user, lecturer, onLogout, isCotMode, setCotMode, onCloseMobileMenu, onOpenShare }) => {
   const location = useLocation();
-  const { isCotMode, setCotMode } = useClinicalContext();
-  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const filteredNav = SIDEBAR_NAVIGATION.filter(item => !item.requireLecturer || lecturer);
 
-  const navigation = [
-    { name: 'Dashboard (Cockpit)', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Kurs-Theorie', path: '/education', icon: Library },
-    { name: 'Skills Lab', path: '/vision', icon: ActivitySquare },
-    { name: 'Clinical Hub', path: '/anamnese-trainer', icon: Stethoscope },
-    { name: 'Moodle-Simulation', path: '/moodle-simulation', icon: School },
-    { name: 'Studien-DB', path: '/literatur', icon: Library },
-    { name: 'Assessment', path: '/assessment', icon: GraduationCap },
-    { name: 'Educator Space', path: '/educator', icon: Users, requireLecturer: true },
-    { name: 'Pitch Dashboard', path: '/pitch-deck', icon: Sparkles, requireLecturer: true },
-  ];
-
-  const filteredNav = navigation.filter(item => !item.requireLecturer || lecturer);
-
-  const SidebarContent = () => (
+  return (
     <>
       <div className="p-6 border-b border-white/10 shrink-0 flex items-center justify-between lg:justify-center">
         <Logo className="w-16 h-16" />
-        <button className="lg:hidden p-2 text-white/50 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+        <button className="lg:hidden p-2 text-white/50 hover:text-white" onClick={onCloseMobileMenu}>
           <X size={24} />
         </button>
       </div>
-      
+
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
         {/* USERFLOW (30.09.2026): Rückweg zur öffentlichen Startseite aus dem LMS */}
         <Link
           to="/"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={onCloseMobileMenu}
           className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium text-brand-primary/80 hover:text-brand-primary hover:bg-white/5 border border-brand-primary/10 mb-4"
         >
           <Home size={20} />
@@ -72,11 +81,11 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
             <Link
               key={item.name}
               to={item.path}
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={onCloseMobileMenu}
               aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
-                isActive 
-                  ? 'bg-brand-primary text-black shadow-lg shadow-brand-primary/20' 
+                isActive
+                  ? 'bg-brand-primary text-black shadow-lg shadow-brand-primary/20'
                   : 'text-zinc-400 hover:text-white hover:bg-white/10'
               }`}
             >
@@ -89,11 +98,11 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
 
       <div className="p-4 border-t border-white/10 shrink-0">
         {/* AI/CoT Toggle */}
-        <button 
+        <button
           onClick={() => setCotMode(!isCotMode)}
           className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl mb-4 transition-all group border ${
-            isCotMode 
-              ? 'bg-brand-primary/20 border-brand-primary/50 text-brand-primary' 
+            isCotMode
+              ? 'bg-brand-primary/20 border-brand-primary/50 text-brand-primary'
               : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white'
           }`}
         >
@@ -102,7 +111,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
             <span className="text-[10px] uppercase font-bold tracking-widest">CoT Engine</span>
           </div>
           <div className={`w-8 h-4 rounded-full relative transition-colors ${isCotMode ? 'bg-brand-primary' : 'bg-white/10'}`}>
-            <motion.div 
+            <motion.div
               animate={{ x: isCotMode ? 16 : 0 }}
               className="absolute left-0.5 top-0.5 w-3 h-3 bg-white rounded-full"
             />
@@ -120,15 +129,15 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
             </p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onLogout}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors"
         >
           <LogOut size={16} /> Logout
         </button>
-        
-        <button 
-          onClick={() => setIsShareModalOpen(true)}
+
+        <button
+          onClick={onOpenShare}
           className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 bg-brand-primary/10 border border-brand-primary/20 rounded-xl text-brand-primary hover:bg-brand-primary/20 transition-all text-[10px] font-black uppercase tracking-widest"
         >
           <Share2 size={14} /> Mobile Connect
@@ -136,6 +145,12 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
       </div>
     </>
   );
+};
+
+export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, lecturer, onLogout }) => {
+  const { isCotMode, setCotMode } = useClinicalContext();
+  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="flex h-[100dvh] bg-transparent text-white overflow-hidden w-full">
@@ -151,7 +166,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
 
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex w-64 flex-shrink-0 bg-black/40 border-r border-white/10 flex-col backdrop-blur-xl pt-[env(safe-area-inset-top)] z-40">
-          <SidebarContent />
+          <SidebarContent user={user} lecturer={lecturer} onLogout={onLogout} isCotMode={isCotMode} setCotMode={setCotMode} onCloseMobileMenu={() => setIsMobileMenuOpen(false)} onOpenShare={() => setIsShareModalOpen(true)} />
         </aside>
 
         {/* Mobile Sidebar (Drawer) */}
@@ -172,7 +187,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
                 transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
                 className="fixed top-0 left-0 bottom-0 w-[80%] max-w-sm bg-black border-r border-white/10 flex flex-col z-[101] lg:hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] shadow-2xl"
               >
-                <SidebarContent />
+                <SidebarContent user={user} lecturer={lecturer} onLogout={onLogout} isCotMode={isCotMode} setCotMode={setCotMode} onCloseMobileMenu={() => setIsMobileMenuOpen(false)} onOpenShare={() => setIsShareModalOpen(true)} />
               </motion.div>
             </>
           )}

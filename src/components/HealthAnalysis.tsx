@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
+import DOMPurify from 'dompurify';
 import { Card } from './Card';
 import { Button } from './Button'; // Import button
 import { CollectedVariables } from './Chatbot';
@@ -171,13 +172,16 @@ QUALITÄTSSICHERUNG:
             {renderInputData()}
             
             <div className="prose prose-lg max-w-none text-brand-text-on-light-secondary leading-relaxed space-y-4">
+                 {/* SECURITY-FIX (30.09.2026): analysis ist LLM-Output (Gemini inkl. Chatbot-Eingaben) —
+                     ohne Sanitizing konnte Prompt-Injection Script-HTML einschleusen. Gleiche Absicherung
+                     wie an den übrigen dangerouslySetInnerHTML-Stellen (DOMPurify). */}
                  <div dangerouslySetInnerHTML={{ 
-                     __html: analysis
+                     __html: DOMPurify.sanitize(analysis
                         .replace(/\n/g, '<br />')
                         // Force table styling for A4 consistency simulation
                         .replace(/\| (.+) \|/g, (match) => `<div class="overflow-x-auto my-4 border border-brand-border rounded-lg bg-white"><table class="min-w-full text-sm text-left border-collapse">${match}</table></div>`)
                         .replace(/### (.*)/g, '<h3 class="text-xl font-bold text-brand-secondary mt-6 mb-2 border-b border-brand-primary/20 pb-1">$1</h3>')
-                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C9A84C]">$1</strong>'))
                  }} />
             </div>
 

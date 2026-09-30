@@ -77,5 +77,17 @@ firebase deploy --only hosting
 # Projekt: gen-lang-client-0285074833 · Live: https://koerperfluss.web.app
 ```
 
+## 7. Review-Fixes (30.09.2026, nach Code-Review „PASS MIT HINWEISEN")
+
+| Finding | Fix | Beweis |
+|---|---|---|
+| P1: `src/components/HealthAnalysis.tsx` — `dangerouslySetInnerHTML` mit LLM-Output (`analysis`) ohne Sanitizing → Prompt-Injection konnte Script-HTML einschleusen | Vorhandene Dependency `dompurify` (^3.4.14, bereits an 6 anderen Stellen im Muster `DOMPurify.sanitize(...)` im Einsatz) wiederverwendet: Replace-Kette in `DOMPurify.sanitize(...)` gewrappt, KEINE neue Dependency | Build Exit 0 |
+| P2: `src/components/Background3D.tsx` — `removeEventListener` auf neuem `matchMedia()`-Objekt → Cleanup wirkungslos | `MediaQueryList` einmal als `mql` gecacht, add/remove auf derselben Referenz | Build Exit 0 |
+| P2: `src/components/SidebarLayout.tsx` — `SidebarContent` im Render-Body definiert → Remount + Fokusverlust je Render | An Modul-Scope gezogen mit expliziten Props (`user/lecturer/onLogout/isCotMode/setCotMode/onCloseMobileMenu/onOpenShare`), eigenes `useLocation()` | Build Exit 0; Preview HTTP 200 auf `/` und `/dashboard` |
+
+Commit: siehe `git log` — „REVIEW-FIXES: P1 XSS-Sanitizing (HealthAnalysis) + P2 matchMedia-Cleanup + P2 SidebarContent-Remount (30.09.2026)".
+
 ---
+
 *Erstellt 30.09.2026 durch Builder-Subagent (ZCode/GLM). Alle Befehle und Exit-Codes in Abschnitt 3 sind echte Ausführungen, keine Behauptungen.*
+

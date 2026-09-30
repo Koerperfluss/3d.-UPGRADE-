@@ -230,18 +230,21 @@ export const Global3DBackground = () => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 1024);
     };
+    // REVIEW-FIX (30.09.2026): MediaQueryList EINMAL cachen und add/remove auf
+    // derselben Referenz aufrufen — ein zweites matchMedia() liefert ein neues
+    // Objekt, auf dem removeEventListener wirkungslos wäre.
+    window.addEventListener('resize', handleResize);
+    let mql: MediaQueryList | null = null;
     const handleMotionPreference = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches);
     };
-    window.addEventListener('resize', handleResize);
     if (typeof window.matchMedia === 'function') {
-      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', handleMotionPreference);
+      mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+      mql.addEventListener('change', handleMotionPreference);
     }
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (typeof window.matchMedia === 'function') {
-        window.matchMedia('(prefers-reduced-motion: reduce)').removeEventListener('change', handleMotionPreference);
-      }
+      mql?.removeEventListener('change', handleMotionPreference);
     };
   }, []);
 
