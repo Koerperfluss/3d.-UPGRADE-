@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 const GOLD = '#D4AF37';
 // Cache-Buster (String statt Kommentar — landet im Bundle und erzwingt einen neuen
 // Content-Hash-Dateinamen, damit Browser mit immutable-Cache den Fix neu laden):
-const __BG3D_BUILD = 'platzierungsfix-v1-20260930';
+const __BG3D_BUILD = 'startseite-only-v2-20260930';
 const GOLD_LIGHT = '#E5BF48';
 const GOLD_DARK = '#B38F2D';
 
@@ -199,8 +199,10 @@ const AbstractPremiumScene = ({ home = true }: { home?: boolean }) => {
         {/* FIX B1: Environment MUSS innerhalb von Suspense hängen — preset="city" lädt
             ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
             die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
-        {/* Anatomie-Modell WIEDER AKTIV (30.09. Abend) — zusammen mit den Orbit-Ringen */}
-        <AnatomicalModel pointerPos={pointerPos} home={home} />
+        {/* SASCHA-ENTSCHEIDUNG (30.09. Nacht): Das große Anatomie-Modell NUR auf der
+            Startseite — die originale, perfekte Figur (17.09.-Zustand). Unterseiten:
+            kein Modell (nur Orbit-Ringe). */}
+        {home && <AnatomicalModel pointerPos={pointerPos} />}
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
       </Suspense>
@@ -268,7 +270,7 @@ export const Global3DBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none" data-bg3d={__BG3D_BUILD} style={{ zIndex: -1, opacity: isHome ? 1 : 0.3, transition: 'opacity 0.5s ease' }}>
+    <div className="fixed inset-0 pointer-events-none" data-bg3d={__BG3D_BUILD} style={{ zIndex: -1 }}>
       {show3D && isDesktop && !prefersReducedMotion ? (
         <CanvasGuard>
           <Canvas
