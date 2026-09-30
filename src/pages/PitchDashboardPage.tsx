@@ -39,10 +39,10 @@ export const PitchDashboardPage: React.FC = () => {
               <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(34,197,94,0.3)]">
                 <ShieldCheckIcon className="w-12 h-12 text-green-500" />
               </div>
-              <h3 className="text-2xl font-bold mb-4">MDR-Abstand Sicher</h3>
+              <h3 className="text-2xl font-bold mb-4">MDR-Abstand: Education-Only</h3>
               <p className="text-sm text-white/70 leading-relaxed mb-6">
-                Reine didaktische Simulationsumgebung. Keine Diagnose-Software nach MPG. 
-                <span className="block mt-2 font-bold text-green-400 underline decoration-dotted">100% Haftungsfrei für FH-Träger</span>
+                Reine didaktische Simulationsumgebung. Keine Diagnose-Software nach MPG.
+                <span className="block mt-2 font-bold text-green-400 underline decoration-dotted">Kein Medizinprodukt – Haftungsrisiken minimiert</span>
               </p>
               <div className="flex gap-2">
                 <span className="px-3 py-1 bg-green-500/20 rounded-full text-[10px] uppercase font-black text-green-500 border border-green-500/30">Verified</span>

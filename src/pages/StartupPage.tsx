@@ -190,7 +190,7 @@ export const StartupPage: React.FC = () => {
               </div>
               <div className="glass-dark p-6 rounded-2xl border border-brand-primary/20">
                 <span className="text-brand-primary font-black text-xs uppercase tracking-wider block mb-2">Entwicklungsstufe (FFG)</span>
-                <p className="text-zinc-300 font-light text-sm"><strong className="text-white">TRL 3 ➔ Ziel TRL 7</strong> – Einstieg als Konzept-Prototyp (TRL 3), Entwicklung über 36 Monate zum validierten Demonstrator im klinischen/akademischen Einsatz (TRL 7, Budget 130.800 €).</p>
+                <p className="text-zinc-300 font-light text-sm"><strong className="text-white">TRL 3 ➔ Ziel TRL 7</strong> – Einstieg als Konzept-Prototyp (TRL 3), Entwicklung über 12 Monate (FFG-eCall 68209806) zum validierten Demonstrator im akademischen Einsatz (TRL 7, Budget 130.800 €).</p>
               </div>
               <div className="glass-dark p-6 rounded-2xl border border-white/5">
                 <span className="text-brand-primary font-black text-xs uppercase tracking-wider block mb-2">Businessmodell</span>
@@ -205,7 +205,7 @@ export const StartupPage: React.FC = () => {
       <Section containerClassName="py-16 relative z-10">
         <div className="container mx-auto px-8 max-w-6xl text-center">
           <h2 className="text-2xl font-bold font-serif text-white mb-2">Pilot-Kooperationen</h2>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest mb-10">Österreichische Fachhochschulen · Geplant Q3–Q4 2026</p>
+          <p className="text-zinc-500 text-xs uppercase tracking-widest mb-10">Österreichische Fachhochschulen · Pilot-Akquise 2027 (AP 5, M 7–12)</p>
           <div className="grid md:grid-cols-3 gap-6">
             {pilots.map((p) => (
               <div key={p.name} className="glass-dark p-6 rounded-2xl border border-white/5">
@@ -225,7 +225,7 @@ export const StartupPage: React.FC = () => {
             <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-4">
               Module & <span className="text-gradient-gold italic font-light">Live Demos</span>
             </h2>
-            <p className="text-zinc-500 uppercase tracking-[0.3em] text-[10px] font-black">Alle Module sind produktiv – Klick auf Demo startet die echte Anwendung</p>
+            <p className="text-zinc-500 uppercase tracking-[0.3em] text-[10px] font-black">Interaktive Prototyp-Demos – Klick startet die Demo-Anwendung</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

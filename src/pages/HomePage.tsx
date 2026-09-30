@@ -130,7 +130,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
             Die Next-Gen <span className="text-gradient-gold italic font-light lowercase">EdTech Suite</span>
           </h2>
           <p className="text-zinc-400 max-w-2xl mx-auto text-base md:text-lg font-light leading-relaxed">
-            Interaktive 3D-Anatomie, sokratische Fallsimulationen und rechtssichere MDR-Konformität für Hochschulen & Studierende.
+            Interaktive 3D-Anatomie, sokratische Fallsimulationen und MDR-freien Education-Ansatz für Hochschulen & Studierende.
           </p>
         </div>
 
@@ -200,7 +200,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
         {/* Safety Guard & Evidence Strip */}
         <div className="glass-dark p-8 md:p-12 rounded-[36px] border border-white/10 bg-gradient-to-r from-white/[0.02] to-brand-primary/[0.04] flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-3 text-center md:text-left">
-            <span className="text-[10px] uppercase tracking-[0.4em] text-brand-success font-black">100% MDR-Frei · Education-First</span>
+            <span className="text-[10px] uppercase tracking-[0.4em] text-brand-success font-black">Kein Medizinprodukt · Education-First</span>
             <h4 className="text-2xl md:text-3xl font-serif font-bold text-white">Neuro-Symbolischer Safety Guard</h4>
             <p className="text-zinc-400 text-sm font-light max-w-2xl leading-relaxed">
               Kuratierte Wissensbasis nach AWMF-S3-Leitlinien und WHO-ICF — evidenzgeprüfte, versionierte Quellensammlung. Medizinische Aussagen werden gegen die hinterlegte Evidenz validiert — ohne Heilaussagen.
