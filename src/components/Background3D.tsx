@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, Suspense, Component } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-// FIX (30.09.2026): useGLTF aus dem Import entfernt — @react-three/drei 9.122 exportiert
-// es nicht mehr (neu: <Gltf />). AnatomicalModel wird aktuell NICHT gerendert
-// (toter Code seit dem Slicing-Käfig-Fix), daher wird der GLB-Load hier deaktiviert.
-import { Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
+// REAKTIVIERT (30.09.2026, Abend): Der Vormittags-Fix war fachlich falsch —
+// @react-three/drei 9.122 exportiert useGLTF sehr wohl (belegt:
+// node_modules/@react-three/drei/index.js -> export { Gltf, useGLTF }).
+// Das goldene Anatomie-Modell ist wieder Teil der Landing-Szene.
+import { useGLTF, Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 
 const GOLD = '#D4AF37';
@@ -12,10 +13,7 @@ const GOLD_DARK = '#B38F2D';
 
 function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ x: number, y: number }> }) {
   // Load the authentic Körperfluss Full-Body Anatomical 3D Model
-  // FIX (30.09.2026): useGLTF-Load deaktiviert — Funktion wird aktuell nicht gerendert
-  // und drei 9.122 unterstützt useGLTF nicht mehr. Stub hält den Pfad compilierbar.
-  // const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
-  const nodes = {} as any;
+  const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
   const ref = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -193,7 +191,8 @@ const AbstractPremiumScene = () => {
         {/* FIX B1: Environment MUSS innerhalb von Suspense hängen — preset="city" lädt
             ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
             die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
-        {/* Slicing-Käfig entfernt — Goldene Orbit-Ringe & Partikel-Sphäre aktiv */}
+        {/* Anatomie-Modell WIEDER AKTIV (30.09. Abend) — zusammen mit den Orbit-Ringen */}
+        <AnatomicalModel pointerPos={pointerPos} />
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
       </Suspense>
@@ -286,7 +285,6 @@ export const Global3DBackground = () => {
 };
 
 
-// PERFORMANCE-FIX (30.09.2026): GLB-Preload deaktiviert — das 2,4-MB-Modell wurde bei
-// jedem Start sofort geladen, obwohl AnatomicalModel in der Szene nicht mehr vorkommt
-// (Slicing-Käfig-Fix). Spart 2,4 MB Bandbreite pro Seitenaufruf.
-// useGLTF.preload('/koerperfluss_model.glb');
+// REAKTIVIERT (30.09.2026, Abend): Preload zurück — das Modell gehört zur Szene,
+// der frühere Load soll nicht erst nach dem ersten Frame starten.
+useGLTF.preload('/koerperfluss_model.glb');
