@@ -4,89 +4,64 @@ import { Canvas, useFrame } from '@react-three/fiber';
 // @react-three/drei 9.122 exportiert useGLTF sehr wohl (belegt:
 // node_modules/@react-three/drei/index.js -> export { Gltf, useGLTF }).
 // Das goldene Anatomie-Modell ist wieder Teil der Landing-Szene.
-import { useGLTF, Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
+import { useGLTF, Center, Environment, Float, Sphere, MeshTransmissionMaterial, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { useLocation } from 'react-router-dom';
 
 const GOLD = '#D4AF37';
 // Cache-Buster (String statt Kommentar — landet im Bundle und erzwingt einen neuen
 // Content-Hash-Dateinamen, damit Browser mit immutable-Cache den Fix neu laden):
-const __BG3D_BUILD = 'startseite-only-v2-20260930';
+const __BG3D_BUILD = 'lee-perry-head-v1-20260930';
 const GOLD_LIGHT = '#E5BF48';
 const GOLD_DARK = '#B38F2D';
 
-// PLATZIERUNGS-FIX (30.09.2026, Nacht): Das Modell ist für die STARTSEITEN-Komposition
-// gebaut (zentraler Anker zwischen CAMPUS/FAKULTÄT). Auf Unterseiten verdeckte es
-// Headlines — dort steht es jetzt dezent rechts-unten, kleiner und über CSS-Opacity
-// des Canvas-Wrappers als Hintergrund. Startseite bleibt exakt der 17.09.-Zustand.
-function AnatomicalModel({ pointerPos, home = true }: { pointerPos: React.MutableRefObject<{ x: number, y: number }>; home?: boolean }) {
-  // Load the authentic Körperfluss Full-Body Anatomical 3D Model
-  const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
+// SASCHA-REFERENZ (30.09.2026, nachts): Die „erste Figur" der Startseite ist der
+// LeePerrySmith-Kopf im Liquid-Gold-Glas-Look — exakt wie in der AI-Studio-App
+// („aktuell-3d-upgrade-(vollfunktion)"), deren Background3D hier 1:1 übernommen
+// wurde. Einzige Abweichung: GLB lokal (public/LeePerrySmith.glb, 405 KB) statt
+// GitHub-CDN (Rate-Limit/CORS in Produktion). Das Faszien-GLB (koerperfluss_model.glb)
+// bleibt unangetastet in public/, wird nur nicht mehr geladen.
+function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ x: number, y: number }> }) {
+  const { nodes } = useGLTF('/LeePerrySmith.glb') as any;
   const ref = useRef<THREE.Group>(null);
 
   useFrame((state) => {
+    if (!ref.current) return;
     const t = state.clock.elapsedTime;
-    const scrollParallax = (window.scrollY || 0) * 0.001;
-    
+
     // Smooth target rotation based on mouse
     const targetX = pointerPos.current.x * 0.3;
     const targetY = pointerPos.current.y * 0.3;
-    
-    // Authentic Körperfluss 3D model with ergonomic right-offset
-    if (ref.current) {
-      const isWide = typeof window !== 'undefined' && window.innerWidth >= 1280;
-      const targetBaseX = isWide ? 2.4 : 1.0;
-      ref.current.position.x += (targetBaseX - ref.current.position.x) * 0.05;
-      ref.current.rotation.y += (targetX - ref.current.rotation.y + scrollParallax * 0.5) * 0.05;
-      ref.current.rotation.x += (-targetY - ref.current.rotation.x) * 0.05;
-      ref.current.position.y = -0.65 + Math.sin(t * 1.5) * 0.04 - scrollParallax * 0.15;
-    }
+
+    // PARALLAX: Reactive to scroll
+    const scrollParallax = (window.scrollY || 0) * 0.001;
+
+    ref.current.rotation.y += (targetX - ref.current.rotation.y + scrollParallax * 0.5) * 0.05;
+    ref.current.rotation.x += (-targetY - ref.current.rotation.x) * 0.05;
+
+    // Subtle breathing/floating
+    ref.current.position.y = -1 + Math.sin(t * 1.5) * 0.05 - scrollParallax * 0.2;
   });
 
-  // FIX A1: Die GLB-Rohgeometrie ist unnormalisiert (~65.000 Einheiten Spannweite,
-  // int16-Scan-Export). Der Node-Transform (scale 0.567) geht beim direkten
-  // geometry-Zugriff verloren → Kamera (Sichtbereich ~5,8 Einheiten) hing IM Modell.
-  // Hier: zentrieren + explizit auf definierte Weltgröße normalisieren.
-  const modelGeometry = React.useMemo(() => {
-    const src = nodes?.node_0?.geometry
-      ?? (() => {
-        const foundKey = Object.keys(nodes || {}).find(key => nodes[key]?.geometry);
-        return foundKey ? nodes[foundKey].geometry : null;
-      })();
-    if (!src) return null;
-    try {
-      const geom = src.clone();
-      geom.computeBoundingBox();
-      if (!geom.boundingBox) return null;
-      const size = new THREE.Vector3();
-      const center = new THREE.Vector3();
-      geom.boundingBox.getSize(size);
-      geom.boundingBox.getCenter(center);
-      const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const TARGET = 4.0; // Welteinheiten ≈ 75 % der sichtbaren Kamera-Höhe (fov 45, z=7)
-      geom.translate(-center.x, -center.y, -center.z);
-      const s = TARGET / maxDim;
-      geom.scale(s, s, s);
-      return geom;
-    } catch {
-      return null;
-    }
-  }, [nodes]);
-
-  if (!modelGeometry) return null;
-
   return (
-    <group ref={ref} position={home ? [0, -0.65, 0] : [2.7, -1.0, 0]} scale={home ? 1 : 0.7}>
-      <mesh
-        geometry={modelGeometry}
-        rotation={[0, 0, Math.PI / 2]}
-        castShadow
-        receiveShadow
-      >
-        {/* FIX D3+UX: sichtbares Gold-Glas statt unsichtbarem Klarglas —
-            transmission 0.92 auf schwarzem BG = optisch nicht existent */}
-        <meshStandardMaterial color="#d4af37" emissive="#8a6d1f" emissiveIntensity={0.55} metalness={0.85} roughness={0.3} />
-      </mesh>
+    <group ref={ref} scale={0.8} position={[0, -1, 0]}>
+      <Center>
+        <mesh geometry={nodes.mesh_4_1?.geometry || nodes.mesh_4?.geometry || nodes.mesh_2?.geometry || nodes[Object.keys(nodes).find(key => nodes[key]?.geometry) as string]?.geometry}>
+          <MeshTransmissionMaterial
+            backside
+            backsideThickness={5}
+            thickness={2}
+            roughness={0.05}
+            transmission={1}
+            ior={1.5}
+            chromaticAberration={0.04}
+            anisotropy={0.1}
+            color="#ffffff"
+            emissive={GOLD_DARK}
+            emissiveIntensity={0.1}
+          />
+        </mesh>
+      </Center>
     </group>
   );
 }
@@ -196,12 +171,6 @@ const AbstractPremiumScene = ({ home = true }: { home?: boolean }) => {
       <Suspense fallback={
         <Sphere args={[1, 32, 32]}><meshStandardMaterial color={GOLD} wireframe /></Sphere>
       }>
-        {/* FIX B1: Environment MUSS innerhalb von Suspense hängen — preset="city" lädt
-            ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
-            die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
-        {/* SASCHA-ENTSCHEIDUNG (30.09. Nacht): Das große Anatomie-Modell NUR auf der
-            Startseite — die originale, perfekte Figur (17.09.-Zustand). Unterseiten:
-            kein Modell (nur Orbit-Ringe). */}
         {home && <AnatomicalModel pointerPos={pointerPos} />}
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
@@ -298,6 +267,6 @@ export const Global3DBackground = () => {
 };
 
 
-// REAKTIVIERT (30.09.2026, Abend): Preload zurück — das Modell gehört zur Szene,
-// der frühere Load soll nicht erst nach dem ersten Frame starten.
-useGLTF.preload('/koerperfluss_model.glb');
+// SASCHA-REFERENZ (30.09.2026): Preload auf den LeePerrySmith-Kopf — die Figur der
+// Startseite (Liquid-Gold-Glas, 1:1 aus der AI-Studio-Referenz-App übernommen).
+useGLTF.preload('/LeePerrySmith.glb');
