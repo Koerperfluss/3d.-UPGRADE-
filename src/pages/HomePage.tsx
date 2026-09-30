@@ -15,6 +15,14 @@ export const HomePage: React.FC<HomePageProps> = () => {
     window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
   };
 
+  // A11Y (WCAG 2.1.1): Klick-Flächen auch per Tastatur aktivierbar (Enter/Leertaste)
+  const activateWithKeyboard = (target: string) => (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navigate(target);
+    }
+  };
+
   return (
     <div className="relative w-full overflow-x-hidden bg-transparent text-white font-sans">
       
@@ -69,7 +77,12 @@ export const HomePage: React.FC<HomePageProps> = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
           className="relative z-20 flex-1 flex flex-col items-center justify-center p-8 md:p-12 group cursor-pointer overflow-hidden"
-          onClick={() => navigate('/login')}
+          // USERFLOW (30.09.2026): Campus-Einstieg führt direkt in den Anamnese-Trainer (Kern-Tool Studierende)
+          onClick={() => navigate('/anamnese-trainer')}
+          role="link"
+          tabIndex={0}
+          aria-label="Campus — zum Anamnese-Trainer für Studierende"
+          onKeyDown={activateWithKeyboard('/anamnese-trainer')}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           <div className="text-center relative z-30 transform group-hover:scale-105 transition-transform duration-700">
@@ -90,6 +103,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
           transition={{ duration: 1.2 }}
           className="relative z-20 flex-1 flex flex-col items-center justify-center p-8 md:p-12 group cursor-pointer overflow-hidden border-t md:border-t-0 md:border-l border-white/5"
           onClick={() => navigate('/dozenten-login')}
+          role="link"
+          tabIndex={0}
+          aria-label="Fakultät — zum Dozenten-Login"
+          onKeyDown={activateWithKeyboard('/dozenten-login')}
         >
           <div className="absolute inset-0 bg-gradient-to-l from-brand-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           <div className="text-center relative z-30 transform group-hover:scale-105 transition-transform duration-700">
@@ -122,6 +139,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
           {/* Card 1 */}
           <div 
             onClick={() => navigate('/showcase')}
+            role="link"
+            tabIndex={0}
+            aria-label="18 Klinische KI-Tools — zum DigiArk-Showcase"
+            onKeyDown={activateWithKeyboard('/showcase')}
             className="glass-dark p-8 md:p-10 rounded-[32px] border border-white/10 hover:border-brand-primary/40 transition-all cursor-pointer group relative overflow-hidden shadow-2xl"
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/10 rounded-full blur-3xl group-hover:bg-brand-primary/20 transition-all" />
@@ -138,6 +159,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
           {/* Card 2 */}
           <div 
             onClick={() => navigate('/anamnese-trainer')}
+            role="link"
+            tabIndex={0}
+            aria-label="LUMI Anamnese-Trainer — Patiententraining starten"
+            onKeyDown={activateWithKeyboard('/anamnese-trainer')}
             className="glass-dark p-8 md:p-10 rounded-[32px] border border-white/10 hover:border-brand-primary/40 transition-all cursor-pointer group relative overflow-hidden shadow-2xl"
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all" />
@@ -154,6 +179,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
           {/* Card 3 */}
           <div 
             onClick={() => navigate('/moodle-simulation')}
+            role="link"
+            tabIndex={0}
+            aria-label="LTI 1.3 Hochschul-LMS — Moodle-Simulation öffnen"
+            onKeyDown={activateWithKeyboard('/moodle-simulation')}
             className="glass-dark p-8 md:p-10 rounded-[32px] border border-white/10 hover:border-brand-primary/40 transition-all cursor-pointer group relative overflow-hidden shadow-2xl"
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all" />

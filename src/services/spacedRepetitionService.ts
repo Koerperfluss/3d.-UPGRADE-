@@ -6,8 +6,14 @@ const STORAGE_KEY = 'koerperfluss_spaced_repetition';
 export const spacedRepetitionService = {
   
   getItems(): SpacedRepetitionItem[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      const parsed = data ? JSON.parse(data) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      return [];
+    }
   },
 
   saveItems(items: SpacedRepetitionItem[]) {

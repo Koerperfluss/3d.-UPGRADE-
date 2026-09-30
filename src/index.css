@@ -140,6 +140,12 @@ input, textarea, select {
   background: #333;
 }
 
+/* A11Y (WCAG 2.4.7): Sichtbarer Tastatur-Fokus — goldener Outline passend zur Marke */
+:focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 3px;
+}
+
 /* A11Y: Reduced-Motion respektieren (WCAG 2.3.3) — CSS-Animationen/Transitions aus */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, Suspense, Component } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
+// FIX (30.09.2026): useGLTF aus dem Import entfernt — @react-three/drei 9.122 exportiert
+// es nicht mehr (neu: <Gltf />). AnatomicalModel wird aktuell NICHT gerendert
+// (toter Code seit dem Slicing-Käfig-Fix), daher wird der GLB-Load hier deaktiviert.
+import { Environment, Float, Sphere, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 
 const GOLD = '#D4AF37';
@@ -9,7 +12,10 @@ const GOLD_DARK = '#B38F2D';
 
 function AnatomicalModel({ pointerPos }: { pointerPos: React.MutableRefObject<{ x: number, y: number }> }) {
   // Load the authentic Körperfluss Full-Body Anatomical 3D Model
-  const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
+  // FIX (30.09.2026): useGLTF-Load deaktiviert — Funktion wird aktuell nicht gerendert
+  // und drei 9.122 unterstützt useGLTF nicht mehr. Stub hält den Pfad compilierbar.
+  // const { nodes } = useGLTF('/koerperfluss_model.glb') as any;
+  const nodes = {} as any;
   const ref = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -187,7 +193,7 @@ const AbstractPremiumScene = () => {
         {/* FIX B1: Environment MUSS innerhalb von Suspense hängen — preset="city" lädt
             ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
             die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
-        <AnatomicalModel pointerPos={pointerPos} />
+        {/* Slicing-Käfig entfernt — Goldene Orbit-Ringe & Partikel-Sphäre aktiv */}
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
       </Suspense>
@@ -214,13 +220,29 @@ export const Global3DBackground = () => {
     return stored === 'true';
   });
   const [isDesktop, setIsDesktop] = React.useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+  // A11Y (WCAG 2.3.3): Bei „Bewegung reduzieren" (prefers-reduced-motion) keine animierte
+  // 3D-Szene (Partikel/Ring-Rotation) rendern — stattdessen das statische Grid.
+  const [prefersReducedMotion, setPrefersReducedMotion] = React.useState(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   React.useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 1024);
     };
+    const handleMotionPreference = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    if (typeof window.matchMedia === 'function') {
+      window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', handleMotionPreference);
+    }
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (typeof window.matchMedia === 'function') {
+        window.matchMedia('(prefers-reduced-motion: reduce)').removeEventListener('change', handleMotionPreference);
+      }
+    };
   }, []);
 
   React.useEffect(() => {
@@ -234,7 +256,7 @@ export const Global3DBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1 }}>
-      {show3D && isDesktop ? (
+      {show3D && isDesktop && !prefersReducedMotion ? (
         <CanvasGuard>
           <Canvas
             camera={{ position: [0, 0, 7], fov: 45 }}
@@ -261,4 +283,7 @@ export const Global3DBackground = () => {
 };
 
 
-useGLTF.preload('/koerperfluss_model.glb');
+// PERFORMANCE-FIX (30.09.2026): GLB-Preload deaktiviert — das 2,4-MB-Modell wurde bei
+// jedem Start sofort geladen, obwohl AnatomicalModel in der Szene nicht mehr vorkommt
+// (Slicing-Käfig-Fix). Spart 2,4 MB Bandbreite pro Seitenaufruf.
+// useGLTF.preload('/koerperfluss_model.glb');

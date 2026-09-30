@@ -16,8 +16,15 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
-    const stored = localStorage.getItem('koerperfluss_cart');
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const stored = localStorage.getItem('koerperfluss_cart');
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      // Korrupter/alter Cart-Code → ignorieren statt App-Crash
+      try { localStorage.removeItem('koerperfluss_cart'); } catch {}
+      return [];
+    }
   });
 
   useEffect(() => {

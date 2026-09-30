@@ -28,5 +28,11 @@
     "noEmit": true
   },
   "include": ["src/**/*", "index.tsx"],
-  "exclude": ["node_modules", "dist"]
+  // FIX (30.09.2026): Finder-Duplikate ("* 2.*") werden nirgends importiert und aus dem
+  // Compile genommen — die Dateien selbst bleiben unangetastet.
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/* 2.*"
+  ]
 }

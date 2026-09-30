@@ -11,7 +11,9 @@ import {
   Sparkles,
   Share2,
   Menu,
-  X
+  X,
+  Home,
+  School
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { ConnectModal } from './ConnectModal';
@@ -36,6 +38,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
     { name: 'Kurs-Theorie', path: '/education', icon: Library },
     { name: 'Skills Lab', path: '/vision', icon: ActivitySquare },
     { name: 'Clinical Hub', path: '/anamnese-trainer', icon: Stethoscope },
+    { name: 'Moodle-Simulation', path: '/moodle-simulation', icon: School },
     { name: 'Studien-DB', path: '/literatur', icon: Library },
     { name: 'Assessment', path: '/assessment', icon: GraduationCap },
     { name: 'Educator Space', path: '/educator', icon: Users, requireLecturer: true },
@@ -54,6 +57,15 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
       </div>
       
       <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+        {/* USERFLOW (30.09.2026): Rückweg zur öffentlichen Startseite aus dem LMS */}
+        <Link
+          to="/"
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium text-brand-primary/80 hover:text-brand-primary hover:bg-white/5 border border-brand-primary/10 mb-4"
+        >
+          <Home size={20} />
+          Zur Startseite
+        </Link>
         {filteredNav.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           return (
@@ -61,6 +73,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children, user, le
               key={item.name}
               to={item.path}
               onClick={() => setIsMobileMenuOpen(false)}
+              aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
                 isActive 
                   ? 'bg-brand-primary text-black shadow-lg shadow-brand-primary/20' 

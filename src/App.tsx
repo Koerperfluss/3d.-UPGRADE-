@@ -54,28 +54,52 @@ import { Assistant } from './components/Assistant';
 import { MessageIcon, CloseIcon } from './components/IconComponents';
 
 // --- GLOBAL ERROR BOUNDARY ---
-class GlobalErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
+class GlobalErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: any) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
-  static getDerivedStateFromError() { return { hasError: true }; }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error }; }
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Critical App Error:", error, info);
   }
+  resetAppData = () => {
+    // Selbstheilung: alten App-Zustand (localStorage/sessionStorage/Caches/SW) entfernen
+    try { localStorage.clear(); } catch {}
+    try { sessionStorage.clear(); } catch {}
+    if (typeof caches !== 'undefined') {
+      caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(() => {});
+    }
+    if (navigator.serviceWorker?.getRegistrations) {
+      navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+    }
+    window.location.reload();
+  };
   render() {
     if (this.state.hasError) {
       return (
-        <div className="fixed inset-0 bg-black flex items-center justify-center p-8 text-center">
+        <div className="fixed inset-0 bg-black flex items-center justify-center p-8 text-center overflow-auto">
           <div className="max-w-md">
             <h1 className="text-brand-primary text-2xl font-black mb-4 uppercase">System-Fehler</h1>
-            <p className="text-zinc-400 mb-8 font-light">Die App ist auf ein unerwartetes Problem gestoßen. Bitte lade die Seite neu.</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="bg-brand-primary text-black px-8 py-3 rounded-full font-black uppercase tracking-widest text-xs"
+            <p className="text-zinc-400 mb-4 font-light">Die App ist auf ein unerwartetes Problem gestoßen. Meist hilft es, die gespeicherten App-Daten zurückzusetzen.</p>
+            <button
+              onClick={this.resetAppData}
+              className="bg-brand-primary text-black px-8 py-3 rounded-full font-black uppercase tracking-widest text-xs mb-4"
             >
-              Neu Laden
+              App-Daten zurücksetzen &amp; neu laden
             </button>
+            <br />
+            <button
+              onClick={() => window.location.reload()}
+              className="text-zinc-500 underline text-xs uppercase tracking-widest"
+            >
+              Nur neu laden
+            </button>
+            {this.state.error && (
+              <pre className="mt-6 text-left bg-zinc-900 border border-zinc-700 p-4 rounded-xl text-[10px] text-red-400 overflow-auto max-h-40">
+                {this.state.error.toString()}
+              </pre>
+            )}
           </div>
         </div>
       );

@@ -72,6 +72,10 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                 <NavLink to="/showcase" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
                     Showcase
                 </NavLink>
+                {/* USERFLOW (30.09.2026): KERN-Route für Studierende direkt aus der Navbar erreichbar */}
+                <NavLink to="/anamnese-trainer" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
+                    Campus
+                </NavLink>
                 <NavLink to="/angebote" className={({ isActive }) => `text-[11px] uppercase tracking-[0.4em] font-black hover:text-brand-primary transition-all duration-700 ${isActive ? 'text-brand-primary' : 'text-zinc-500'}`}>
                     Angebote
                 </NavLink>
@@ -128,14 +132,15 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                 </button>
               )}
               
-              <button 
+              <button
                 onClick={() => setIsShareOpen(true)}
+                aria-label="Seite teilen"
                 className="p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5"
               >
                 <Share2 className="w-5 h-5 text-zinc-500 group-hover:text-brand-primary transition-colors duration-500" />
               </button>
 
-              <button onClick={onCartClick} className="relative p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+              <button onClick={onCartClick} aria-label={`Warenkorb öffnen${totalItems > 0 ? `, ${totalItems} Artikel` : ''}`} className="relative p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
                 <ShoppingCartIcon className="w-6 h-6 text-zinc-500 group-hover:text-brand-primary transition-colors duration-500" />
                 {totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 bg-brand-primary text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-2xl transform scale-110 animate-pulse">
@@ -167,11 +172,11 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden nav-mobile-flex">
-             <button onClick={onCartClick} className="relative p-2">
+             <button onClick={onCartClick} aria-label={`Warenkorb öffnen${totalItems > 0 ? `, ${totalItems} Artikel` : ''}`} className="relative p-2">
                 <ShoppingCartIcon className="w-6 h-6 text-brand-primary" />
                 {totalItems > 0 && <span className="absolute top-0 right-0 bg-brand-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center text-black">{totalItems}</span>}
              </button>
-             <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-white">
+             <button onClick={() => setIsOpen(!isOpen)} aria-label={isOpen ? 'Menü schließen' : 'Menü öffnen'} aria-expanded={isOpen} className="p-2 text-white">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {isOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />}
                 </svg>
@@ -198,6 +203,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, lecturer, onLogout, onCart
                 <NavLink to="/ueber-uns" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Über Uns</NavLink>
                 <NavLink to="/startup" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Startup</NavLink>
                 <NavLink to="/showcase" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Showcase</NavLink>
+                <NavLink to="/anamnese-trainer" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Campus</NavLink>
                 <NavLink to="/angebote" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Angebote</NavLink>
                 <NavLink to="/blog" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Blog</NavLink>
                 <NavLink to="/kontakt" onClick={() => setIsOpen(false)} className="text-[12px] uppercase tracking-[0.4em] font-black text-zinc-500 hover:text-brand-primary transition-all py-3">Kontakt</NavLink>

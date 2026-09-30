@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -18,6 +18,12 @@ const AnamneseTrainerScene = () => {
   }, []);
 
   const latheGeo = useMemo(() => new THREE.LatheGeometry(points, 30), [points]);
+
+  useEffect(() => {
+    return () => {
+      latheGeo.dispose();
+    };
+  }, [latheGeo]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -59,6 +65,12 @@ const AssessmentScene = () => {
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     return geo;
   }, [positions]);
+
+  useEffect(() => {
+    return () => {
+      bgGeo.dispose();
+    };
+  }, [bgGeo]);
 
   useFrame((state) => {
     if (pointsRef.current) {
@@ -181,6 +193,12 @@ const MatrixScene = () => {
     return geo;
   }, [points]);
 
+  useEffect(() => {
+    return () => {
+      lineGeometry.dispose();
+    };
+  }, [lineGeometry]);
+
   useFrame((state) => {
     if(groupRef.current) {
       groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
@@ -247,6 +265,12 @@ const CreativeScene = () => {
     geo.setAttribute('position', new THREE.BufferAttribute(currentPos, 3));
     return geo;
   }, [currentPos]);
+
+  useEffect(() => {
+    return () => {
+      pointGeo.dispose();
+    };
+  }, [pointGeo]);
 
   useFrame((state) => {
     if(pointsRef.current) {
@@ -318,6 +342,12 @@ const LandingScene = () => {
   }, []);
 
   const tubeGeo = useMemo(() => new THREE.TubeGeometry(curve, 64, 0.05, 8, true), [curve]);
+
+  useEffect(() => {
+    return () => {
+      tubeGeo.dispose();
+    };
+  }, [tubeGeo]);
 
   useFrame((state) => {
     if(torusRef.current) torusRef.current.rotation.y = state.clock.elapsedTime * 0.1;
