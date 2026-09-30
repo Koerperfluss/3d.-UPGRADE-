@@ -161,7 +161,7 @@ function Particles() {
   );
 }
 
-const AbstractPremiumScene = () => {
+const AbstractPremiumScene = ({ home = true }: { home?: boolean }) => {
   const scrollY = useRef(0);
   const pointerPos = useRef({ x: 0, y: 0 });
 
@@ -197,7 +197,7 @@ const AbstractPremiumScene = () => {
             ein HDR von einem externen CDN. Außerhalb von Suspense hat das Suspendieren
             die ganze App in den „System-Fehler"-Screen gerissen (Chrome-CDN-Blockade). */}
         {/* Anatomie-Modell WIEDER AKTIV (30.09. Abend) — zusammen mit den Orbit-Ringen */}
-        <AnatomicalModel pointerPos={pointerPos} home={isHome} />
+        <AnatomicalModel pointerPos={pointerPos} home={home} />
         <AnimatedLogoRings pointerPos={pointerPos} />
         <Environment preset="city" />
       </Suspense>
@@ -273,7 +273,7 @@ export const Global3DBackground = () => {
             dpr={[1, 1.75]}
             gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
           >
-            <AbstractPremiumScene />
+            <AbstractPremiumScene home={isHome} />
           </Canvas>
         </CanvasGuard>
       ) : (
