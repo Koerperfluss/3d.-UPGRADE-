@@ -29,5 +29,5 @@ aktuell-3d-upgrade*/
 (0) Körperfluss- Website Local*/
 körperfluss-pilot.ai/
 dist/
-functions/.env
+functions/.env*
 .agents/
